@@ -1,21 +1,15 @@
 /*
- * Using sprites to draw more interesting game objects
+ * Main script for the game "HyperJump"
  *
- * Gilberto Echeverria
- * 2026-03-03
+ * Daniel José Armas Azar A01786896
+ * Guillermo Patricio González Martínez A01787393
+ * David Blanco Ortiz A01786713
  */
 
 "use strict";
 
-//import { Vector } from "./libs/Vector";
-//import { Rect } from "./libs/Rect";
-//import { GameObject } from "./libs/GameObject";
-//import { AnimatedPlayer } from "./libs/AnimatedPlayer";
-//import { boxOverlap, randomRange } from "./libs/game_functions";
-//import { AnimatedObject } from "./libs/AnimatedObject";
-
 // Global variables
-const canvasWidth = 800;
+const canvasWidth = 1400;
 const canvasHeight = 600;
 
 // Context of the Canvas
@@ -37,6 +31,7 @@ const keyDirections = {
     ArrowUp: 'up',
     ArrowLeft: 'left',
     ArrowRight: 'right',
+    Space: 'up',
 };
 
 // Data structure with the directions a character can move, the
@@ -75,12 +70,14 @@ const playerMotion = {
 // Class to keep track of all the events and objects in the game
 class Game {
     constructor() {
-        this.createEventListeners();
-        this.initObjects();
+        this.createEventListeners();  //Initializes the event lsiteners
+        this.initObjects();   //Initializes the game objects
     }
 
+    //Initializes the game objects (the sprites are temporal)
     initObjects() {
-        // Add another object to draw a background
+        
+        //Background
         this.background = new AnimatedObject(
             new Vector(canvasWidth / 2, canvasHeight / 2),
             canvasWidth,
@@ -93,10 +90,11 @@ class Game {
                                     new Rect(0, 0, 16, 16));
         this.background.setAnimation(0, 44, true, 100);
 
+        //Player
         this.player = new AnimatedPlayer(
-            new Vector(canvasWidth / 2, canvasHeight / 2),
-            60,
-            60,
+            new Vector(30, canvasHeight / 2),
+            48,
+            64,
             "red",
             3,
             playerMotion
@@ -105,107 +103,150 @@ class Game {
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(playerSpeed);
 
-        this.actors = [];
-        for (let i=0; i<10; i++) {
-            this.addBox();
+
+        //Actual generation zones
+        this.generation_zones = [];                     //Manually until the API is ready
+        this.generation_zones.push(new generation_zone(30, canvasHeight/1.2));
+        this.generation_zones.push(new generation_zone(canvasWidth/2, canvasHeight/1.2));
+        this.generation_zones.push(new generation_zone(canvasWidth - 100, canvasHeight/1.5));
+        this.generation_zones.push(new generation_zone(canvasWidth - 200, canvasHeight/1.5));
+
+        //Plaforms (temporal here until DB and API are ready)
+        this.platforms = [];
+        this.addPlatform(0,0,30,30, this.platforms);
+        this.addPlatform(0,0,40,30, this.platforms);
+        this.addPlatform(0,0,50,30, this.platforms);
+        this.addPlatform(0,0,30,40, this.platforms);
+        this.addPlatform(0,0,30,40, this.platforms);
+        this.addPlatform(0,0,40,40, this.platforms);
+        this.addPlatform(0,0,40,50, this.platforms);
+        this.addPlatform(0,0,50,40, this.platforms);
+        this.addPlatform(0,0,50,50, this.platforms);
+
+        //Actual platforms
+        this.actualPlatforms = [];
+        for(let i = 0; i < this.generation_zones.length; i++) {
+            let zona = this.generation_zones[i];
+
+            //(temporal until we can read platforms from the DB)
+            let plat = this.platforms[randomRange(this.platforms.length-1, 0)];
+
+            this.addPlatform(zona.x, zona.y, plat.size.x, plat.size.y, this.actualPlatforms);
         }
     }
 
+    //To draw the game objects
     draw(ctx) {
-        // Draw the background first, so everything else is drawn on top
+
+        //Background
         this.background.draw(ctx);
 
-        for (let actor of this.actors) {
-            actor.draw(ctx);
+        //Actual Platforms
+        for(let platform of this.actualPlatforms) {
+            platform.draw(ctx);
         }
+        
+        //Player
         this.player.draw(ctx);
-        //console.log(`Current frame: ${this.player.frame}, repeating: ${this.player.repeat}`);
     }
 
+    //Tu update the position, sprites, collisions...
     update(deltaTime) {
-        // Animate the background
+
+        //Animate the background
         this.background.updateFrame(deltaTime);
 
-        // Move the player
-        //this.player.onGround = false;
+        //Move the player
         this.player.update(deltaTime, ctx.canvas);
-
-        // Check collision against other objects
+        //this.player.onGround = false;   //This can be uncommented when the game over condition related to falling into the void has been implemented
+                                          //While not, when player falls from a platform, there is a jump that should not be there
         
-        for (let actor of this.actors) {
-            actor.updateFrame(deltaTime);
+        // Check collision against platforms
+        for (let platform of this.actualPlatforms) {
+            platform.updateFrame(deltaTime);  //Important to udate the platform first
 
-            let overlap = boxOverlap(this.player, actor);
+            if(platform.collision == true) {
+                
+                let overlap = boxOverlap(this.player, platform, deltaTime); //Checks the direction of the collision
 
-            // if (boxOverlap(this.player, actor)) {
-            //     actor.setSprite('../assets/sprites/RTS_Crate_red.png');
-            // } else {
-            //     actor.setSprite('../assets/sprites/RTS_Crate.png');
-            // }
+                if (overlap == "top") {
+                    this.player.position.y = platform.position.y - platform.halfSize.y - this.player.halfSize.y;
+                    this.player.fallSpeed = 0;
+                    this.player.onGround = true;  //Activates the jump
+                }
 
-            if (overlap == "top") {
-                this.player.position.y = actor.position.y - actor.halfSize.y - this.player.halfSize.y;
-                this.player.fallSpeed = 0;
-                this.player.onGround = true;
-            }
+                if (overlap == "bottom") {
+                    this.player.position.y = platform.position.y + platform.halfSize.y + this.player.halfSize.y;
+                    this.player.fallSpeed = 0;
+                }
 
-            if (overlap == "bottom") {
-                this.player.position.y = actor.position.y + actor.halfSize.y + this.player.halfSize.y;
-                this.player.fallSpeed = 0;
-            }
+                if (overlap == "left") {
+                    this.player.position.x = platform.position.x - platform.halfSize.x - this.player.halfSize.x;
+                    this.player.velocity.x = 0;
+                }
 
-            if (overlap == "left") {
-                this.player.position.x = actor.position.x - actor.halfSize.x - this.player.halfSize.x;
-                this.player.velocity.x = 0;
-            }
-
-            if (overlap == "right") {
-                this.player.position.x = actor.position.x + actor.halfSize.x + this.player.halfSize.x;
-                this.player.velocity.x = 0;
+                if (overlap == "right") {
+                    this.player.position.x = platform.position.x + platform.halfSize.x + this.player.halfSize.x;
+                    this.player.velocity.x = 0;
+                }
             }
         }
     }
 
-    addBox() {
-        // Create boxes with minimum size 50, and up to 50 pixels more
-        const size = randomRange(60, 50);
-        const posX = randomRange(canvasWidth - size);
-        const posY = randomRange(canvasHeight - size);
+    //To add a platform in the game
+    addPlatform(x, y, width, height, lst) {
+
         const box = new AnimatedObject(
-            new Vector(posX, posY),
-            size,
-            size,
+            new Vector(x, y),
+            width,
+            height,
             "gray",
             "obstacle",
             6
         );
-        // If we want to draw the whole sprite, no need to add a rect
+        
         box.setSprite('../assets/sprites/RTS_Crate.png',
-        //box.setSprite('../assets/sprites/artifact_ss.png',
-                              new Rect(64, 0, 64, 64));
+                              new Rect(64, 0, 64, 64));  // If we want to draw the whole sprite, no need to add a rect
         box.setAnimation(1, 5, true, 200);
         box.destroy = false;
-        this.actors.push(box);
+        lst.push(box);
     }
 
+    //To create the parallel events to detect the keys
     createEventListeners() {
+
+        //When pressed
         window.addEventListener('keydown', (event) => {
-            // Detect the predefined keys for movement and store the direction
+            //Detect the predefined keys for movement and store the direction
             if (event.key in keyDirections) {
                 this.addKey(keyDirections[event.key]);
                 this.player.startMovement(keyDirections[event.key]);
             }
+
+            //For "Space"
+            if (event.code in keyDirections) {
+                this.addKey(keyDirections[event.code]);
+                this.player.startMovement(keyDirections[event.code]);
+            }
         });
 
+        //When released
         window.addEventListener('keyup', (event) => {
-            // Detect the predefined keys for movement and remove the direction
+            //Detect the predefined keys for movement and remove the direction
             if (event.key in keyDirections) {
                 this.delKey(keyDirections[event.key]);
                 this.player.stopMovement(keyDirections[event.key]);
             }
+
+            //For "Space"
+            if (event.code in keyDirections) {
+                this.delKey(keyDirections[event.code]);
+                this.player.startMovement(keyDirections[event.code]);
+            }
         });
     }
 
+    //To add and remove the keys that had been pressed
     addKey(direction) {
         if (!this.player.keys.includes(direction)) {
             this.player.keys.push(direction);
@@ -222,20 +263,22 @@ class Game {
 
 // Starting function that will be called from the HTML page
 function main() {
+
     // Get a reference to the object with id 'canvas' in the page
     const canvas = document.getElementById('canvas');
-    // Resize the element
+
+    //Resize the element
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
+
     // Get the context for drawing in 2D
     ctx = canvas.getContext('2d');
 
-    // Create the game object
+    //Create the "game" object
     game = new Game();
 
     drawScene(0);
 }
-
 
 // Main loop function to be called once per frame
 function drawScene(newTime) {
@@ -254,5 +297,3 @@ function drawScene(newTime) {
     oldTime = newTime;
     requestAnimationFrame(drawScene);
 }
-
-//main();
