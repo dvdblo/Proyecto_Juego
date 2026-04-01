@@ -1,8 +1,9 @@
 /*
  * Class to draw text at specific positions within the game canvas
  *
- * Gilberto Echeverria
- * 2026-02-10
+ * Daniel José Armas Azar A01786896
+ * Guillermo Patricio González Martínez A01787393
+ * David Blanco Ortiz A01786713
  */
 
 "use strict";

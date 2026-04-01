@@ -1,11 +1,10 @@
 /*
- * Vector class used in 2D games
+ * Class for a vector in "HyperJump"
  *
- * Gilberto Echeverria
- * 2026-02-10
+ * Daniel José Armas Azar A01786896
+ * Guillermo Patricio González Martínez A01787393
+ * David Blanco Ortiz A01786713
  */
-
-// TODO: Complete the methods in this class to be able to perform vector operations
 
 class Vector {
     constructor(x, y) {
@@ -29,7 +28,7 @@ class Vector {
         return Math.sqrt(this.x**2 + this.y**2);
     }
 
-    squareLength() { //NOTA: Funcion como una optimización, así no ocupas sacar la raiz, 
+    squareLength() {
         return this.x**2 + this.y**2;
     }
 
@@ -41,17 +40,3 @@ class Vector {
         return new Vector(this.x / mag, this.y / mag);
     }
 }
-
-
-/*
- * Test the Vector class
- */
-//let p = new Vector(0, 8);
-//let v = new Vector(1, 1);
-//p = p.plus(v.times(1));
-//console.log("New position: ", p);
-//console.log("plus: ", p.plus(v));
-//console.log("minus: ", p.minus(v));
-//console.log("times: ", p.times(3));
-//console.log("magnitude: ", p.magnitude());
-//console.log("squareLength: ", p.squareLength());

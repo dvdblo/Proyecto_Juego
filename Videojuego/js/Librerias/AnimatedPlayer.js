@@ -1,13 +1,10 @@
 /*
- * Class for the principal game object in a simple game
- * This object will have animation for some of its actions
+ * Class for the principal game object (player) in "HyperJump"
  *
- * Gilberto Echeverria
- * 2026-02-22
+ * Daniel José Armas Azar A01786896
+ * Guillermo Patricio González Martínez A01787393
+ * David Blanco Ortiz A01786713
  */
-
-//import { Vector } from "./Vector.js";
-//import { AnimatedObject } from "./AnimatedObject.js";
 
 class AnimatedPlayer extends AnimatedObject {
     constructor( position, width, height, color, sheetCols, motion ) {
@@ -19,73 +16,76 @@ class AnimatedPlayer extends AnimatedObject {
             "player",
             sheetCols
         );
-        this.velocity = new Vector(0, 0);
-        // Default value for player speed
-        this.speed = 1.0;
 
-        //VARIABLES PARA LA GRAVEDAD
+        this.velocity = new Vector(0, 0);
+        this.speed = 1.0; // Default value for player speed
+
+        //For gravity simulation
         this.fallSpeed = 0;
-        this.gravity = 0.02;
+        this.gravity = 0.0009;
         this.jumpForce = -0.6;
         this.onGround = false;
 
-        this.sheetCols = sheetCols;
-
-        // Keys pressed to move the player
+        //Keys pressed to move the player
         this.keys = [];
 
-        // Data structure with the directions a character can move, the
-        // direction sign and the related animation.
+        //Data structure with the directions a character can move, the
+        //direction sign and the related animation.
         this.motion = motion;
     }
 
+    //To update the player
     update(deltaTime, canvas) {
+
         // Restart the velocity on x
         this.velocity.x = 0;
 
         // Modify the velocity according to the directions pressed
         for (const direction of this.keys) {
 
-            //MOVIMIENTO DE SALTO, SOLO SE ACTIVA SI EL JUGADOR ESTA SOBRE EL SUELO
+            //Jump movement, only if the player is on the ground
             if (direction === "up" && this.onGround) {
-                this.fallSpeed = this.jumpForce;
+                this.fallSpeed = this.jumpForce;  //The fall speed controls if player goes up or down, and the velocity
                 this.onGround = false;
             }
-            if (this.fallSpeed > 1.5) {  //Limita velocidad
+            if (this.fallSpeed > 1.5) {  //Max velocity
                 this.fallSpeed = 1.5;
             }
 
+            //Controls the velocity in X and Y
             const axis = this.motion[direction].axis;
             const sign = this.motion[direction].sign;
 
             this.velocity[axis] += sign;
 
-            // Adapt the animation according to the direction
+            //Adapt the animation according to the direction
             const dirData = this.motion[direction];
-            // Make changes only if the direction is different
+
+            //Make changes only if the direction is different
             if (!dirData.status) {
                 dirData.status = true;
                 this.setAnimation(...dirData.moveFrames, dirData.repeat, dirData.duration);
             }
         }
 
-        //GENERA LA ACELERACIÓN DE LA GRAVEDAD
-        this.fallSpeed += this.gravity;
+        //Simulation of gravity
+        this.fallSpeed += this.gravity * deltaTime;
         this.velocity.y = this.fallSpeed;
 
-
+        //Movement in X
         this.velocity.x *= this.speed;
 
+        //New position
         this.position = this.position.plus(this.velocity.times(deltaTime));
 
-        // Restrict the player to move only within the canvas area
+        //Restrict the player to move only within the canvas area
         this.clampWithinCanvas(canvas);
 
         // Update to show then next frame when necessary
         this.updateFrame(deltaTime);
 
         // Change the collider's position
-        this.updateCollider();
+        //this.setCollider(this.position.x, this.position.y,this.width, this.height);
     }
 
     clampWithinCanvas(canvas) {
@@ -97,7 +97,7 @@ class AnimatedPlayer extends AnimatedObject {
         if (this.position.x - this.halfSize.x < 0) {
             this.position.x = this.halfSize.x;
         }
-        // Bottom border
+        // Bottom border (in the future, this is going to have a game over condition)
         if (this.position.y + this.halfSize.y > canvas.height) {
             this.position.y = canvas.height - this.halfSize.y;
             this.fallSpeed = 0;
@@ -109,15 +109,16 @@ class AnimatedPlayer extends AnimatedObject {
         }
     }
 
+    //To set the speed
     setSpeed(newSpeed) {
         this.speed = newSpeed;
     }
 
-
+    //To detect the keys pressed
     startMovement(direction) {
+        
         // Check whether we are already moving in a direction
         const dirData = this.motion[direction];
-
 
         // Make changes only if the direction is different
         if (!dirData.status) {
@@ -126,10 +127,10 @@ class AnimatedPlayer extends AnimatedObject {
         }
     }
 
+    //To stop movement when key is released
     stopMovement(direction) {
         const dirData = this.motion[direction];
         dirData.status = false;
         this.setAnimation(...dirData.idleFrames, dirData.repeat, dirData.duration);
     }
-
 }
