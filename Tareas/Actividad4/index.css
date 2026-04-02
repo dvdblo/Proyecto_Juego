@@ -1,0 +1,125 @@
+/* Hoja de estilos */
+
+/* Fuente de letra */
+body {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet ', sans-serif;
+    background-color: #d5ffbd;
+}
+
+/* Imagen de fondo de la página */
+.bg-fondo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("images/backgrounds/plantas.svg") center/cover no-repeat;
+    z-index: -1;
+}
+
+/* Imagen bienvenida */
+.bienvenida {
+    background-image: url("https://okdiario.com/img/2019/07/19/cafe.jpg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px; 
+}
+
+/* Estilo textos */
+.texto {
+    font-size:larger;
+    background: rgba(54, 52, 49, 0.785);
+    color: rgb(255, 255, 255);
+
+    padding: 20px;
+    border-radius: 12px;
+
+    max-width: 1000px;
+    text-align: center;
+
+    line-height: 1.6;
+
+}
+
+/* Imagen menú e items*/
+.seccionMenu {
+    background-image: url("https://img.pikbest.com/wp/202344/rustic-table-view-from-above-texture-of-light-wooden_9936937.jpg!w700wp");
+    background-size: cover;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px; 
+    
+}
+
+
+/* Animación 1: aparicion de imagenes del menú */
+.imagen {
+    max-width: 300px;
+
+    transform: scale(0) rotate(-360deg);
+    opacity: 0;
+
+    height: 0;
+    overflow: hidden;  
+
+    transition: transform 0.3s ease, opacity 0.3s ease, height 0.4s ease;
+}
+
+.imagen.visible {
+    transform: scale(1.1) rotate(360deg);
+    opacity: 1;
+    height: 200px;
+}
+
+/* Animación 2: selección items en menú */
+.menu-item {
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 10px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.menu-item:hover {
+    background-color: #b0a8a3;
+    transform: translateY(-5px);
+}
+
+/* Animación 3: selección de tarjetas de gatos */
+.cat-card {
+    transition: transform 0.3s;
+}
+
+.cat-card:hover {
+    transform: scale(1.05);
+}
+
+/* Tarjetas de gatos */
+.card-img {
+    height: 200px;
+    object-fit: cover;
+    object-position: top;
+}
+
+.card-body {
+    height: 200px;
+}
+
+/* Imagen fondo gatos */
+.gatos {
+    min-height: 1500px;
+    background-image: url("https://pintomicasa.com/img/2008/01/Pared.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
