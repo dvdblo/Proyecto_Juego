@@ -1,0 +1,118 @@
+<!-- HTML de la actividad 4 -->
+<!-- Daniel José Armas Azar A01786896
+     Guillermo Patricio González Martínez A01787393
+     David Blanco Ortiz A01786713 -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>EL Gatito Comelon</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="index.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JS -->
+    <script src="index.js"></script>
+</head>
+
+<body>
+    <!-- Fondo de la página -->
+    <div class="bg-fondo"></div>
+
+    <!-- CONTENIDO -->
+    <div class="container mt-4">
+
+        <!-- Bienvenida -->
+        <div class="bienvenida text-center">
+            <div class="texto">  <!-- aplica formato y fondo al texto -->
+                <h1>🐱 El Gatito Comelón 🐱 <br></h1>
+                <br></b>
+                <p><b>¡Bienvenido a nuestro café de gatos!</b></p>
+                <p>Adéntrate en una maravillosa experiencia, tomando café y degustando de 
+                    un rico alimento dulce, mientras convives con nuestros lindos y adorables gatitos.
+                </p>
+                <p>Podrás conocer a una variedad de gatos, desde los amigables pero independientes,
+                    hasta los que te harán decir: "Vaya, hoy dormiré sobre las cobijas".
+                </p>
+                <p>Si demuestras que tienes lo que se requiere para ser uno de sus amigos,
+                    podrás iniciar tu proceso de adopción para que uno de nuestros gatitos 
+                    encuentre su nuevo y seguro hogar, lleno de amor (no negociable), lleno de 
+                    comida (negócialo con el gato), y lleno de buena actitud (¡Seguro que sí!).
+                </p>
+            </div>
+        </div>
+
+        <br>
+
+        <!-- Menu -->
+        <div class="seccionMenu">
+            <div class="texto">
+                <h2 class="text-center"><b>Menú del día</b></h2>
+                <br>
+                <h5 class="text-center">¡Contamos con café del día! ¡Todos los días! ¡A todas horas!</h5>
+                <h5 class="text-center">(cerrado los domingos)</h5>
+                
+                <!-- Selector de día -->
+                <select id="selector" class="form-select mb-4">
+                    <option value="Hoy">Hoy</option>
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miercoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sabado">Sábado</option>
+                </select>
+            </div>
+
+            <br>
+
+            <div class="texto">
+
+                <!-- Menú dinámico -->
+                <div id="menu" class="row text-center g-5"></div>
+
+                <!-- Imagenes del menú -->
+                <div class="text-center mt-4">
+                    <img id="imagenes" src="" class="img-fluid imagen">
+                </div>
+
+                <hr>
+
+            </div>
+        </div>
+
+        <!-- Sección gatos -->
+        <br>
+        <div class="gatos text-center">
+            <div class="texto">
+                <p><b>¡Prepárate para divertirte junto con tus nuevos amigos!</b></p>
+            </div>
+
+            <br>
+
+            <div class="texto">
+                <h3 class="text-center"><b>Nuestros gatos 🐾</b></h3>
+            </div>
+
+            <br>
+
+            <!-- Tarjetas gatos -->
+            <div id="cats" class="row"></div>
+        </div>
+
+        <br>
+
+    </div>
+
+</body>
+</html>
