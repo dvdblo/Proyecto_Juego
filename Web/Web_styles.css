@@ -1,0 +1,33 @@
+#Main_title{
+    margin: 0px;
+    color: violet;
+    font-size: 40px;
+    text-align: center;
+}
+
+#fondo{
+    background-image: url("../Videojuego/assets/Fondos/back.png");
+    background-size: auto;
+    color: white;
+}
+
+.navbar{
+    background-color: indigo;
+    height: 60px;
+    display: flex;
+    align-items: center;     /* Centers items vertically */
+}
+
+li{
+    display: inline-block;
+}
+
+li a{
+    color: white;
+    font-size: 25px;
+    margin-right: 15px;
+}
+
+.game_images{
+    margin-right: 40px;
+}
