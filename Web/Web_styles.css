@@ -28,6 +28,28 @@ li a{
     margin-right: 15px;
 }
 
+.displays{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-right: 10px;
+}
+
 .game_images{
     margin-right: 40px;
+}
+
+.btn{
+    background-color: indigo;
+    color: white;
+    padding: 20px 40px;
+    border-radius: 8px;
+    font-size: 30px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.hidden{
+    display: none;
+    margin-right: 10px;
 }

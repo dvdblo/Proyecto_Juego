@@ -22,6 +22,7 @@ let game;
 let oldTime;
 
 let playerSpeed = 0.5;
+let enemySpeed = 0.1;
 
 // Dictionary for the keys that will control player movement
 const keyDirections = {
@@ -66,6 +67,24 @@ const playerMotion = {
     },
 };
 
+class Enemies extends AnimatedObject {
+    constructor(platform, width, height, color, type, speed) {
+        const position = new Vector(platform.position.x, platform.position.y - platform.halfSize.y - height/2);
+        super(position, width, height, color, type);
+        this.speed = speed;
+        this.direction = 1; // 1 for right, -1 for left
+        this.platform = platform;
+    }
+    
+    update(deltaTime) {
+        this.position.x += this.speed * this.direction * deltaTime;
+        const leftBoundary = this.platform.position.x - this.platform.halfSize.x;
+        const rightBoundary = this.platform.position.x + this.platform.halfSize.x;
+        if (this.position.x - this.halfSize.x < leftBoundary || this.position.x + this.halfSize.x > rightBoundary) {
+            this.direction *= -1; // Reverse direction
+        }
+    }
+}
 
 // Class to keep track of all the events and objects in the game
 class Game {
@@ -113,15 +132,15 @@ class Game {
 
         //Plaforms (temporal here until DB and API are ready)
         this.platforms = [];
-        this.addPlatform(0,0,30,30, this.platforms);
-        this.addPlatform(0,0,40,30, this.platforms);
-        this.addPlatform(0,0,50,30, this.platforms);
-        this.addPlatform(0,0,30,40, this.platforms);
-        this.addPlatform(0,0,30,40, this.platforms);
-        this.addPlatform(0,0,40,40, this.platforms);
-        this.addPlatform(0,0,40,50, this.platforms);
-        this.addPlatform(0,0,50,40, this.platforms);
-        this.addPlatform(0,0,50,50, this.platforms);
+        this.addPlatform(0,0,60,60, this.platforms);
+        this.addPlatform(0,0,80,60, this.platforms);
+        this.addPlatform(0,0,100,60, this.platforms);
+        this.addPlatform(0,0,60,80, this.platforms);
+        this.addPlatform(0,0,60,80, this.platforms);
+        this.addPlatform(0,0,80,80, this.platforms);
+        this.addPlatform(0,0,80,100, this.platforms);
+        this.addPlatform(0,0,100,80, this.platforms);
+        this.addPlatform(0,0,100,100, this.platforms);
 
         //Actual platforms
         this.actualPlatforms = [];
@@ -133,6 +152,22 @@ class Game {
 
             this.addPlatform(zona.x, zona.y, plat.size.x, plat.size.y, this.actualPlatforms);
         }
+
+        this.enemies = [];
+        for(let i = 0; i < this.actualPlatforms.length; i++) {
+            let platform = this.actualPlatforms[i];
+            let enemy = new Enemies(
+                platform,
+                32,
+                32,
+                "red",
+                "basic_enemy",
+                enemySpeed
+            );
+            enemy.setSprite("../assets/sprites/blue_alien.png");
+            this.enemies.push(enemy);
+        }
+
     }
 
     //To draw the game objects
@@ -148,6 +183,10 @@ class Game {
         
         //Player
         this.player.draw(ctx);
+
+        for(let enemy of this.enemies) {
+            enemy.draw(ctx);
+        }
     }
 
     //Tu update the position, sprites, collisions...
@@ -160,10 +199,22 @@ class Game {
         this.player.update(deltaTime, ctx.canvas);
         //this.player.onGround = false;   //This can be uncommented when the game over condition related to falling into the void has been implemented
                                           //While not, when player falls from a platform, there is a jump that should not be there
+
+        for(let enemy of this.enemies) {
+            enemy.update(deltaTime);
+
+            let overlap = boxOverlap(this.player, enemy, deltaTime);
+            if(overlap == "top") {
+                this.player.position.y = enemy.position.y - enemy.halfSize.y - this.player.halfSize.y;
+                this.player.fallSpeed = 0;
+                this.player.onGround = true;
+                this.enemies.splice(this.enemies.indexOf(enemy), 1);
+            }
+        }
         
         // Check collision against platforms
         for (let platform of this.actualPlatforms) {
-            platform.updateFrame(deltaTime);  //Important to udate the platform first
+            platform.updateFrame(deltaTime);  //Important to update the platform first
 
             if(platform.collision == true) {
                 
