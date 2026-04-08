@@ -104,8 +104,8 @@ class AnimatedPlayer extends AnimatedObject {
             this.onGround = true;
         }
         // Right border
-        if (this.position.x + this.halfSize.x > canvas.width) {
-            this.position.x = canvas.width - this.halfSize.x;
+        if (this.position.x + this.halfSize.x > canvas.width*3) { //The constant represet the size where the player can move 
+            this.position.x = canvas.width*3 - this.halfSize.x;
         }
     }
 

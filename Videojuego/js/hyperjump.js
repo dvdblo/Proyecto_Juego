@@ -11,12 +11,14 @@
 // Global variables
 const canvasWidth = 1400;
 const canvasHeight = 600;
+const unit = canvasWidth/28;
 
 // Context of the Canvas
 let ctx;
 
 // A variable to store the game object
 let game;
+let gameReady = false;
 
 // Variable to store the time at the previous frame
 let oldTime;
@@ -103,43 +105,36 @@ class Game {
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(playerSpeed);
 
-
         //Actual generation zones
-        this.generation_zones = [];                     //Manually until the API is ready
-        this.generation_zones.push(new generation_zone(30, canvasHeight/1.2));
-        this.generation_zones.push(new generation_zone(canvasWidth/2, canvasHeight/1.2));
-        this.generation_zones.push(new generation_zone(canvasWidth - 100, canvasHeight/1.5));
-        this.generation_zones.push(new generation_zone(canvasWidth - 200, canvasHeight/1.5));
-
-        //Plaforms (temporal here until DB and API are ready)
-        this.platforms = [];
-        this.addPlatform(0,0,30,30, this.platforms);
-        this.addPlatform(0,0,40,30, this.platforms);
-        this.addPlatform(0,0,50,30, this.platforms);
-        this.addPlatform(0,0,30,40, this.platforms);
-        this.addPlatform(0,0,30,40, this.platforms);
-        this.addPlatform(0,0,40,40, this.platforms);
-        this.addPlatform(0,0,40,50, this.platforms);
-        this.addPlatform(0,0,50,40, this.platforms);
-        this.addPlatform(0,0,50,50, this.platforms);
-
-        //Actual platforms
+        this.generation_zones = [];
         this.actualPlatforms = [];
-        for(let i = 0; i < this.generation_zones.length; i++) {
-            let zona = this.generation_zones[i];
 
-            //(temporal until we can read platforms from the DB)
-            let plat = this.platforms[randomRange(this.platforms.length-1, 0)];
+        //Funcion to connect front whit API
+        //The objects that depends on DB to load, are here.
+        const loadMap = async () => {
+            this.generation_zones = await initGenerationZones(1);
 
-            this.addPlatform(zona.x, zona.y, plat.size.x, plat.size.y, this.actualPlatforms);
+            this.actualPlatforms = await initPlatforms("true", this.generation_zones, unit);
+
+            gameReady = true; //Allows the start of the game update and draw
         }
+        loadMap();
     }
 
     //To draw the game objects
     draw(ctx) {
 
         //Background
+        ctx.save()
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         this.background.draw(ctx);
+        ctx.restore();
+
+        //Camera movement
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        let tx = canvas.width / 2 - this.player.position.x;
+        let ty = 0;
+        ctx.translate(tx,ty);
 
         //Actual Platforms
         for(let platform of this.actualPlatforms) {
@@ -150,7 +145,7 @@ class Game {
         this.player.draw(ctx);
     }
 
-    //Tu update the position, sprites, collisions...
+    //To update the position, sprites, collisions...
     update(deltaTime) {
 
         //Animate the background
@@ -167,10 +162,12 @@ class Game {
 
             if(platform.collision == true) {
                 
-                let overlap = boxOverlap(this.player, platform, deltaTime); //Checks the direction of the collision
+                const dephase = 3;  //To move the collision with the platform. Allows the player to be in a pleasant visual spot
+
+                let overlap = boxOverlap(this.player, platform, deltaTime, dephase); //Checks the direction of the collision
 
                 if (overlap == "top") {
-                    this.player.position.y = platform.position.y - platform.halfSize.y - this.player.halfSize.y;
+                    this.player.position.y = platform.position.y - platform.halfSize.y/dephase - this.player.halfSize.y;
                     this.player.fallSpeed = 0;
                     this.player.onGround = true;  //Activates the jump
                 }
@@ -191,25 +188,6 @@ class Game {
                 }
             }
         }
-    }
-
-    //To add a platform in the game
-    addPlatform(x, y, width, height, lst) {
-
-        const box = new AnimatedObject(
-            new Vector(x, y),
-            width,
-            height,
-            "gray",
-            "obstacle",
-            6
-        );
-        
-        box.setSprite('../assets/sprites/RTS_Crate.png',
-                              new Rect(64, 0, 64, 64));  // If we want to draw the whole sprite, no need to add a rect
-        box.setAnimation(1, 5, true, 200);
-        box.destroy = false;
-        lst.push(box);
     }
 
     //To create the parallel events to detect the keys
@@ -241,7 +219,7 @@ class Game {
             //For "Space"
             if (event.code in keyDirections) {
                 this.delKey(keyDirections[event.code]);
-                this.player.startMovement(keyDirections[event.code]);
+                this.player.stopMovement(keyDirections[event.code]);
             }
         });
     }
@@ -290,9 +268,10 @@ function drawScene(newTime) {
     // Clean the canvas so we can draw everything again
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
+    if(gameReady) {
     game.update(deltaTime);
-
-    game.draw(ctx);
+    game.draw(ctx, deltaTime);
+    }
 
     oldTime = newTime;
     requestAnimationFrame(drawScene);
