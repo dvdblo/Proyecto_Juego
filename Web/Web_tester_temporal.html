@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Hyperjump</title>
+    <link rel="stylesheet" href="Web_styles.css">
+    <script src="../Videojuego/js/Tester.js" defer></script>
+</head>
+<body>
+
+        <main id="fondo">
+        <nav class="navbar">
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#tutorial">Tutorial</a></li>
+                <li><a href="#personajes">Personajes</a></li>
+                <li><a href="#estadisticas">Estadísticas</a></li>
+            </ul>
+        </nav>
+
+            <h1 id="Main_title">HyperJump</h1>
+            <ul>
+
+                <li class = "displays">
+                    <button type = "button" class = "btn" id="inicio">Iniciar a jugar.</button>
+                </li>
+
+                <li class = "displays">
+                        <button type = "button" class = "btn">Controles.</button>
+                            <div class="tutorial hidden" id="tutorial">
+                                <div class="instruccion"><strong>Movimiento Derecha:</strong> D o Flecha Derecha</div>
+                                <div class="instruccion"><strong>Movimiento Izquierda:</strong> A o Flecha Izquierda</div>
+                                <div class="instruccion"><strong>Salto:</strong> W o Flecha Arriba</div>
+                                <div class="instruccion"><strong>Objetivo:</strong> Esquiva los obstáculos y enemigos para ayudar a
+                                                                    Astro a llegar a su casa.</div>
+                            </div>
+                </li>
+
+                <li class = "displays">
+                    <button type = "button" class = "btn">Historia del juego.</button>
+                    <div class="historia hidden">
+                        <p>Astro se encuentra atrapado en un planeta alienígena. Su nave se encuentra en la posesión del rey alien
+                        ,necesita tu ayuda para superar los tres niveles y enfrentar a todos los enemigos
+                        con la finalidad de regresr al planeta tierra.
+                        <br>
+                        <p>Ayuda a Astro en su misión y embarcate en esta aventura</p>
+                    </div>
+                </li>
+
+                <li class = "displays">
+                    <button type = "button" class = "btn">Tus Héroes</button>
+                    <div class="personaje hidden" id="personajes">
+                        <img src = "../Videojuego/assets/sprites/Astro.png" height="200">
+                    </div>
+                </li>
+
+                <li class = "displays">
+                    <button type = "button" class = "btn">Estadísticas</button>
+                    <div class="estadistica hidden" id="estadisticas">
+                        <p>¡Comparte tu puntaje con tus amigos y compite por el primer lugar en la tabla de clasificación!</p>
+                        <table border="1">
+                            <tr>
+                                <th>Jugador</th>
+                                <th>Puntaje</th>
+                            </tr>
+                            <tr>
+                                <td>Player_01</td>
+                                <td>1500</td>
+                            </tr>
+                        </table>
+                    </div>
+                </li>
+
+            </ul>
+    </main>
+
+</body>
+</html>
