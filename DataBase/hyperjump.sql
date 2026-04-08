@@ -97,8 +97,9 @@ CREATE TABLE EnemigoNivel(id_enemigo_nivel INT AUTO_INCREMENT PRIMARY KEY,
 );
 
 CREATE TABLE Plataforma(id_plataforma INT AUTO_INCREMENT PRIMARY KEY,
-    id_carta INT NOT NULL,
+    id_carta INT,
     nombre VARCHAR(60),
+    composicion JSON,
     es_autogenerada BOOLEAN,
     FOREIGN KEY (id_carta) REFERENCES Carta(id_carta)
 );
@@ -130,4 +131,12 @@ CREATE TABLE PowerUpNivel(id_powerup_nivel INT AUTO_INCREMENT PRIMARY KEY,
     rango_actuacion INT,
     FOREIGN KEY (id_powerUp) REFERENCES PowerUp(id_powerUp)
 );
+
+CREATE TABLE ZonaGeneracion(id_zona INT AUTO_INCREMENT PRIMARY KEY,
+	id_nivel INT,
+    coord_x INT,
+    coord_y INT,
+    hostil BOOL,
+    FOREIGN KEY (id_nivel) REFERENCES Nivel(id_nivel)
+    );
 

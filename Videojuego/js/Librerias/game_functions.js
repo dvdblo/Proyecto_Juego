@@ -18,7 +18,7 @@
  * Returns:
  * - the direction of the collision
  */
-function boxOverlap(obj1, obj2, deltaTime) {
+function boxOverlap(obj1, obj2, deltaTime, dephase) {
 
     //Previous position (change from the old function)
     const prevX = obj1.position.x - (obj1.velocity?.x || 0) * deltaTime;
@@ -33,7 +33,7 @@ function boxOverlap(obj1, obj2, deltaTime) {
     //Obj2 limits
     const L2 = obj2.position.x - obj2.halfSize.x;
     const R2 = obj2.position.x + obj2.halfSize.x;
-    const T2 = obj2.position.y - obj2.halfSize.y;
+    const T2 = obj2.position.y - obj2.halfSize.y/dephase;
     const B2 = obj2.position.y + obj2.halfSize.y;
 
     //If there is no overlap, you can return
@@ -83,6 +83,24 @@ function randomRange(size, start) {
     return Math.floor(Math.random() * size) + ((start === undefined) ? 0 : start);
 }
 
+//To add a platform in the game (thus was a method in class Game, now it is here)
+function addPlatform(x, y, width, height, lst, unit) {
+
+    const box = new AnimatedObject(
+        new Vector(x, y),
+        width*unit,
+        height*unit,
+        "gray",
+        "obstacle",
+        6
+    );
+    
+    box.setSprite('../assets/sprites/plataformas_auto/1_1.png',
+                            new Rect(1024, 0, 1024, 450));  // If we want to draw the whole sprite, no need to add a rect
+    //box.setAnimation(1, 1, true, 200);
+    box.destroy = false;
+    lst.push(box);
+}
 
 //OLD FUNCTION, MAINTAINING THIS FOR POSIBLE REFERENCE IN FUTURE
 // function boxOverlap(obj1, obj2, deltaTime) {
