@@ -84,7 +84,7 @@ function randomRange(size, start) {
 }
 
 //To add a platform in the game (thus was a method in class Game, now it is here)
-function addPlatform(x, y, width, height, lst, unit) {
+function addPlatform(x, y, width, height, lst, unit, hostile) {
 
     const box = new AnimatedObject(
         new Vector(x, y),
@@ -99,6 +99,7 @@ function addPlatform(x, y, width, height, lst, unit) {
                             new Rect(1024, 0, 1024, 450));  // If we want to draw the whole sprite, no need to add a rect
     //box.setAnimation(1, 1, true, 200);
     box.destroy = false;
+    box.hostile = hostile;
     lst.push(box);
 }
 

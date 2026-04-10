@@ -8,6 +8,67 @@
 
 "use strict";
 
+// Global variables
+const canvasWidth = 1400;
+const canvasHeight = 600;
+const unit = canvasWidth/28;
+
+// Context of the Canvas
+let ctx;
+
+// A variable to store the game object
+let game;
+let gameReady = false;
+
+// Variable to store the time at the previous frame
+let oldTime;
+
+let playerSpeed = 0.5;
+let enemySpeed = 0.1;
+
+// Dictionary for the keys that will control player movement
+const keyDirections = {
+    w: 'up',
+    a: 'left',
+    d: 'right',
+    ArrowUp: 'up',
+    ArrowLeft: 'left',
+    ArrowRight: 'right',
+    Space: 'up',
+};
+
+// Data structure with the directions a character can move, the
+// direction sign and the related animation.
+const playerMotion = {
+    up: {
+        status: false,
+        axis: "y",
+        sign: -1,
+        repeat: true,
+        duration: 100,
+        moveFrames: [0, 2],
+        idleFrames: [1, 1],
+    },
+    left: {
+        status: false,
+        axis: "x",
+        sign: -1,
+        repeat: true,
+        duration: 100,
+        moveFrames: [9, 11],
+        idleFrames: [10, 10],
+    },
+    right: {
+        status: false,
+        axis: "x",
+        sign: 1,
+        repeat: true,
+        duration: 100,
+        moveFrames: [3, 5],
+        idleFrames: [4, 4],
+    },
+};
+
 class Enemies extends AnimatedObject {
     constructor(platform, width, height, color, type, speed, dephase) {
         const position = new Vector(platform.position.x, platform.position.y - platform.halfSize.y/dephase - height/2);
@@ -29,32 +90,30 @@ class Enemies extends AnimatedObject {
 
 // Class to keep track of all the events and objects in the game
 class Game {
-    constructor(width, height) {
-        this.canvasWidth = width;
-        this.canvasHeight = height;
+    constructor() {
         this.createEventListeners();  //Initializes the event lsiteners
+        this.initObjects();   //Initializes the game objects
     }
 
     //Initializes the game objects (the sprites are temporal)
-    //This function is async so it can load the objects in the scene before the game starts
-    async init() {
+    initObjects() {
         
         //Background
         this.background = new AnimatedObject(
-            new Vector(this.canvasWidth / 2, this.canvasHeight / 2),
-            this.canvasWidth,
-            this.canvasHeight,
+            new Vector(canvasWidth / 2, canvasHeight / 2),
+            canvasWidth,
+            canvasHeight,
             "gray",
             "background",
             45
         );
-        this.background.setSprite("../../sprites/Background/Background N1.png",
-                                    new Rect(1376, 0, 1376, 768));
-        //this.background.setAnimation(0, 44, true, 100);
+        this.background.setSprite("../assets/sprites/lava_spr_strip45.png",
+                                    new Rect(0, 0, 16, 16));
+        this.background.setAnimation(0, 44, true, 100);
 
         //Player
         this.player = new AnimatedPlayer(
-            new Vector(30, this.canvasHeight / 2),
+            new Vector(30, canvasHeight / 2),
             48,
             64,
             "red",
@@ -63,7 +122,7 @@ class Game {
         );
         this.player.setSprite('../assets/sprites/blordrough_quartermaster-NESW.png',
                               new Rect(48, 128, 48, 64));
-        this.player.setSpeed(gameConfig.playerSpeed);
+        this.player.setSpeed(playerSpeed);
 
         //Actual generation zones
         this.generation_zones = [];
@@ -75,7 +134,7 @@ class Game {
         const loadMap = async () => {
             this.generation_zones = await initGenerationZones(1);
 
-            this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
+            this.actualPlatforms = await initPlatforms("true", this.generation_zones, unit);
 
             //Enemies
             for(let i = 0; i < this.actualPlatforms.length; i++) {
@@ -88,21 +147,32 @@ class Game {
                         32,
                         "red",
                         "basic_enemy",
-                        gameConfig.enemySpeed,
+                        enemySpeed,
                         3
                     );
                     enemy.setSprite("../assets/sprites/blue_alien.png");
                     this.enemies.push(enemy);
                 }
             }
+            gameReady = true; //Allows the start of the game update and draw
         }
-        await loadMap();
+        loadMap();
     }
 
     //To draw the game objects
     draw(ctx) {
 
-        //Background now is loaded from the Phaser scene
+        //Background
+        ctx.save()
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        this.background.draw(ctx);
+        ctx.restore();
+
+        //Camera movement
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        let tx = canvas.width / 2 - this.player.position.x;
+        let ty = 0;
+        ctx.translate(tx,ty);
 
         //Actual Platforms
         for(let platform of this.actualPlatforms) {
@@ -124,7 +194,7 @@ class Game {
         this.background.updateFrame(deltaTime);
 
         //Move the player
-        this.player.update(deltaTime, {width:this.canvasWidth, height:this.canvasHeight});
+        this.player.update(deltaTime, ctx.canvas);
         //this.player.onGround = false;   //This can be uncommented when the game over condition related to falling into the void has been implemented
                                           //While not, when player falls from a platform, there is a jump that should not be there
 
@@ -224,39 +294,39 @@ class Game {
 
 
 // Starting function that will be called from the HTML page
-// function main() {
+function main() {
 
-//     // Get a reference to the object with id 'canvas' in the page
-//     const canvas = document.getElementById('canvas');
+    // Get a reference to the object with id 'canvas' in the page
+    const canvas = document.getElementById('canvas');
 
-//     //Resize the element
-//     canvas.width = canvasWidth;
-//     canvas.height = canvasHeight;
+    //Resize the element
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
-//     // Get the context for drawing in 2D
-//     ctx = canvas.getContext('2d');
+    // Get the context for drawing in 2D
+    ctx = canvas.getContext('2d');
 
-//     //Create the "game" object
-//     game = new Game();
+    //Create the "game" object
+    game = new Game();
 
-//     drawScene(0);
-// }
+    drawScene(0);
+}
 
 // Main loop function to be called once per frame
-// function drawScene(newTime) {
-//     if (oldTime == undefined) {
-//         oldTime = newTime;
-//     }
-//     let deltaTime = newTime - oldTime;
+function drawScene(newTime) {
+    if (oldTime == undefined) {
+        oldTime = newTime;
+    }
+    let deltaTime = newTime - oldTime;
 
-//     // Clean the canvas so we can draw everything again
-//     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    // Clean the canvas so we can draw everything again
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-//     if(gameReady) {
-//     game.update(deltaTime);
-//     game.draw(ctx, deltaTime);
-//     }
+    if(gameReady) {
+    game.update(deltaTime);
+    game.draw(ctx, deltaTime);
+    }
 
-//     oldTime = newTime;
-//     requestAnimationFrame(drawScene);
-// }
+    oldTime = newTime;
+    requestAnimationFrame(drawScene);
+}
