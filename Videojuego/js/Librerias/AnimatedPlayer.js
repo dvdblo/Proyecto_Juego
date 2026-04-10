@@ -99,13 +99,14 @@ class AnimatedPlayer extends AnimatedObject {
         }
         // Bottom border (in the future, this is going to have a game over condition)
         if (this.position.y + this.halfSize.y > canvas.height) {
-            this.position.y = canvas.height - this.halfSize.y;
-            this.fallSpeed = 0;
-            this.onGround = true;
+            gameConfig.levelOver1 = true;
+            // this.position.y = canvas.height - this.halfSize.y;
+            // this.fallSpeed = 0;
+            // this.onGround = true;
         }
         // Right border
         if (this.position.x + this.halfSize.x > canvas.width*3) { //The constant represet the size where the player can move 
-            this.position.x = canvas.width*3 - this.halfSize.x;
+            this.position.x = gameConfig.levelLenght - this.halfSize.x;
             gameConfig.levelComplete = true;
         }
     }

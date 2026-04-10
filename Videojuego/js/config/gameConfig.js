@@ -3,10 +3,12 @@
 const gameConfig = {
   canvasWidth: 1400,
   canvasHeight: 600,
+  levelLenght: 1400*3,
   unit: 1400 / 28,
   playerSpeed: 0.5,
   enemySpeed: 0.1,
-  levelComplete: false
+  levelComplete: false,
+  levelOver1: false
 };
 
 // Dictionary for the keys that will control player movement

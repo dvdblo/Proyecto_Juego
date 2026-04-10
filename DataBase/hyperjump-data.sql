@@ -29,11 +29,13 @@ select * from hyperjump.Nivel;
 
 INSERT INTO ZonaGeneracion (id_nivel, coord_x, coord_y, hostil)
 VALUES  (1, 30, 500, false),
-(1, 500, 500, TRUE),
-(1, 800, 400, TRUE),
-(1, 1000, 500, TRUE),
-(1, 1300, 600, TRUE),
-(1, 1500, 500, TRUE);
+(1, 600, 500, TRUE),
+(1, 1200, 400, TRUE),
+(1, 1800, 500, TRUE),
+(1, 2400, 600, TRUE),
+(1, 3000, 500, TRUE),
+(1, 3600, 500, TRUE),
+(1, 4200, 500, TRUE);
 COMMIT;
 
 select * from hyperjump.ZonaGeneracion;

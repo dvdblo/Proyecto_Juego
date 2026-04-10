@@ -148,6 +148,10 @@ class Level_1 extends Phaser.Scene {
         gameConfig.levelComplete = false;
         this.scene.start('WinScreen');
     }
+    if(gameConfig.levelOver1 == true) {
+        gameConfig.levelOver1 = false;
+        this.scene.start('GameOver1Screen');
+    }
     }
 }
 
@@ -208,7 +212,70 @@ class WinLevelScreen extends Phaser.Scene {
             strokeThickness: 8,
             align: 'center'
         };
-        const textWinLevel = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/4, 'YOU WIN', styteWinLevel).setOrigin(0.5);
+        const textWinLevel = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/4, 'NIVEL COMPLETADO', styteWinLevel).setOrigin(0.5);
+
+    } 
+}
+
+
+class GameOver1Screen extends Phaser.Scene {
+    constructor() {
+        super('GameOver1Screen');
+    }
+
+    preload() {
+        this.load.image('backgroundLose', '../assets/Fondos/backMenu.png');
+        this.load.image('buttonMainMenu', '../assets/sprites/botonLargo.png');
+        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+    }
+
+    //At the moment, almost the same as the main menu
+    create() {
+
+        const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundLose');
+        
+        back.displayWidth = gameConfig.canvasWidth;
+        back.displayHeight = gameConfig.canvasHeight;
+
+        const scale = 1/5
+        const button = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'buttonMainMenu').setInteractive();
+        button.setScale(scale);
+
+        const textButton = {
+            fontFamily: 'myTextFont',
+            fontSize: '40px',
+            color: '#ffffff',
+            stroke: '#0087fe',
+            strokeThickness: 8,
+            align: 'center'
+        };
+
+        const textContinue = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2-scale*gameConfig.canvasHeight/20, 'Ir al Menú', textButton).setOrigin(0.5);
+
+        button.on('pointerover', () => {
+            button.setScale(scale*1.1);
+            textContinue.setScale(1.1);
+        });
+
+        button.on('pointerout', () => {
+            button.setScale(scale);
+            textContinue.setScale(1);
+        });
+
+        button.on('pointerdown', () => {
+            this.scene.start('MainMenu');
+        });
+
+        //Text
+        const styteWinLevel = {
+            fontFamily: 'myTextFont',
+            fontSize: '90px',
+            color: '#ffffff',
+            stroke: '#0087fe',
+            strokeThickness: 8,
+            align: 'center'
+        };
+        const textGameOver = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/4, 'HAS PERDIDO', styteWinLevel).setOrigin(0.5);
 
     } 
 }
