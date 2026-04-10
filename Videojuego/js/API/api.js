@@ -35,7 +35,7 @@ async function initPlatforms(auto, zones, unit) {  //auto = is auto_generated?
             let plat = platforms[randomRange(platforms.length, 0)];  //Selects a random platforms
 
             for(let j = 0; j < plat.composicion.formas.length; j++) {
-                addPlatform(zone.x + plat.composicion.formas[j].x*unit, zone.y + plat.composicion.formas[j].y*unit, plat.composicion.formas[j].base, plat.composicion.formas[j].altura, actualPlatforms, unit);
+                addPlatform(zone.x + plat.composicion.formas[j].x*unit, zone.y + plat.composicion.formas[j].y*unit, plat.composicion.formas[j].base, plat.composicion.formas[j].altura, actualPlatforms, unit, zone.hostile);
             }
         }
     return actualPlatforms;

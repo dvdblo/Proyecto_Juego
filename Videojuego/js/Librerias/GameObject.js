@@ -20,7 +20,7 @@ window.addEventListener('keydown', event => {
 
 
 class GameObject {
-    constructor(position, width, height, color, type) {
+    constructor(position, width, height, color, type, hostile) {
         this.position = position;
         this.size = new Vector(width, height);
         this.halfSize = new Vector(width / 2, height / 2);
@@ -37,6 +37,9 @@ class GameObject {
         // Intialize a collider with the default object size
         this.collision = true;  //Solid or no
         //this.setCollider(position.x, position. y, width, height);
+
+        //If the object can be or have hostile entities
+        this.hostile = false;
     }
 
     //To set the sprite in the area of the sprite sheet
