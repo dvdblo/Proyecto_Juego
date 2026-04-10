@@ -15,6 +15,8 @@ class Enemies extends AnimatedObject {
         this.speed = speed;
         this.direction = 1; // 1 for right, -1 for left
         this.platform = platform;
+        this.lives = 1;
+        this.points = 100;
     }
     
     update(deltaTime) {
@@ -24,6 +26,11 @@ class Enemies extends AnimatedObject {
         if (this.position.x - this.halfSize.x < leftBoundary || this.position.x + this.halfSize.x > rightBoundary) {
             this.direction *= -1; // Reverse direction
         }
+    }
+
+    receiveDamage(quantity = 1){
+        this.lives -=quantity;
+        return this.lives <=0;
     }
 }
 
@@ -61,6 +68,14 @@ class Game {
             3,
             playerMotion
         );
+        this.player.lives = 3;
+        this.lifeSprite =  new Image();
+        this.lifeSprite.src = "../../sprites/Lives/lives.png";
+        this.player.Maxlives = 6;
+        this.score = 0;
+        this.isGameOver = false;
+        this.startTime= Date.now();
+        this.elapsedTime = 0;
         this.player.setSprite('../assets/sprites/blordrough_quartermaster-NESW.png',
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(gameConfig.playerSpeed);
@@ -99,8 +114,47 @@ class Game {
         await loadMap();
     }
 
+    gameOver(){
+            this.isGameOver=true;
+
+            this.player.velocity.x = 0;
+            this.player.velocity.y = 0;
+        }
+
     //To draw the game objects
     draw(ctx) {
+        ctx.save();
+        ctx.setTransform(1,0,0,1,0,0);
+        const lifeWidth = 32;
+        const lifeHeight = 32;
+        const margin = 10;
+        
+        ctx.fillStyle = "white";
+        ctx.font = "18px Arial";
+        ctx.textAlign = "left";
+
+        for(let i = 0; i < this.player.lives; i++){
+            ctx.drawImage(
+               this.lifeSprite,
+               margin + i * (lifeWidth + 5),
+               margin,
+               lifeWidth,
+               lifeHeight
+            );
+        }
+
+        ctx.fillText(
+            "Score: " + this.score,
+            margin,
+            margin + 50
+        );
+
+        ctx.fillText(
+            "Time: " + this.elapsedTime + "s",
+            margin,
+            margin + 80
+        );
+        ctx.restore();
 
         //Background now is loaded from the Phaser scene
 
@@ -115,11 +169,37 @@ class Game {
         for(let enemy of this.enemies) {
             enemy.draw(ctx);
         }
+
+        ctx.save();
+        ctx.setTransform(1,0,0,1,0,0);
+        if(this.isGameOver){
+            this.drawGameOver(ctx);
+        }
+        ctx.restore();
+    }
+
+    drawGameOver(ctx){
+        const centerX = this.canvasWidth / 2;
+        const centerY =  this.canvasHeight / 2;
+
+        ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.font = "bold 60px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("GAME OVER", centerX, centerY - 20);
+
+        ctx.font = "30px Arial";
+        ctx.fillText("Score: " + this.score, centerX, centerY + 20);
+
+        ctx.fillText("Time: " + this.elapsedTime + "s", centerX, centerY + 50);
     }
 
     //To update the position, sprites, collisions...
     update(deltaTime) {
 
+        if(this.isGameOver) return;
         //Animate the background
         this.background.updateFrame(deltaTime);
 
@@ -136,9 +216,22 @@ class Game {
                 this.player.position.y = enemy.position.y - enemy.halfSize.y - this.player.halfSize.y;
                 this.player.fallSpeed = 0;
                 this.player.onGround = true;
-                this.enemies.splice(this.enemies.indexOf(enemy), 1);
+                
+                if (enemy.receiveDamage()){
+                    this.score += enemy.points;
+                    this.enemies.splice(this.enemies.indexOf(enemy), 1);
+                }
+            }
+            else if (overlap == "left" || overlap == "right" || overlap== "bottom"){
+                this.player.lives--;
+
+                if(this.player.lives <=0){
+                    this.gameOver();
+                }
             }
         }
+
+        this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000); //Time en seconds
         
         // Check collision against platforms
         for (let platform of this.actualPlatforms) {
