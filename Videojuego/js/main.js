@@ -4,7 +4,7 @@ const config = {
   height: gameConfig.canvasHeight,
   backgroundColor: '#43005e',
   parent: 'game-container',
-  scene: [MainMenu, Introduction, LoadingGame, Level_1, WinLevelScreen, GoodEnding, GameOver1Screen, BadEnding1]
+  scene: [MainMenu, Introduction, LoadingGame, Level_1, WinLevelScreen, GoodEnding, GameOver1Screen, BadEnding1, GameOver2Screen]
 };
 
 const game = new Phaser.Game(config);
