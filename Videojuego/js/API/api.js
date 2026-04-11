@@ -34,6 +34,8 @@ async function initPlatforms(auto, zones, unit) {  //auto = is auto_generated?
             let plat;
             if (i == 0 || i == zones.length - 1) {  //The last zone and first zone share a different platform
                 plat = platforms[1];  
+            }else if (zone.x == 3200){
+                continue;
             }
             else {
                 plat = platforms[randomRange(platforms.length, 0)];  //Selects a random platforms
