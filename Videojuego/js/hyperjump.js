@@ -112,10 +112,10 @@ class Game {
         this.lifeSprite =  new Image();
         this.lifeSprite.src = "../../sprites/Lives/lives.png";
         this.player.Maxlives = 6;
-        this.score = 0;
+        gameConfig.score = 0;
         this.isGameOver = false;
         this.startTime= Date.now();
-        this.elapsedTime = 0;
+        gameConfig.elapsedTime = 0;
         this.player.setSprite('../assets/sprites/blordrough_quartermaster-NESW.png',
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(gameConfig.playerSpeed);
@@ -238,13 +238,13 @@ class Game {
         }
 
         ctx.fillText(
-            "Score: " + this.score,
+            "Score: " + gameConfig.score,
             margin,
             margin + 50
         );
 
         ctx.fillText(
-            "Time: " + this.elapsedTime + "s",
+            "Time: " + gameConfig.elapsedTime + "s",
             margin,
             margin + 80
         );
@@ -285,9 +285,9 @@ class Game {
         ctx.fillText("GAME OVER", centerX, centerY - 20);
 
         ctx.font = "30px Arial";
-        ctx.fillText("Score: " + this.score, centerX, centerY + 20);
+        ctx.fillText("Score: " + gameConfig.score, centerX, centerY + 20);
 
-        ctx.fillText("Time: " + this.elapsedTime + "s", centerX, centerY + 50);
+        ctx.fillText("Time: " + gameConfig.elapsedTime + "s", centerX, centerY + 50);
     }
 
     //To update the position, sprites, collisions...
@@ -312,7 +312,7 @@ class Game {
                 this.player.onGround = true;
                 
                 if (enemy.receiveDamage()){
-                    this.score += enemy.points;
+                    gameConfig.score += enemy.points;
                     this.enemies.splice(this.enemies.indexOf(enemy), 1);
                 }
             }
@@ -320,12 +320,13 @@ class Game {
                 this.player.lives--;
 
                 if(this.player.lives <=0){
-                    this.gameOver();
+                    //this.gameOver();
+                    gameConfig.levelOver2 = true;
                 }
             }
         }
 
-        this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000); //Time en seconds
+        gameConfig.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000); //Time en seconds
         
         // Check collision against platforms
         for (let platform of this.actualPlatforms) {
