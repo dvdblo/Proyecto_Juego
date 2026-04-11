@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS hyperjump;
 CREATE DATABASE hyperjump;
 USE hyperjump;
 

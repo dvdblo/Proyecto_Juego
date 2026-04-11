@@ -3,7 +3,7 @@
 const gameConfig = {
   canvasWidth: 1400,
   canvasHeight: 600,
-  unit: 1400 / 28,
+  unit: 50,
   playerSpeed: 0.5,
   enemySpeed: 0.1,
   levelComplete: false

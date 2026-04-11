@@ -5,7 +5,7 @@ VALUES (null, "cuadrada", '{"formas": [{"base": 1, "altura": 1, "x": 0, "y": 0}]
 (null, "rect_3:1", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', true),
 (null, "rect_9:2", '{"formas": [{"base": 9, "altura": 2, "x": 0, "y": 0}]}', true),
 (null, "rect_12:2", '{"formas": [{"base": 12, "altura": 2, "x": 0, "y": 0}]}', true),
-(null, "rect_3:15", '{"formas": [{"base": 3, "altura": 15, "x": 0, "y": 0}]}', true),
+(null, "rect_3:12", '{"formas": [{"base": 3, "altura": 12, "x": 0, "y": 0}]}', true),
 (null, "circulo", '{"formas": [{"base": 2, "altura": 2, "x": 0, "y": 0}]}', true),
 (null, "ele", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', true);
 COMMIT;
@@ -29,13 +29,18 @@ select * from hyperjump.Nivel;
 
 INSERT INTO ZonaGeneracion (id_nivel, coord_x, coord_y, hostil)
 VALUES  (1, 30, 500, false),
-(1, 500, 500, TRUE),
-(1, 800, 400, TRUE),
-(1, 1000, 500, TRUE),
-(1, 1300, 600, TRUE),
-(1, 1500, 500, TRUE);
+(1, 600, 500, TRUE),
+(1, 1100, 400, TRUE),
+(1, 1700, 400, TRUE),
+(1, 2200, 300, TRUE),
+(1, 2700, 450, TRUE),
+(1, 3200, 300, TRUE),
+(1, 3500, 400, TRUE),
+(1, 4100, 300, false);
 COMMIT;
 
 select * from hyperjump.ZonaGeneracion;
-
-#TRUNCATE TABLE ZonaGeneracion;
+SELECT * FROM Plataforma;
+#TRUNCATE TABLE Plataforma;
+#TRUNCATE TABLE Nivel;
+TRUNCATE TABLE ZonaGeneracion;

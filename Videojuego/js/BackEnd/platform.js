@@ -17,7 +17,7 @@ const port = 3000;
 //Actual host and DB
 const host = '127.0.0.1';
 const user = 'root';
-const pass = 'Armasazar1';
+const pass = 'Febrero_312';
 const db = 'hyperjump';
 
 app.use(cors());
