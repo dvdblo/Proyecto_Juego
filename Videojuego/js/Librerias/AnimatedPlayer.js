@@ -115,6 +115,10 @@ class AnimatedPlayer extends AnimatedObject {
         this.speed = newSpeed;
     }
 
+    setJumpForce(newJumpForce) {
+        this.jumpForce = newJumpForce;
+    }
+
     //To detect the keys pressed
     startMovement(direction) {
         

@@ -34,6 +34,45 @@ class Enemies extends AnimatedObject {
     }
 }
 
+class Cards extends AnimatedObject {
+    constructor(position, width, height, type, duration) {
+        super(position, width, height, type);
+        this.duration = duration; // Duration of the power-up effect
+        this.type = type; // Type of power-up (e.g., "Esprint N1", "Doble Salto N1")
+    }
+
+
+    applyEffect(player,game) {
+        if (this.type == "Esprint N1") {
+            player.setSpeed(player.speed * 1.5);
+        setTimeout(() => { /*Had to google what setTimeout was, but it allows to
+                            delay the execution of a function, in this case, to set
+                            the speed back to normal after the duration of the power-up*/
+                player.setSpeed(player.speed / 1.5);
+            }, this.duration);
+        }
+        else if (this.type == "Doble Salto N1") {
+            player.setJumpForce(player.jumpForce * 1.5);
+        setTimeout(() => {
+                player.setJumpForce(player.jumpForce / 1.5);
+            }, this.duration);
+        }
+        else if(this.type == "Plataforma") {
+            //This power-up generates a temporary platform under the player, allowing him to jump again
+            addPlatform(
+                game.generation_zones[6].x, 
+                game.generation_zones[6].y, 
+                3, 1, 
+                game.actualPlatforms, 
+                50, 
+                true
+            );
+
+        }   
+    }
+}
+
+
 // Class to keep track of all the events and objects in the game
 class Game {
     constructor(width, height) {
@@ -68,6 +107,7 @@ class Game {
             3,
             playerMotion
         );
+
         this.player.lives = 3;
         this.lifeSprite =  new Image();
         this.lifeSprite.src = "../../sprites/Lives/lives.png";
@@ -84,6 +124,37 @@ class Game {
         this.generation_zones = [];
         this.actualPlatforms = [];
         this.enemies = [];
+        this.powerUpInventory = [];  //To store the power-ups the player can use
+        this.platformInventory = [];  //To store the platforms the player can use
+
+        this.powerUpType = randomRange(2,0) == 0 ? "Esprint N1" : "Doble Salto N1";  //Randomly selects a power-up to generate in the game
+        this.powerUpSprite = new Image();
+        if(this.powerUpType == "Esprint N1") {
+            this.powerUpSprite.src = "../../sprites/PowerUps/Nivel1/Esprint N1.png";
+        }
+        else {
+            this.powerUpSprite.src = "../../sprites/PowerUps/Nivel1/Doble Salto N1.png";
+        }
+
+        this.powerUp = new Cards(
+            new Vector(0, 0),
+            10,
+            10,
+            this.powerUpType,
+            5000 // Duration of the power-up effect
+        );
+
+        this.platformSprite = new Image();
+        this.platformSprite.src = "../../sprites/Plataformas/N1/Plataforma Básica N1.png";
+        this.platform = new Cards(
+            new Vector(0, 0),
+            10,
+            10,
+            "Plataforma",
+            5000 // Duration of the power-up effect
+        );
+        this.powerUpInventory.push(this.powerUp);  //Adds the power-up to the inventory, so the player can use it when he wants
+        this.platformInventory.push(this.platform);  //Adds the platform to the inventory, so the player can use it when he wants
 
         //Funcion to connect front whit API
         //The objects that depends on DB to load, are here.
@@ -91,7 +162,8 @@ class Game {
             this.generation_zones = await initGenerationZones(1);
 
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
-
+            this.actualPlatforms.at(-1).setSprite('../assets/sprites/plataformas_auto/Final_Platform.png',
+                            new Rect(0, 0, 1566, 688));
             //Enemies
             for(let i = 0; i < this.actualPlatforms.length; i++) {
 
@@ -127,6 +199,8 @@ class Game {
         ctx.setTransform(1,0,0,1,0,0);
         const lifeWidth = 32;
         const lifeHeight = 32;
+        const cardWidth = 160;
+        const cardHeight = 240;
         const margin = 10;
         
         ctx.fillStyle = "white";
@@ -140,6 +214,26 @@ class Game {
                margin,
                lifeWidth,
                lifeHeight
+            );
+        }
+        
+        
+        if(this.powerUpInventory.length > 0) {
+            ctx.drawImage(
+                this.powerUpSprite,
+                this.canvasWidth - margin - cardWidth,
+                margin,
+                cardWidth,
+                cardHeight
+            );
+        }
+        if(this.platformInventory.length > 0) {
+            ctx.drawImage(
+                this.platformSprite,
+                this.canvasWidth - margin - cardWidth*2,
+                margin,
+                cardWidth,
+                cardHeight
             );
         }
 
@@ -299,6 +393,23 @@ class Game {
                 this.player.stopMovement(keyDirections[event.code]);
             }
         });
+
+        //For the powerup, when "0" is pressed, the first power-up in the inventory is used
+        window.addEventListener('keydown', (event) => {
+            if (event.key == "0" && this.powerUpInventory.length > 0) {
+            const powerUpToUse = this.powerUpInventory.shift() // Remove the first power-up from the inventory
+            powerUpToUse.applyEffect(this.player,this);
+    }
+});
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key == "9" && this.platformInventory.length > 0) {
+            const powerUpToUse = this.platformInventory.shift() // Remove the first platform from the inventory
+            powerUpToUse.applyEffect(this.player,this);
+    }
+});
+
+        
     }
 
     //To add and remove the keys that had been pressed
