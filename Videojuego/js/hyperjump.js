@@ -94,7 +94,7 @@ class Game {
             "background",
             45
         );
-        this.background.setSprite("../../sprites/Background/Background N1.png",
+        this.background.setSprite("../assets/Fondos/back_1.png",
                                     new Rect(1376, 0, 1376, 768));
         //this.background.setAnimation(0, 44, true, 100);
 
