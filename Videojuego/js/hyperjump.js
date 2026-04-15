@@ -43,7 +43,7 @@ class Cards extends AnimatedObject {
 
 
     applyEffect(player,game) {
-        if (this.type == "Esprint N1") {
+        if (this.type == "Esprint") {
             player.setSpeed(player.speed * 1.5);
         setTimeout(() => { /*Had to google what setTimeout was, but it allows to
                             delay the execution of a function, in this case, to set
@@ -51,13 +51,28 @@ class Cards extends AnimatedObject {
                 player.setSpeed(player.speed / 1.5);
             }, this.duration);
         }
-        else if (this.type == "Doble Salto N1") {
+        else if (this.type == "Doble Salto") {
             player.setJumpForce(player.jumpForce * 1.5);
         setTimeout(() => {
                 player.setJumpForce(player.jumpForce / 1.5);
             }, this.duration);
         }
-        else if(this.type == "Plataforma") {
+        else if (this.type == "Bomba") {
+            game.enemies.splice(0, game.enemies.length); //Removes all the enemies in the game, simulating a bomb explosion that kills all the enemies on the screen
+        }
+        else if (this.type == "Vida Extra") {
+            player.lives += 1;
+        }
+        else if (this.type == "Escudo") {
+            player.damageCooldown = this.duration; //The player will be invulnerable for the duration of the power-up, simulating a shield
+        }
+        else if (this.type == "Jetpack") {
+            player.setJumpForce(player.jumpForce * 1.5);
+        setTimeout(() => {
+                player.setJumpForce(player.jumpForce / 1.5);
+            }, this.duration);
+        }
+        else if(this.type == "Plataforma Random") {
             //This power-up generates a temporary platform under the player, allowing him to jump again
             addPlatform(
                 game.generation_zones[6].x, 
@@ -130,33 +145,15 @@ class Game {
         this.powerUpInventory = [];  //To store the power-ups the player can use
         this.platformInventory = [];  //To store the platforms the player can use
 
-        this.powerUpType = randomRange(2,0) == 0 ? "Esprint N1" : "Doble Salto N1";  //Randomly selects a power-up to generate in the game
-        this.powerUpSprite = new Image();
-        if(this.powerUpType == "Esprint N1") {
-            this.powerUpSprite.src = "../../sprites/PowerUps/Nivel1/Esprint N1.png";
-        }
-        else {
-            this.powerUpSprite.src = "../../sprites/PowerUps/Nivel1/Doble Salto N1.png";
-        }
-
-        this.powerUp = new Cards(
-            new Vector(0, 0),
-            10,
-            10,
-            this.powerUpType,
-            5000 // Duration of the power-up effect
-        );
-
         this.platformSprite = new Image();
         this.platformSprite.src = "../../sprites/Plataformas/N1/Plataforma Básica N1.png";
         this.platform = new Cards(
             new Vector(0, 0),
             10,
             10,
-            "Plataforma",
+            "Plataforma Random",
             5000 // Duration of the power-up effect
         );
-        this.powerUpInventory.push(this.powerUp);  //Adds the power-up to the inventory, so the player can use it when he wants
         this.platformInventory.push(this.platform);  //Adds the platform to the inventory, so the player can use it when he wants
 
         //Funcion to connect front whit API
@@ -164,6 +161,8 @@ class Game {
         const loadMap = async () => {
             this.generation_zones = await initGenerationZones(1);
 
+            this.powerUpInventory = await initCards(3);
+            
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
             this.actualPlatforms.at(-1).setSprite('../assets/sprites/plataformas_auto/Final_Platform.png',
                             new Rect(0, 0, 1566, 688));
@@ -232,19 +231,20 @@ class Game {
         }
         
         
-        if(this.powerUpInventory.length > 0) {
+        for(let i = 0; i < this.powerUpInventory.length; i++) {
             ctx.drawImage(
-                this.powerUpSprite,
-                this.canvasWidth - margin - cardWidth,
+                this.powerUpInventory[i].sprite,
+                this.canvasWidth - margin - cardWidth - (i * (cardWidth + 10)),
                 margin,
                 cardWidth,
                 cardHeight
             );
         }
+
         if(this.platformInventory.length > 0) {
             ctx.drawImage(
                 this.platformSprite,
-                this.canvasWidth - margin - cardWidth*2,
+                this.canvasWidth - margin - cardWidth - (this.powerUpInventory.length * (cardWidth + 10)),
                 margin,
                 cardWidth,
                 cardHeight

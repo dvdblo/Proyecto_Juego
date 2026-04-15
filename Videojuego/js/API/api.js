@@ -21,6 +21,19 @@ async function initGenerationZones(level) {
     return generation_zones;
 }
 
+async function initCards(nivel) {
+    const res = await fetch(`http://localhost:3000/cartas/${nivel}`);
+    const data = await res.json();
+
+    let powerUpInventory = [];
+    for (let i = 0; i < 3; i++) {
+        let type = data[randomRange(data.length, 0)];
+
+        addCard(0,0,10,10,powerUpInventory,type.nombre_carta,2000);
+    }
+    return powerUpInventory;
+}
+
 //Function to read and translate platforms from DB to game
 async function initPlatforms(auto, zones, unit) {  //auto = is auto_generated?
     const res = await fetch(`http://localhost:3000/plats/${auto}`);

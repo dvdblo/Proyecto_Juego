@@ -103,6 +103,44 @@ function addPlatform(x, y, width, height, lst, unit, hostile) {
     lst.push(box);
 }
 
+
+function addCard(x, y, width, height, lst, type, duration) {
+
+    const card = new Cards(
+        new Vector(x, y),
+        width,
+        height,
+        type,
+        duration
+    );
+    card.sprite = new Image();
+        if(type == "Esprint") {
+            card.sprite.src = "../../sprites/PowerUps/Nivel1/Esprint N1.png";
+        }
+        else if (type == "Doble Salto") {
+            card.sprite.src = "../../sprites/PowerUps/Nivel1/Doble Salto N1.png";
+        }
+        else if (type == "Vida Extra") {
+            card.sprite.src = "../../sprites/PowerUps/Nivel1/Vida Extra N1.png";
+        }
+        else if (type == "Bomba") {
+            card.sprite.src = "../../sprites/PowerUps/Nivel1/Bomba N1.png";
+        }
+        else if (type == "Plataforma Random") {
+            card.sprite.src = "../../sprites/PowerUps/Nivel1/Plataforma Random N1.png";
+        }
+        else if (type == "Escudo") {
+            card.sprite.src = "../../sprites/PowerUps/Nivel1/Escudo N1.png";
+        }
+        else if (type == "Jetpack") {
+            card.sprite.src = "../../sprites/PowerUps/Nivel1/Jetpack N1.png";
+        }
+        else {
+            card.sprite.src = "../../sprites/PowerUps/Nivel3/Escudo N3.png";
+        }
+    lst.push(card);
+}
+
 //OLD FUNCTION, MAINTAINING THIS FOR POSIBLE REFERENCE IN FUTURE
 // function boxOverlap(obj1, obj2, deltaTime) {
 

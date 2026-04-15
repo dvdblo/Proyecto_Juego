@@ -15,9 +15,9 @@ const app = express();
 const port = 3000;
 
 //Actual host and DB
-const host = '192.168.1.12';
+const host = '127.0.0.1';
 const user = 'root';
-const pass = 'bl200611';
+const pass = 'Febrero_312';
 const db = 'hyperjump';
 
 app.use(cors());
@@ -67,6 +67,31 @@ app.get('/plats/:auto', (req, res) => {
         if (err) throw err;
 
         connection.query('SELECT * FROM Plataforma WHERE es_autogenerada = ?', [auto], (err, results) => {
+                if (err) throw err;
+
+                connection.end();
+                
+                res.json(results);
+            }
+        );
+    });
+});
+
+app.get('/cartas/:nivel', (req, res) => {
+
+    const nivel = req.params.nivel;
+
+    const connection = mysql.createConnection({
+        host: host,
+        user: user,
+        password: pass,
+        database: db
+    });
+
+    connection.connect((err) => {
+        if (err) throw err;
+
+        connection.query('SELECT * FROM Carta WHERE nivel_maximo = ?', [nivel], (err, results) => {
                 if (err) throw err;
 
                 connection.end();

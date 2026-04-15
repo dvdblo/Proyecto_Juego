@@ -39,8 +39,19 @@ VALUES  (1, 30, 500, false),
 (1, 4100, 300, false);
 COMMIT;
 
+INSERT INTO Carta(nombre_carta, descripcion, nivel_maximo, dificultad_requerida) 
+VALUES ("Bomba", "Una bomba que explota y daña a los enemigos cercanos", 3, "Baja"),
+("Doble Salto", "Aumenta la altura del salto del jugador", 3, "Baja"),
+("Escudo", "Crea un escudo temporal que protege al jugador de un golpe", 3, "Media"),
+("Esprint", "Aumenta la velocidad de movimiento del jugador", 3, "Baja"),
+("Jetpack", "Otorga al jugador un jetpack, el cual permite que desactive la gravedad 5 segundos", 3, "Alta"),
+("Plataforma Random", "Permite al jugador generar una plataforma aleatoria", 3, "Baja"),
+("Vida Extra", "Otorga al jugador una vida extra", 3, "Baja");
+COMMIT;
+
 select * from hyperjump.ZonaGeneracion;
 SELECT * FROM Plataforma;
+SELECT * FROM Carta;
 #TRUNCATE TABLE Plataforma;
 #TRUNCATE TABLE Nivel;
-TRUNCATE TABLE ZonaGeneracion;
+#TRUNCATE TABLE ZonaGeneracion;
