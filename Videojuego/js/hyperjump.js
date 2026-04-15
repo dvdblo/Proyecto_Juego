@@ -105,7 +105,7 @@ class Game {
             64,
             "red",
             3,
-            playerMotion
+            createPlayerMotion()
         );
 
         this.player.lives = 3;
@@ -116,6 +116,9 @@ class Game {
         this.isGameOver = false;
         this.startTime= Date.now();
         gameConfig.elapsedTime = 0;
+        this.player.damageCooldown = 0;
+        this.scoreApplied = false;
+        console.log("init player");
         this.player.setSprite('../assets/sprites/blordrough_quartermaster-NESW.png',
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(gameConfig.playerSpeed);
@@ -192,6 +195,17 @@ class Game {
             this.player.velocity.x = 0;
             this.player.velocity.y = 0;
         }
+    
+    getTimeMultiplier() {
+        const time = gameConfig.elapsedTime;
+        if (time <= 15){
+            return 2;
+        }       
+        if (time <= 30){
+            return 1.5;
+        }      
+        return 1;                       
+    }
 
     //To draw the game objects
     draw(ctx) {
@@ -264,36 +278,36 @@ class Game {
             enemy.draw(ctx);
         }
 
-        ctx.save();
-        ctx.setTransform(1,0,0,1,0,0);
-        if(this.isGameOver){
-            this.drawGameOver(ctx);
-        }
-        ctx.restore();
+        // ctx.save();
+        // ctx.setTransform(1,0,0,1,0,0);
+        // if(this.isGameOver){
+        //     this.drawGameOver(ctx);
+        // }
+        // ctx.restore();
     }
 
-    drawGameOver(ctx){
-        const centerX = this.canvasWidth / 2;
-        const centerY =  this.canvasHeight / 2;
+    // drawGameOver(ctx){
+    //     const centerX = this.canvasWidth / 2;
+    //     const centerY =  this.canvasHeight / 2;
 
-        ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        ctx.font = "bold 60px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText("GAME OVER", centerX, centerY - 20);
+    //     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    //     ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    //     ctx.fillStyle = "white";
+    //     ctx.textAlign = "center";
+    //     ctx.font = "bold 60px Arial";
+    //     ctx.textAlign = "center";
+    //     ctx.fillText("GAME OVER", centerX, centerY - 20);
 
-        ctx.font = "30px Arial";
-        ctx.fillText("Score: " + gameConfig.score, centerX, centerY + 20);
+    //     ctx.font = "30px Arial";
+    //     ctx.fillText("Score: " + gameConfig.score, centerX, centerY + 20);
 
-        ctx.fillText("Time: " + gameConfig.elapsedTime + "s", centerX, centerY + 50);
-    }
+    //     ctx.fillText("Time: " + gameConfig.elapsedTime + "s", centerX, centerY + 50);
+    // }
 
     //To update the position, sprites, collisions...
     update(deltaTime) {
-
-        if(this.isGameOver) return;
+        this.player.damageCooldown -= deltaTime;
+        //if(this.isGameOver) return;
         //Animate the background
         this.background.updateFrame(deltaTime);
 
@@ -316,9 +330,9 @@ class Game {
                     this.enemies.splice(this.enemies.indexOf(enemy), 1);
                 }
             }
-            else if (overlap == "left" || overlap == "right" || overlap== "bottom"){
+            else if (overlap != false && this.player.damageCooldown <= 0){
                 this.player.lives--;
-
+                this.player.damageCooldown = 1000;
                 if(this.player.lives <=0){
                     //this.gameOver();
                     gameConfig.levelOver2 = true;
@@ -327,7 +341,12 @@ class Game {
         }
 
         gameConfig.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000); //Time en seconds
-        
+
+        if (gameConfig.levelComplete && !this.scoreApplied) {
+            const multiplier = this.getTimeMultiplier();
+            gameConfig.score = Math.floor(gameConfig.score * multiplier);
+            this.scoreApplied = true;
+        }
         // Check collision against platforms
         for (let platform of this.actualPlatforms) {
             platform.updateFrame(deltaTime);  //Important to update the platform first

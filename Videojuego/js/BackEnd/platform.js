@@ -15,7 +15,7 @@ const app = express();
 const port = 3000;
 
 //Actual host and DB
-const host = '10.49.108.217';
+const host = '192.168.1.12';
 const user = 'root';
 const pass = 'bl200611';
 const db = 'hyperjump';
@@ -25,7 +25,7 @@ app.use(cors());
 //Generation zones backend
 app.get('/zonas/:level', (req, res) => {
     const level = req.params.level;
-
+    
     //Creates the conection
     const connection = mysql.createConnection({
         host: host,
