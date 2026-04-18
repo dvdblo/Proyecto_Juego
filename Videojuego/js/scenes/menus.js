@@ -10,10 +10,19 @@ class MainMenu extends Phaser.Scene {
         this.load.image('backgroundMenu', '../assets/Fondos/backMenu2.png');
         this.load.image('buttonPlay', '../assets/sprites/botones/botonLargo.png');
         this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('menuMusic', '../assets/Musica/musicMenu.mp3');
     }
 
     //Creates the objects/variables
     create() {
+        gameConfig.actualLevel = 1;
+        gameConfig.actualDiff = 1;
+        gameConfig.gameLoad = false;
+
+        if (!this.menuMusic || !this.menuMusic.isPlaying) {
+            this.menuMusic = this.sound.add('menuMusic', { loop: true });
+            this.menuMusic.play();
+        }
 
         //Main Menu Background         Position X                Position Y              Name to reference
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundMenu');
@@ -97,16 +106,27 @@ class MainMenu extends Phaser.Scene {
 
         //Button pressed
         buttonNew.on('pointerdown', () => {
-            this.scene.start('Introduction');   //Changes to this scene
+            this.cameras.main.fadeOut(0);
+            this.tweens.add({
+                targets: this.menuMusic,
+                volume: 0,
+                duration: 0,
+                onComplete: () => {
+                    this.scene.start('Introduction');  //Changes to this scene
+                    this.menuMusic.stop();
+                }
+            });
         });
         buttonContinue.on('pointerdown', () => {
-            //this.scene.start('Introduction');   //Changes to this scene
+            //this.scene.start('Introduction');
+            //this.menuMusic.stop();
         });
         buttonSettings.on('pointerdown', () => {
-            this.scene.start('Settings');   //Changes to this scene
+            this.scene.start('Settings');
         });
         buttonTutorial.on('pointerdown', () => {
-            //this.scene.start('Introduction');   //Changes to this scene
+            //this.scene.start('Introduction')
+            //this.menuMusic.stop();
         });
 
         //Text

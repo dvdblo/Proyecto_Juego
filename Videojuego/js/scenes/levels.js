@@ -1,10 +1,27 @@
 //LEVELS------------------------------------------------------------------------------------------------------------
-class Level_1 extends Phaser.Scene {
+class Level extends Phaser.Scene {
     constructor() {
-        super('Level_1');
+        super('Level');
+    }
+
+    preload() {
+        if(gameConfig.actualDiff == 1) {
+            this.load.audio('levelMusic1', `../assets/Musica/music${gameConfig.actualDiff}.mp3`);
+        } else if(gameConfig.actualDiff == 2) {
+            this.load.audio('levelMusic2', `../assets/Musica/music${gameConfig.actualDiff}.mp3`);
+        }else if(gameConfig.actualDiff = 3) {
+            this.load.audio('levelMusic3', `../assets/Musica/music${gameConfig.actualDiff}.mp3`);
+        }
     }
 
     create(data) {
+        gameConfig.gameLoad = true;
+
+        if (!this.levelMusic || !this.levelMusic.isPlaying) {
+            this.levelMusic = this.sound.add(`levelMusic${gameConfig.actualDiff}`, { loop: true });
+            this.levelMusic.play();
+        }
+
         //Reads the game from the Load scene
         this.game = data.game;
 
@@ -51,15 +68,21 @@ class Level_1 extends Phaser.Scene {
         //If the level was completed, it changes to the win scene
         if(gameConfig.levelComplete == true) {
             gameConfig.levelComplete = false;
-            this.scene.start('WinScreen1');
+            gameConfig.gameLoad = false;
+            this.scene.start(`WinScreen${gameConfig.actualDiff}`);
+            this.levelMusic.stop();
         }
         if(gameConfig.levelOver1 == true) {
             gameConfig.levelOver1 = false;
+            gameConfig.gameLoad = false;
             this.scene.start('GameOver1Screen');
+            this.levelMusic.stop();
         }
         if(gameConfig.levelOver2 == true) {
             gameConfig.levelOver2 = false;
+            gameConfig.gameLoad = false;
             this.scene.start('GameOver2Screen');
+            this.levelMusic.stop();
         }
     }
 }
