@@ -15,7 +15,7 @@ const app = express();
 const port = 3000;
 
 //Actual host and DB
-const host = '192.168.1.12';
+const host = '192.168.1.8';
 const user = 'root';
 const pass = 'bl200611';
 const db = 'hyperjump';

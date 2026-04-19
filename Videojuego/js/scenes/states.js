@@ -1,23 +1,69 @@
 
 //STATE SCREENS------------------------------------------------------------------------------------------------------------
 
-class LoadingGame extends Phaser.Scene {
+class LoadingGame1 extends Phaser.Scene {
     constructor() {
-        super('LoadingGame');
+        super('LoadingGame1');
     }
 
     //Initializes the game
     async create() {
+        gameConfig.gameLoad = false;
         this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'Cargando...').setOrigin(0.5).setScale(4);
 
         //New game (level)
-        const game = new Game(gameConfig.canvasWidth, gameConfig.canvasHeight);
+        const game = new Game(gameConfig.canvasWidth, gameConfig.canvasHeight, gameConfig.actualLevel);
+        gameConfig.actualDiff =1;
 
         //Game function to init the game
         await game.init();
 
         //Next scene
-        this.scene.start('Level_1', { game });
+        this.scene.start('Level', { game });
+    }
+}
+
+class LoadingGame2 extends Phaser.Scene {
+    constructor() {
+        super('LoadingGame2');
+    }
+
+    //Initializes the game
+    async create() {
+        gameConfig.gameLoad = false;
+        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'Cargando...').setOrigin(0.5).setScale(4);
+
+        //New game (level)
+        const game = new Game(gameConfig.canvasWidth, gameConfig.canvasHeight, gameConfig.actualLevel);
+        gameConfig.actualDiff =2;
+
+        //Game function to init the game
+        await game.init();
+
+        //Next scene
+        this.scene.start('Level', { game });
+    }
+}
+
+class LoadingGame3 extends Phaser.Scene {
+    constructor() {
+        super('LoadingGame3');
+    }
+
+    //Initializes the game
+    async create() {
+        gameConfig.gameLoad = false;
+        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'Cargando...').setOrigin(0.5).setScale(4);
+
+        //New game (level)
+        const game = new Game(gameConfig.canvasWidth, gameConfig.canvasHeight, gameConfig.actualLevel);
+        gameConfig.actualDiff =3;
+
+        //Game function to init the game
+        await game.init();
+
+        //Next scene
+        this.scene.start('Level', { game });
     }
 }
 
@@ -69,7 +115,13 @@ class WinLevelScreen1 extends Phaser.Scene {
         });
 
         button.on('pointerdown', () => {
-            this.scene.start('GoodEnding');
+            console.log(gameConfig.actualLevel);
+            gameConfig.actualLevel++;
+            console.log(gameConfig.actualLevel);
+            if (gameConfig.actualLevel > 3) {
+                this.scene.start('LoadingGame2');
+            } else {this.scene.start('LoadingGame1');}
+            
         });
 
         //Text
@@ -134,7 +186,12 @@ class WinLevelScreen2 extends Phaser.Scene {
         });
 
         button.on('pointerdown', () => {
-            this.scene.start('GoodEnding');
+            console.log(gameConfig.actualLevel);
+            gameConfig.actualLevel++;
+            console.log(gameConfig.actualLevel);
+            if (gameConfig.actualLevel > 6) {
+                this.scene.start('LoadingGame3');
+            } else {this.scene.start('LoadingGame2');}
         });
 
         //Text
@@ -199,7 +256,12 @@ class WinLevelScreen3 extends Phaser.Scene {
         });
 
         button.on('pointerdown', () => {
-            this.scene.start('GoodEnding');
+            console.log(gameConfig.actualLevel);
+            gameConfig.actualLevel++;
+            console.log(gameConfig.actualLevel);
+            if (gameConfig.actualLevel > 9) {
+                this.scene.start('GoodEnding');
+            } else {this.scene.start('LoadingGame3');}
         });
 
         //Text
@@ -225,10 +287,20 @@ class GameOver1Screen extends Phaser.Scene {
         this.load.image('backgroundLose', '../assets/Fondos/backGameOver1.png');
         this.load.image('buttonGameOver', '../assets/sprites/botones/botonLargoOver.png');
         this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('gameOverMusic', '../assets/Musica/musicOver.mp3');
     }
 
     //At the moment, almost the same as the main menu
     create() {
+
+        let overMusic = this.sound.get('gameOverMusic');
+
+        if (overMusic) {
+            overMusic.destroy();
+        }
+
+        overMusic = this.sound.add('gameOverMusic', { loop: true });
+        overMusic.play();
 
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundLose');
         
@@ -291,10 +363,17 @@ class GameOver2Screen extends Phaser.Scene {
         this.load.image('backgroundLose2', '../assets/Fondos/backGameOver2.png');
         this.load.image('buttonGameOver', '../assets/sprites/botones/botonLargoOver.png');
         this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('gameOverMusic2', '../assets/Musica/musicOver.mp3');
     }
 
     //At the moment, almost the same as the main menu
     create() {
+        let overMusic = this.sound.get('gameOverMusic2');
+
+        if (!overMusic) {
+            overMusic = this.sound.add('gameOverMusic2', {loop: true});
+            overMusic.play();
+        }
 
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundLose2');
         
