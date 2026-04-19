@@ -10,6 +10,7 @@ VALUES (null, "cuadrada", '{"formas": [{"base": 1, "altura": 1, "x": 0, "y": 0}]
 (null, "ele", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', true);
 COMMIT;
 
+
 select * from hyperjump.Plataforma;
 
 INSERT INTO Nivel(dificultad, numero_nivel, tiempo_limite_seg, tiene_jefe, tiene_jefe2)
@@ -46,7 +47,8 @@ VALUES ("Bomba", "Una bomba que explota y daña a los enemigos cercanos", 3, "Ba
 ("Esprint", "Aumenta la velocidad de movimiento del jugador", 3, "Baja"),
 ("Jetpack", "Otorga al jugador un jetpack, el cual permite que desactive la gravedad 5 segundos", 3, "Alta"),
 ("Plataforma Random", "Permite al jugador generar una plataforma aleatoria", 3, "Baja"),
-("Vida Extra", "Otorga al jugador una vida extra", 3, "Baja");
+("Vida Extra", "Otorga al jugador una vida extra", 3, "Baja"),
+
 COMMIT;
 
 select * from hyperjump.ZonaGeneracion;
