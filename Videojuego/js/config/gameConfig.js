@@ -27,32 +27,34 @@ const keyDirections = {
 
 // Data structure with the directions a character can move, the
 // direction sign and the related animation.
-const playerMotion = {
-    up: {
-        status: false,
-        axis: "y",
-        sign: -1,
-        repeat: true,
-        duration: 100,
-        moveFrames: [0, 2],
-        idleFrames: [1, 1],
-    },
-    left: {
-        status: false,
-        axis: "x",
-        sign: -1,
-        repeat: true,
-        duration: 100,
-        moveFrames: [9, 11],
-        idleFrames: [10, 10],
-    },
-    right: {
-        status: false,
-        axis: "x",
-        sign: 1,
-        repeat: true,
-        duration: 100,
-        moveFrames: [3, 5],
-        idleFrames: [4, 4],
-    },
-};
+function createPlayerMotion() {
+    return {
+        up: {
+            status: false,
+            axis: "y",
+            sign: -1,
+            repeat: true,
+            duration: 100,
+            moveFrames: [0, 2],
+            idleFrames: [1, 1],
+        },
+        left: {
+            status: false,
+            axis: "x",
+            sign: -1,
+            repeat: true,
+            duration: 100,
+            moveFrames: [9, 11],
+            idleFrames: [10, 10],
+        },
+        right: {
+            status: false,
+            axis: "x",
+            sign: 1,
+            repeat: true,
+            duration: 100,
+            moveFrames: [3, 5],
+            idleFrames: [4, 4],
+        },
+    };
+}

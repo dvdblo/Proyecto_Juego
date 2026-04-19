@@ -94,7 +94,7 @@ class Game {
             "background",
             45
         );
-        this.background.setSprite("../../sprites/Background/Background N1.png",
+        this.background.setSprite("../assets/Fondos/back_1.png",
                                     new Rect(1376, 0, 1376, 768));
         //this.background.setAnimation(0, 44, true, 100);
 
@@ -105,7 +105,7 @@ class Game {
             64,
             "red",
             3,
-            playerMotion
+            createPlayerMotion()
         );
 
         this.player.lives = 3;
@@ -118,6 +118,7 @@ class Game {
         gameConfig.elapsedTime = 0;
         this.player.damageCooldown = 0;
         this.scoreApplied = false;
+        console.log("init player");
         this.player.setSprite('../assets/sprites/blordrough_quartermaster-NESW.png',
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(gameConfig.playerSpeed);
@@ -277,36 +278,36 @@ class Game {
             enemy.draw(ctx);
         }
 
-        ctx.save();
-        ctx.setTransform(1,0,0,1,0,0);
-        if(this.isGameOver){
-            this.drawGameOver(ctx);
-        }
-        ctx.restore();
+        // ctx.save();
+        // ctx.setTransform(1,0,0,1,0,0);
+        // if(this.isGameOver){
+        //     this.drawGameOver(ctx);
+        // }
+        // ctx.restore();
     }
 
-    drawGameOver(ctx){
-        const centerX = this.canvasWidth / 2;
-        const centerY =  this.canvasHeight / 2;
+    // drawGameOver(ctx){
+    //     const centerX = this.canvasWidth / 2;
+    //     const centerY =  this.canvasHeight / 2;
 
-        ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        ctx.font = "bold 60px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText("GAME OVER", centerX, centerY - 20);
+    //     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    //     ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    //     ctx.fillStyle = "white";
+    //     ctx.textAlign = "center";
+    //     ctx.font = "bold 60px Arial";
+    //     ctx.textAlign = "center";
+    //     ctx.fillText("GAME OVER", centerX, centerY - 20);
 
-        ctx.font = "30px Arial";
-        ctx.fillText("Score: " + gameConfig.score, centerX, centerY + 20);
+    //     ctx.font = "30px Arial";
+    //     ctx.fillText("Score: " + gameConfig.score, centerX, centerY + 20);
 
-        ctx.fillText("Time: " + gameConfig.elapsedTime + "s", centerX, centerY + 50);
-    }
+    //     ctx.fillText("Time: " + gameConfig.elapsedTime + "s", centerX, centerY + 50);
+    // }
 
     //To update the position, sprites, collisions...
     update(deltaTime) {
         this.player.damageCooldown -= deltaTime;
-        if(this.isGameOver) return;
+        //if(this.isGameOver) return;
         //Animate the background
         this.background.updateFrame(deltaTime);
 
