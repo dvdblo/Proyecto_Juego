@@ -8,9 +8,10 @@
 
 //Function to read and translate generation zones from DB to game
 //They are async functions so they can work properly with the connections (also async)
+
 async function initGenerationZones(level) {
-    const res = await fetch(`http://localhost:3000/zonas/${level}`);  //It waits for a response (all the not async functions are still running)
-    const data = await res.json();
+    const zones = await fetch(`http://localhost:3000/zonas/${level}`);
+    const data = await zones.json();
 
     let generation_zones = [];
 
@@ -19,6 +20,19 @@ async function initGenerationZones(level) {
         generation_zones.push(new generation_zone(row.coord_x, row.coord_y, row.hostil));
     }
     return generation_zones;
+}
+
+async function initCards() {
+    const res = await fetch(`http://localhost:3000/powerups`);
+    const data = await res.json();
+
+    let powerUpInventory = [];
+    for (let i = 0; i < 3; i++) {
+        let type = data[randomRange(data.length, 0)];
+
+        addCard(0,0,10,10,powerUpInventory,type.nombre,2000);
+    }
+    return powerUpInventory;
 }
 
 //Function to read and translate platforms from DB to game
@@ -46,4 +60,33 @@ async function initPlatforms(auto, zones, unit) {  //auto = is auto_generated?
             }
         }
     return actualPlatforms;
+}
+
+async function register(username, contraseña, edad) {
+    const response = await fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, contraseña, edad })
+    });
+    const data = await response.json();
+    if (data.success) {
+        alert('Registered! You can now log in.');
+    } else {
+        alert(data.error);
+    }
+}
+
+async function login(username, contraseña) {
+    const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, contraseña })
+    });
+    const data = await response.json();
+    if (data.success) {
+        gameConfig.id_jugador = data.id_jugador;
+        startGame(); // your existing function
+    } else {
+        alert(data.error);
+    }
 }
