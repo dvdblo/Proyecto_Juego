@@ -73,9 +73,9 @@ class WinLevelScreen1 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('backgroundWin1', '../assets/Fondos/backLevelWin_1.png');
-        this.load.image('buttonContinue1', '../assets/sprites/botones/botonLargoWin_1.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.image('backgroundWin1', '../Videojuego/assets/Fondos/backLevelWin_1.png');
+        this.load.image('buttonContinue1', '../Videojuego/assets/sprites/botones/botonLargoWin_1.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
     }
 
     //At the moment, almost the same as the main menu
@@ -114,8 +114,9 @@ class WinLevelScreen1 extends Phaser.Scene {
             textContinue.setScale(1);
         });
 
-        button.on('pointerdown', () => {
+        button.on('pointerdown', async() => {
             console.log(gameConfig.actualLevel);
+            await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
             console.log(gameConfig.actualLevel);
             if (gameConfig.actualLevel > 3) {
@@ -144,9 +145,9 @@ class WinLevelScreen2 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('backgroundWin2', '../assets/Fondos/backLevelWin_2.png');
-        this.load.image('buttonContinue2', '../assets/sprites/botones/botonLargoWin_2.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.image('backgroundWin2', '../Videojuego/assets/Fondos/backLevelWin_2.png');
+        this.load.image('buttonContinue2', '../Videojuego/assets/sprites/botones/botonLargoWin_2.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
     }
 
     //At the moment, almost the same as the main menu
@@ -185,8 +186,9 @@ class WinLevelScreen2 extends Phaser.Scene {
             textContinue.setScale(1);
         });
 
-        button.on('pointerdown', () => {
+        button.on('pointerdown', async() => {
             console.log(gameConfig.actualLevel);
+            await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
             console.log(gameConfig.actualLevel);
             if (gameConfig.actualLevel > 6) {
@@ -214,9 +216,9 @@ class WinLevelScreen3 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('backgroundWin3', '../assets/Fondos/backLevelWin_3.png');
-        this.load.image('buttonContinue3', '../assets/sprites/botones/botonLargoWin_3.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.image('backgroundWin3', '../Videojuego/assets/Fondos/backLevelWin_3.png');
+        this.load.image('buttonContinue3', '../Videojuego/assets/sprites/botones/botonLargoWin_3.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
     }
 
     //At the moment, almost the same as the main menu
@@ -255,8 +257,9 @@ class WinLevelScreen3 extends Phaser.Scene {
             textContinue.setScale(1);
         });
 
-        button.on('pointerdown', () => {
+        button.on('pointerdown', async() => {
             console.log(gameConfig.actualLevel);
+            await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
             console.log(gameConfig.actualLevel);
             if (gameConfig.actualLevel > 9) {
@@ -284,10 +287,10 @@ class GameOver1Screen extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('backgroundLose', '../assets/Fondos/backGameOver1.png');
-        this.load.image('buttonGameOver', '../assets/sprites/botones/botonLargoOver.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
-        this.load.audio('gameOverMusic', '../assets/Musica/musicOver.mp3');
+        this.load.image('backgroundLose', '../Videojuego/assets/Fondos/backGameOver1.png');
+        this.load.image('buttonGameOver', '../Videojuego/assets/sprites/botones/botonLargoOver.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('gameOverMusic', '../Videojuego/assets/Musica/musicOver.mp3');
     }
 
     //At the moment, almost the same as the main menu
@@ -335,7 +338,8 @@ class GameOver1Screen extends Phaser.Scene {
             textContinue.setScale(1);
         });
 
-        button.on('pointerdown', () => {
+        button.on('pointerdown', async() => {
+            await finishPartida(gameConfig.id_partida);
             this.scene.start('BadEnding1');
         });
 
@@ -360,10 +364,10 @@ class GameOver2Screen extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('backgroundLose2', '../assets/Fondos/backGameOver2.png');
-        this.load.image('buttonGameOver', '../assets/sprites/botones/botonLargoOver.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
-        this.load.audio('gameOverMusic2', '../assets/Musica/musicOver.mp3');
+        this.load.image('backgroundLose2', '../Videojuego/assets/Fondos/backGameOver2.png');
+        this.load.image('buttonGameOver', '../Videojuego/assets/sprites/botones/botonLargoOver.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('gameOverMusic2', '../Videojuego/assets/Musica/musicOver.mp3');
     }
 
     //At the moment, almost the same as the main menu
@@ -408,7 +412,8 @@ class GameOver2Screen extends Phaser.Scene {
             textContinue.setScale(1);
         });
 
-        button.on('pointerdown', () => {
+        button.on('pointerdown', async() => {
+            await finishPartida(gameConfig.id_partida);
             this.scene.start('BadEnding2');
         });
 

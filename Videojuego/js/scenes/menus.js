@@ -7,10 +7,10 @@ class MainMenu extends Phaser.Scene {
 
     //Loads images and fonts to use in the menu
     preload() {
-        this.load.image('backgroundMenu', '../assets/Fondos/backMenu2.png');
-        this.load.image('buttonPlay', '../assets/sprites/botones/botonLargo.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
-        this.load.audio('menuMusic', '../assets/Musica/musicMenu.mp3');
+        this.load.image('backgroundMenu', '../Videojuego/assets/Fondos/backMenu2.png');
+        this.load.image('buttonPlay', '../Videojuego/assets/sprites/botones/botonLargo.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('menuMusic', '../Videojuego/assets/Musica/musicMenu.mp3');
     }
 
     //Creates the objects/variables
@@ -105,7 +105,19 @@ class MainMenu extends Phaser.Scene {
         });
 
         //Button pressed
-        buttonNew.on('pointerdown', () => {
+        buttonNew.on('pointerdown', async() => {
+
+            if (!gameConfig.id_jugador) {
+                alert('Debes iniciar sesión primero');
+                return; // stops the function here
+            }
+
+            if(gameConfig.id_partida) {
+                await finishPartida(gameConfig.id_partida);
+            }
+            
+            gameConfig.id_partida = await createPartida(gameConfig.id_jugador);
+            
             this.cameras.main.fadeOut(2000);
             this.tweens.add({
                 targets: this.menuMusic,
@@ -117,10 +129,31 @@ class MainMenu extends Phaser.Scene {
                 }
             });
         });
-        buttonContinue.on('pointerdown', () => {
-            //this.scene.start('Introduction');
-            //this.menuMusic.stop();
+
+        buttonContinue.on('pointerdown', async() => {
+            const data = await continuarPartida(gameConfig.id_jugador);
+
+            if (!data.found) {
+                alert("No hay partida guardada");
+                return;
+            }
+
+            gameConfig.id_partida = data.partida.id_partida;
+            gameConfig.actualLevel = data.partida.niveles_completados + 1;
+
+            this.cameras.main.fadeOut(1000);
+
+            this.tweens.add({
+            targets: this.menuMusic,
+            volume: 0,
+            duration: 1000,
+            onComplete: () => {
+                this.scene.start('Introduction'); // or GameScene
+                this.menuMusic.stop();
+            }
+            });
         });
+
         buttonSettings.on('pointerdown', () => {
             this.scene.start('Settings');
         });
@@ -150,8 +183,8 @@ class Settings extends Phaser.Scene {
 
     preload() {
         //this.load.image('backgroundIntro', '../assets/Fondos/backIntro.png');
-        this.load.image('buttonReturnMenu', '../assets/sprites/botones/botonLargoOver.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.image('buttonReturnMenu', '../Videojuego/assets/sprites/botones/botonLargoOver.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
     }
 
     create () {

@@ -12,21 +12,20 @@ COMMIT;
 
 #TRUNCATE TABLE Plataforma;
 #SET SQL_SAFE_UPDATES = 0;
-DELETE FROM Plataforma;
-ALTER TABLE Plataforma AUTO_INCREMENT = 1;
-select * from hyperjump.Plataforma;
+#DELETE FROM Plataforma;
+#ALTER TABLE Plataforma AUTO_INCREMENT = 1;
+#select * from hyperjump.Plataforma;
 
-INSERT INTO Nivel(dificultad, numero_nivel, tiempo_limite_seg, tiene_jefe, tiene_jefe2)
-VALUES (1, 1, null, false, false),
-(1, 2, null, false, false),
-(1, 3, null, false, false),
-(2, 4, null, false, false),
-(2, 5, null, false, false),
-(2, 6, null, false, false),
-(3, 7, null, false, false),
-(3, 8, null, false, false),
-(3, 9, null, false, false),
-(4, 10, null, true, false);
+INSERT INTO Nivel(dificultad, numero_nivel, tiempo_limite_seg)
+VALUES (1, 1, null),
+(1, 2, null),
+(1, 3, null),
+(2, 4, null),
+(2, 5, null),
+(2, 6, null),
+(3, 7, null),
+(3, 8, null),
+(3, 9, null);
 COMMIT;
 
 #select * from hyperjump.Nivel;
@@ -109,20 +108,32 @@ VALUES  (1, 30, 500, false),
 (9, 5600, 500, true);
 COMMIT;
 
-INSERT INTO Carta(nombre_carta, descripcion, nivel_maximo, dificultad_requerida) 
-VALUES ("Bomba", "Una bomba que explota y daña a los enemigos cercanos", 3, "Baja"),
-("Doble Salto", "Aumenta la altura del salto del jugador", 3, "Baja"),
-("Escudo", "Crea un escudo temporal que protege al jugador de un golpe", 3, "Media"),
-("Esprint", "Aumenta la velocidad de movimiento del jugador", 3, "Baja"),
-("Jetpack", "Otorga al jugador un jetpack, el cual permite que desactive la gravedad 5 segundos", 3, "Alta"),
-("Plataforma Random", "Permite al jugador generar una plataforma aleatoria", 3, "Baja"),
-("Vida Extra", "Otorga al jugador una vida extra", 3, "Baja"),
+INSERT INTO Carta(descripcion, nivel_maximo, dificultad_requerida) 
+VALUES ("Una bomba que explota y daña a los enemigos cercanos", 3, "facil"),
+("Aumenta la altura del salto del jugador", 3, "facil"),
+("Crea un escudo temporal que protege al jugador de un golpe", 3, "medio"),
+("Aumenta la velocidad de movimiento del jugador", 3, "facil"),
+("Otorga al jugador un jetpack, el cual permite que desactive la gravedad 5 segundos", 3, "dificil"),
+("Permite al jugador generar una plataforma aleatoria", 3, "facil"),
+("Otorga al jugador una vida extra", 3, "facil");
+COMMIT;
 
+INSERT INTO PowerUp(id_carta, nombre) VALUES
+(1, "Bomba"),
+(2, "Doble Salto"),
+(3, "Escudo"),
+(4, "Esprint"),
+(5, "Jetpack"),
+(6, "Plataforma Random"),
+(7, "Vida Extra");
 COMMIT;
 
 select * from hyperjump.ZonaGeneracion;
 SELECT * FROM Plataforma;
 SELECT * FROM Carta;
+SELECT * FROM PowerUp;
+SELECT * FROM Jugador;
+SELECT * FROM Partida;
 #TRUNCATE TABLE Plataforma;
 #TRUNCATE TABLE Nivel;
 #TRUNCATE TABLE ZonaGeneracion;

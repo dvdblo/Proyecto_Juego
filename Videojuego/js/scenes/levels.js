@@ -6,11 +6,11 @@ class Level extends Phaser.Scene {
 
     preload() {
         if(gameConfig.actualDiff == 1) {
-            this.load.audio('levelMusic1', `../assets/Musica/music${gameConfig.actualDiff}.mp3`);
+            this.load.audio('levelMusic1', `../Videojuego/assets/Musica/music${gameConfig.actualDiff}.mp3`);
         } else if(gameConfig.actualDiff == 2) {
-            this.load.audio('levelMusic2', `../assets/Musica/music${gameConfig.actualDiff}.mp3`);
-        }else if(gameConfig.actualDiff = 3) {
-            this.load.audio('levelMusic3', `../assets/Musica/music${gameConfig.actualDiff}.mp3`);
+            this.load.audio('levelMusic2', `../Videojuego/assets/Musica/music${gameConfig.actualDiff}.mp3`);
+        }else if(gameConfig.actualDiff == 3) {
+            this.load.audio('levelMusic3', `../Videojuego/assets/Musica/music${gameConfig.actualDiff}.mp3`);
         }
     }
 

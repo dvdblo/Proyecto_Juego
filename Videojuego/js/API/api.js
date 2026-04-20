@@ -22,15 +22,15 @@ async function initGenerationZones(level) {
     return generation_zones;
 }
 
-async function initCards(nivel) {
-    const res = await fetch(`http://localhost:3000/cartas/${nivel}`);
+async function initCards() {
+    const res = await fetch(`http://localhost:3000/powerups`);
     const data = await res.json();
 
     let powerUpInventory = [];
     for (let i = 0; i < 3; i++) {
         let type = data[randomRange(data.length, 0)];
 
-        addCard(0,0,10,10,powerUpInventory,type.nombre_carta,2000);
+        addCard(0,0,10,10,powerUpInventory,type.nombre,2000);
     }
     return powerUpInventory;
 }
@@ -60,4 +60,72 @@ async function initPlatforms(auto, zones, unit) {  //auto = is auto_generated?
             }
         }
     return actualPlatforms;
+}
+
+async function register(username, contraseña, edad) {
+    const response = await fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, contraseña, edad })
+    });
+    const data = await response.json();
+    if (data.success) {
+        alert('Registered! You can now log in.');
+    } else {
+        alert(data.error);
+    }
+}
+
+async function login(username, contraseña) {
+    const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, contraseña })
+    });
+    const data = await response.json();
+    if (data.success) {
+        gameConfig.id_jugador = data.id_jugador;
+        startGame(); // your existing function
+    } else {
+        alert(data.error);
+    }
+}
+
+async function createPartida(id_jugador) {
+    const res = await fetch('http://localhost:3000/partida/nueva', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_jugador })
+    });
+    const data = await res.json();
+    return data.id_partida; // Store this in gameConfig
+}
+
+async function savePartida(id_partida) {
+    await fetch('http://localhost:3000/partida/guardar', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id_partida,
+            puntaje_total: gameConfig.score,
+            niveles_completados: gameConfig.actualLevel, // assuming actualLevel starts at 1
+            enemigos_total: gameConfig.enemiesKilled, // add this to gameConfig
+            vidas_restantes: gameConfig.lives,  // add this to gameConfig
+            tiempo_total_seg: gameConfig.elapsedTime
+        })
+    });
+}
+
+async function continuarPartida(id_jugador) {
+    const res = await fetch(`http://localhost:3000/partida/continuar/${id_jugador}`);
+    const data = await res.json();
+    return data; // { found: true, partida: {...} } or { found: false }
+}
+
+async function finishPartida(id_partida) {
+    await fetch('http://localhost:3000/partida/terminar', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_partida })
+    });
 }

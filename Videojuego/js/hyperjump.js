@@ -61,7 +61,7 @@ class Cards extends AnimatedObject {
             game.enemies.splice(0, game.enemies.length); //Removes all the enemies in the game, simulating a bomb explosion that kills all the enemies on the screen
         }
         else if (this.type == "Vida Extra") {
-            player.lives += 1;
+            gameConfig.lives += 1;
         }
         else if (this.type == "Escudo") {
             player.damageCooldown = this.duration; //The player will be invulnerable for the duration of the power-up, simulating a shield
@@ -75,8 +75,8 @@ class Cards extends AnimatedObject {
         else if(this.type == "Plataforma Random") {
             //This power-up generates a temporary platform under the player, allowing him to jump again
             addPlatform(
-                // game.generation_zones[6].x, 
-                // game.generation_zones[6].y, 
+                //game.generation_zones[6].x, 
+                //game.generation_zones[6].y, 
                 player.position.x + game.mouseX-game.canvasWidth/2,
                 game.mouseY,
                 3, 1, 
@@ -114,7 +114,7 @@ class Game {
             "background",
             45
         );
-        this.background.setSprite(`../assets/Fondos/back_${gameConfig.actualDiff}.png`,
+        this.background.setSprite(`../Videojuego/assets/Fondos/back_${gameConfig.actualDiff}.png`,
                                     new Rect(1376, 0, 1376, 768));
         //this.background.setAnimation(0, 44, true, 100);
 
@@ -128,17 +128,17 @@ class Game {
             createPlayerMotion()
         );
 
-        this.player.lives = 3;
+        gameConfig.lives = 3;
         this.lifeSprite =  new Image();
-        this.lifeSprite.src = "../../sprites/Lives/lives.png";
-        this.player.Maxlives = 6;
+        this.lifeSprite.src = "../sprites/Lives/lives.png";
+        gameConfig.maxlives = 6;
         gameConfig.score = 0;
         this.isGameOver = false;
         this.startTime= Date.now();
         gameConfig.elapsedTime = 0;
         this.player.damageCooldown = 0;
         this.scoreApplied = false;
-        this.player.setSprite('../assets/sprites/blordrough_quartermaster-NESW.png',
+        this.player.setSprite('../Videojuego/assets/sprites/blordrough_quartermaster-NESW.png',
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(gameConfig.playerSpeed);
 
@@ -150,7 +150,7 @@ class Game {
         this.platformInventory = [];  //To store the platforms the player can use
 
         this.platformSprite = new Image();
-        this.platformSprite.src = "../../sprites/Plataformas/N1/Plataforma Básica N1.png";
+        this.platformSprite.src = "../sprites/Plataformas/N1/Plataforma Básica N1.png";
         for(let i = 0; i < 10; i++) {
         this.platform = new Cards(
             new Vector(0, 0),
@@ -166,10 +166,10 @@ class Game {
         const loadMap = async () => {
             this.generation_zones = await initGenerationZones(this.level);
 
-            this.powerUpInventory = await initCards(3);
+            this.powerUpInventory = await initCards();
             
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
-            this.actualPlatforms.at(-1).setSprite('../assets/sprites/plataformas_auto/Final_Platform.png',
+            this.actualPlatforms.at(-1).setSprite('../Videojuego/assets/sprites/plataformas_auto/Final_Platform.png',
                             new Rect(0, 0, 1566, 688));
             //Enemies
             for(let i = 0; i < this.actualPlatforms.length; i++) {
@@ -185,7 +185,7 @@ class Game {
                         gameConfig.enemySpeed,
                         3
                     );
-                    enemy.setSprite("../assets/sprites/blue_alien.png");
+                    enemy.setSprite("../Videojuego/assets/sprites/blue_alien.png");
                     this.enemies.push(enemy);
                 }
             }
@@ -225,7 +225,7 @@ class Game {
         ctx.font = "18px Arial";
         ctx.textAlign = "left";
 
-        for(let i = 0; i < this.player.lives; i++){
+        for(let i = 0; i < gameConfig.lives; i++){
             ctx.drawImage(
                this.lifeSprite,
                margin + i * (lifeWidth + 5),
@@ -332,13 +332,14 @@ class Game {
                 
                 if (enemy.receiveDamage()){
                     gameConfig.score += enemy.points;
+                    gameConfig.enemiesKilled += 1;
                     this.enemies.splice(this.enemies.indexOf(enemy), 1);
                 }
             }
             else if (overlap != false && this.player.damageCooldown <= 0){
-                this.player.lives--;
+                gameConfig.lives--;
                 this.player.damageCooldown = 1000;
-                if(this.player.lives <=0){
+                if(gameConfig.lives <=0){
                     //this.gameOver();
                     gameConfig.levelOver2 = true;
                 }

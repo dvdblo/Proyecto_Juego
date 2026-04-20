@@ -12,10 +12,15 @@ const gameConfig = {
   levelOver1: false,
   levelOver2: false,
   score: 0,
+  lives: 3,
+  maxlives: 6,
+  enemiesKilled: 0,
   elapsedTime: 0,
   actualLevel: 1,
   actualDiff : 1,
-  gameLoad: false
+  gameLoad: false,
+  id_jugador: null,
+  id_partida: null
 };
 
 // Dictionary for the keys that will control player movement

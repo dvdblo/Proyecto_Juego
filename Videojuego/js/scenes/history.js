@@ -7,9 +7,9 @@ class Introduction extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('backgroundIntro', '../assets/Fondos/backIntro.png');
-        this.load.image('buttonContinue', '../assets/sprites/botones/botonLargoWin_1.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.image('backgroundIntro', '../Videojuego/assets/Fondos/backIntro.png');
+        this.load.image('buttonContinue', '../Videojuego/assets/sprites/botones/botonLargoWin_1.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
     }
 
     create() {
@@ -76,9 +76,9 @@ class GoodEnding extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('backgroundGood', '../assets/Fondos/backGoodEnd.png');
-        this.load.image('buttonContinue', '../assets/sprites/botones/botonLargoWin_1.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.image('backgroundGood', '../Videojuego/assets/Fondos/backGoodEnd.png');
+        this.load.image('buttonContinue', '../Videojuego/assets/sprites/botones/botonLargoWin_1.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
     }
 
     create() {
@@ -145,9 +145,9 @@ class BadEnding1 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('backgroundBad1', '../assets/Fondos/backGameOver1.png');
-        this.load.image('buttonOver1', '../assets/sprites/botones/botonLargoOver.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.image('backgroundBad1', '../Videojuego/assets/Fondos/backGameOver1.png');
+        this.load.image('buttonOver1', '../Videojuego/assets/sprites/botones/botonLargoOver.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
     }
 
     create() {
@@ -226,9 +226,9 @@ class BadEnding2 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('backgroundBad2', '../assets/Fondos/backGameOver2.png');
-        this.load.image('buttonOver2', '../assets/sprites/botones/botonLargoOver.png');
-        this.load.font('myTextFont', '../assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.image('backgroundBad2', '../Videojuego/assets/Fondos/backGameOver2.png');
+        this.load.image('buttonOver2', '../Videojuego/assets/sprites/botones/botonLargoOver.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
     }
 
     create() {

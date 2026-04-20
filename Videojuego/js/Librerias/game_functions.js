@@ -95,7 +95,7 @@ function addPlatform(x, y, width, height, lst, unit, hostile) {
         6
     );
     
-    box.setSprite(`../assets/sprites/plataformas_auto/1_${gameConfig.actualDiff}.png`,
+    box.setSprite(`../Videojuego/assets/sprites/plataformas_auto/1_${gameConfig.actualDiff}.png`,
                             new Rect(1024, 0, 1024, 450));  // If we want to draw the whole sprite, no need to add a rect
     //box.setAnimation(1, 1, true, 200);
     box.destroy = false;

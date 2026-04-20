@@ -15,6 +15,7 @@ const app = express();
 const port = 3000;
 
 app.use(cors());
+app.use(express.json());
 
 const pool = mysql.createPool({
     host: '127.0.0.1',
@@ -51,16 +52,112 @@ app.get('/plats/:auto', async(req, res) => {
     }
 });
 
-app.get('/cartas/:nivel', async (req, res) => {
+app.get('/powerups', async (req, res) => {
     try{
-    const nivel = req.params.nivel;
+    const [powerUps] = await pool.query('SELECT * FROM PowerUp');
 
-    const [cartas] = await pool.query('SELECT * FROM Carta WHERE nivel_maximo = ?', [nivel]);
-
-    res.json(cartas);
+    res.json(powerUps);
     }catch(error){
-        console.error('Error fetching cards:', error);
-        res.status(500).json({ error: 'Error fetching cards' });
+        console.error('Error fetching power-ups:', error);
+        res.status(500).json({ error: 'Error fetching power-ups' });
+    }
+});
+
+app.post('/register', async (req, res) => {
+    try {
+        const { username, contraseña, edad } = req.body;
+        await pool.query('INSERT INTO Jugador (username, contraseña, edad) VALUES (?, ?, ?)', 
+            [username, contraseña, edad]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Este Username ya existe' });
+    }
+});
+
+// Login
+app.post('/login', async (req, res) => {
+    try {
+        const { username, contraseña } = req.body;
+        const [rows] = await pool.query('SELECT * FROM Jugador WHERE username = ?', [username]);
+        if (rows.length === 0) {
+            return res.status(401).json({ error: 'Información de inicio de sesión inválida' });
+        }
+
+        const correctPassword = rows[0].contraseña === contraseña;
+
+        if (!correctPassword) {
+            return res.status(401).json({ error: 'Información de inicio de sesión inválida' });
+        }
+
+        res.json({ success: true, username, id_jugador: rows[0].id_jugador });
+    } catch (error) {
+        res.status(500).json({ error: 'Información de inicio de sesión inválida' });
+    }
+});
+
+app.post('/partida/nueva', async (req, res) => {
+    try {
+        const { id_jugador } = req.body;
+        const [result] = await pool.query(
+            'INSERT INTO Partida (id_jugador) VALUES (?)',
+            [id_jugador]
+        );
+        res.json({ success: true, id_partida: result.insertId });
+    } catch (error) {
+        res.status(500).json({ error: 'Error creating game session' });
+    }
+});
+
+// Save game progress
+app.put('/partida/guardar', async (req, res) => {
+    try {
+        const { id_partida, puntaje_total, niveles_completados, 
+                enemigos_total, vidas_restantes, tiempo_total_seg } = req.body;
+        await pool.query(
+            `UPDATE Partida SET 
+                puntaje_total = puntaje_total + ?,
+                niveles_completados = niveles_completados + ?,
+                enemigos_total = enemigos_total + ?,
+                vidas_restantes = ?,
+                tiempo_total_seg = tiempo_total_seg + ?
+            WHERE id_partida = ?`,
+            [puntaje_total, niveles_completados, enemigos_total, 
+             vidas_restantes, tiempo_total_seg, id_partida]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Error saving game' });
+    }
+});
+
+// Get unfinished game for a player
+app.get('/partida/continuar/:id_jugador', async (req, res) => {
+    try {
+        const { id_jugador } = req.params;
+        const [rows] = await pool.query(
+            `SELECT * FROM Partida 
+             WHERE id_jugador = ? AND fecha_fin IS NULL 
+             ORDER BY fecha_inicio DESC LIMIT 1`,
+            [id_jugador]
+        );
+        if (rows.length === 0) return res.json({ found: false });
+        res.json({ found: true, partida: rows[0] });
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching game' });
+    }
+});
+
+// Mark game as finished
+app.put('/partida/terminar', async (req, res) => {
+    try {
+        const { id_partida } = req.body;
+        await pool.query(
+            'UPDATE Partida SET fecha_fin = CURRENT_TIMESTAMP WHERE id_partida = ?',
+            [id_partida]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Error finishing game' });
     }
 });
 
