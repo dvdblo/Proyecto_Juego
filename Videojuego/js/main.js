@@ -2,7 +2,7 @@ const config = {
   type: Phaser.CANVAS,
   width: gameConfig.canvasWidth,
   height: gameConfig.canvasHeight,
-  backgroundColor: '#43005e',
+  backgroundColor: '#4e4751',
   parent: 'game-container',
   scene: [MainMenu, Settings, Introduction, LoadingGame1, LoadingGame2, LoadingGame3, Level, WinLevelScreen1, WinLevelScreen2, WinLevelScreen3, GoodEnding, GameOver1Screen, BadEnding1, GameOver2Screen, BadEnding2]
 };
