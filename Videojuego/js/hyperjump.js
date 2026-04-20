@@ -75,8 +75,10 @@ class Cards extends AnimatedObject {
         else if(this.type == "Plataforma Random") {
             //This power-up generates a temporary platform under the player, allowing him to jump again
             addPlatform(
-                game.generation_zones[6].x, 
-                game.generation_zones[6].y, 
+                // game.generation_zones[6].x, 
+                // game.generation_zones[6].y, 
+                player.position.x + game.mouseX-game.canvasWidth/2,
+                game.mouseY,
                 3, 1, 
                 game.actualPlatforms, 
                 50, 
@@ -90,9 +92,12 @@ class Cards extends AnimatedObject {
 
 // Class to keep track of all the events and objects in the game
 class Game {
-    constructor(width, height) {
+    constructor(width, height, level) {
         this.canvasWidth = width;
         this.canvasHeight = height;
+        this.level = level;
+        this.mouseX = 0;
+        this.mouseY = 0;
         this.createEventListeners();  //Initializes the event lsiteners
     }
 
@@ -109,13 +114,13 @@ class Game {
             "background",
             45
         );
-        this.background.setSprite("../assets/Fondos/back_1.png",
+        this.background.setSprite(`../assets/Fondos/back_${gameConfig.actualDiff}.png`,
                                     new Rect(1376, 0, 1376, 768));
         //this.background.setAnimation(0, 44, true, 100);
 
         //Player
         this.player = new AnimatedPlayer(
-            new Vector(30, this.canvasHeight / 2),
+            new Vector(30, 0),
             48,
             64,
             "red",
@@ -133,7 +138,6 @@ class Game {
         gameConfig.elapsedTime = 0;
         this.player.damageCooldown = 0;
         this.scoreApplied = false;
-        console.log("init player");
         this.player.setSprite('../assets/sprites/blordrough_quartermaster-NESW.png',
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(gameConfig.playerSpeed);
@@ -147,6 +151,7 @@ class Game {
 
         this.platformSprite = new Image();
         this.platformSprite.src = "../../sprites/Plataformas/N1/Plataforma Básica N1.png";
+        for(let i = 0; i < 10; i++) {
         this.platform = new Cards(
             new Vector(0, 0),
             10,
@@ -155,11 +160,11 @@ class Game {
             5000 // Duration of the power-up effect
         );
         this.platformInventory.push(this.platform);  //Adds the platform to the inventory, so the player can use it when he wants
-
+        }
         //Funcion to connect front whit API
         //The objects that depends on DB to load, are here.
         const loadMap = async () => {
-            this.generation_zones = await initGenerationZones(1);
+            this.generation_zones = await initGenerationZones(this.level);
 
             this.powerUpInventory = await initCards(3);
             
@@ -417,17 +422,29 @@ class Game {
         //For the powerup, when "0" is pressed, the first power-up in the inventory is used
         window.addEventListener('keydown', (event) => {
             if (event.key == "0" && this.powerUpInventory.length > 0) {
-            const powerUpToUse = this.powerUpInventory.shift() // Remove the first power-up from the inventory
-            powerUpToUse.applyEffect(this.player,this);
-    }
-});
+                const powerUpToUse = this.powerUpInventory.shift() // Remove the first power-up from the inventory
+                powerUpToUse.applyEffect(this.player,this);
+            }
+        });
 
         window.addEventListener('keydown', (event) => {
             if (event.key == "9" && this.platformInventory.length > 0) {
-            const powerUpToUse = this.platformInventory.shift() // Remove the first platform from the inventory
-            powerUpToUse.applyEffect(this.player,this);
-    }
-});
+                const powerUpToUse = this.platformInventory.shift() // Remove the first platform from the inventory
+                powerUpToUse.applyEffect(this.player,this);
+            }
+        });
+
+        const canvas = document.querySelector('canvas');
+
+        canvas.addEventListener('click', (event) => {
+            if (this.platformInventory.length > 0 && gameConfig.gameLoad == true) {
+                this.mouseX = event.offsetX;
+                this.mouseY = event.offsetY;
+                const powerUpToUse = this.platformInventory.shift() // Remove the first platform from the inventory
+                powerUpToUse.applyEffect(this.player,this);
+            }
+            console.log(`Clic en X: ${event.offsetX}, Y: ${event.offsetY}`);
+        });
 
         
     }

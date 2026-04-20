@@ -52,7 +52,7 @@ class Introduction extends Phaser.Scene {
 
         //Button pressed
         button.on('pointerdown', () => {
-            this.scene.start('LoadingGame');   //Changes to this scene
+            this.scene.start('LoadingGame1');   //Changes to this scene
         });
 
         const styleHistory = {
@@ -190,7 +190,19 @@ class BadEnding1 extends Phaser.Scene {
 
         //Button pressed
         button.on('pointerdown', () => {
-            this.scene.start('MainMenu');   //Changes to this scene
+            this.cameras.main.fadeOut(3000);
+                const overMusic = this.sound.get('gameOverMusic');
+                if (overMusic && overMusic.isPlaying) {
+                    this.tweens.add({
+                        targets: overMusic,
+                        volume: 0,
+                        duration: 3000,
+                        onComplete: () => {
+                            this.scene.start('MainMenu');
+                            overMusic.stop();
+                        }
+                    });
+                } else {this.scene.start('MainMenu');}
         });
 
         const styleHistory = {
@@ -259,7 +271,19 @@ class BadEnding2 extends Phaser.Scene {
 
         //Button pressed
         button.on('pointerdown', () => {
-            this.scene.start('MainMenu');   //Changes to this scene
+            this.cameras.main.fadeOut(3000);
+                const overMusic = this.sound.get('gameOverMusic2');
+                if (overMusic && overMusic.isPlaying) {
+                    this.tweens.add({
+                        targets: overMusic,
+                        volume: 0,
+                        duration: 3000,
+                        onComplete: () => {
+                            this.scene.start('MainMenu');
+                            overMusic.stop();
+                        }
+                    });
+                } else {this.scene.start('MainMenu');}
         });
 
         const styleHistory = {
