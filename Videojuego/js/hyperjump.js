@@ -43,7 +43,7 @@ class Cards extends AnimatedObject {
 
 
     applyEffect(player,game) {
-        if (this.type == "Esprint N1") {
+        if (this.type == "Esprint") {
             player.setSpeed(player.speed * 1.5);
         setTimeout(() => { /*Had to google what setTimeout was, but it allows to
                             delay the execution of a function, in this case, to set
@@ -51,17 +51,32 @@ class Cards extends AnimatedObject {
                 player.setSpeed(player.speed / 1.5);
             }, this.duration);
         }
-        else if (this.type == "Doble Salto N1") {
+        else if (this.type == "Doble Salto") {
             player.setJumpForce(player.jumpForce * 1.5);
         setTimeout(() => {
                 player.setJumpForce(player.jumpForce / 1.5);
             }, this.duration);
         }
-        else if(this.type == "Plataforma") {
+        else if (this.type == "Bomba") {
+            game.enemies.splice(0, game.enemies.length); //Removes all the enemies in the game, simulating a bomb explosion that kills all the enemies on the screen
+        }
+        else if (this.type == "Vida Extra") {
+            gameConfig.lives += 1;
+        }
+        else if (this.type == "Escudo") {
+            player.damageCooldown = this.duration; //The player will be invulnerable for the duration of the power-up, simulating a shield
+        }
+        else if (this.type == "Jetpack") {
+            player.setJumpForce(player.jumpForce * 1.5);
+        setTimeout(() => {
+                player.setJumpForce(player.jumpForce / 1.5);
+            }, this.duration);
+        }
+        else if(this.type == "Plataforma Random") {
             //This power-up generates a temporary platform under the player, allowing him to jump again
             addPlatform(
-                // game.generation_zones[6].x, 
-                // game.generation_zones[6].y, 
+                //game.generation_zones[6].x, 
+                //game.generation_zones[6].y, 
                 player.position.x + game.mouseX-game.canvasWidth/2,
                 game.mouseY,
                 3, 1, 
@@ -99,7 +114,7 @@ class Game {
             "background",
             45
         );
-        this.background.setSprite(`../assets/Fondos/back_${gameConfig.actualDiff}.png`,
+        this.background.setSprite(`../Videojuego/assets/Fondos/back_${gameConfig.actualDiff}.png`,
                                     new Rect(1376, 0, 1376, 768));
         //this.background.setAnimation(0, 44, true, 100);
 
@@ -113,17 +128,17 @@ class Game {
             createPlayerMotion()
         );
 
-        this.player.lives = 3;
+        gameConfig.lives = 3;
         this.lifeSprite =  new Image();
-        this.lifeSprite.src = "../../sprites/Lives/lives.png";
-        this.player.Maxlives = 6;
+        this.lifeSprite.src = "../sprites/Lives/lives.png";
+        gameConfig.maxlives = 6;
         gameConfig.score = 0;
         this.isGameOver = false;
         this.startTime= Date.now();
         gameConfig.elapsedTime = 0;
         this.player.damageCooldown = 0;
         this.scoreApplied = false;
-        this.player.setSprite('../assets/sprites/blordrough_quartermaster-NESW.png',
+        this.player.setSprite('../Videojuego/assets/sprites/blordrough_quartermaster-NESW.png',
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(gameConfig.playerSpeed);
 
@@ -134,33 +149,14 @@ class Game {
         this.powerUpInventory = [];  //To store the power-ups the player can use
         this.platformInventory = [];  //To store the platforms the player can use
 
-        this.powerUpType = randomRange(2,0) == 0 ? "Esprint N1" : "Doble Salto N1";  //Randomly selects a power-up to generate in the game
-        this.powerUpSprite = new Image();
-        if(this.powerUpType == "Esprint N1") {
-            this.powerUpSprite.src = "../../sprites/PowerUps/Nivel1/Esprint N1.png";
-        }
-        else {
-            this.powerUpSprite.src = "../../sprites/PowerUps/Nivel1/Doble Salto N1.png";
-        }
-
-        this.powerUp = new Cards(
-            new Vector(0, 0),
-            10,
-            10,
-            this.powerUpType,
-            5000 // Duration of the power-up effect
-        );
-        this.powerUpInventory.push(this.powerUp);  //Adds the power-up to the inventory, so the player can use it when he wants
-        
-
         this.platformSprite = new Image();
-        this.platformSprite.src = "../../sprites/Plataformas/N1/Plataforma Básica N1.png";
+        this.platformSprite.src = "../sprites/Plataformas/N1/Plataforma Básica N1.png";
         for(let i = 0; i < 10; i++) {
         this.platform = new Cards(
             new Vector(0, 0),
             10,
             10,
-            "Plataforma",
+            "Plataforma Random",
             5000 // Duration of the power-up effect
         );
         this.platformInventory.push(this.platform);  //Adds the platform to the inventory, so the player can use it when he wants
@@ -170,8 +166,10 @@ class Game {
         const loadMap = async () => {
             this.generation_zones = await initGenerationZones(this.level);
 
+            this.powerUpInventory = await initCards();
+            
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
-            this.actualPlatforms.at(-1).setSprite('../assets/sprites/plataformas_auto/Final_Platform.png',
+            this.actualPlatforms.at(-1).setSprite('../Videojuego/assets/sprites/plataformas_auto/Final_Platform.png',
                             new Rect(0, 0, 1566, 688));
             //Enemies
             for(let i = 0; i < this.actualPlatforms.length; i++) {
@@ -187,7 +185,7 @@ class Game {
                         gameConfig.enemySpeed,
                         3
                     );
-                    enemy.setSprite("../assets/sprites/blue_alien.png");
+                    enemy.setSprite("../Videojuego/assets/sprites/blue_alien.png");
                     this.enemies.push(enemy);
                 }
             }
@@ -227,7 +225,7 @@ class Game {
         ctx.font = "18px Arial";
         ctx.textAlign = "left";
 
-        for(let i = 0; i < this.player.lives; i++){
+        for(let i = 0; i < gameConfig.lives; i++){
             ctx.drawImage(
                this.lifeSprite,
                margin + i * (lifeWidth + 5),
@@ -238,19 +236,20 @@ class Game {
         }
         
         
-        if(this.powerUpInventory.length > 0) {
+        for(let i = 0; i < this.powerUpInventory.length; i++) {
             ctx.drawImage(
-                this.powerUpSprite,
-                this.canvasWidth - margin - cardWidth,
+                this.powerUpInventory[i].sprite,
+                this.canvasWidth - margin - cardWidth - (i * (cardWidth + 10)),
                 margin,
                 cardWidth,
                 cardHeight
             );
         }
+
         if(this.platformInventory.length > 0) {
             ctx.drawImage(
                 this.platformSprite,
-                this.canvasWidth - margin - cardWidth*2,
+                this.canvasWidth - margin - cardWidth - (this.powerUpInventory.length * (cardWidth + 10)),
                 margin,
                 cardWidth,
                 cardHeight
@@ -333,13 +332,14 @@ class Game {
                 
                 if (enemy.receiveDamage()){
                     gameConfig.score += enemy.points;
+                    gameConfig.enemiesKilled += 1;
                     this.enemies.splice(this.enemies.indexOf(enemy), 1);
                 }
             }
             else if (overlap != false && this.player.damageCooldown <= 0){
-                this.player.lives--;
+                gameConfig.lives--;
                 this.player.damageCooldown = 1000;
-                if(this.player.lives <=0){
+                if(gameConfig.lives <=0){
                     //this.gameOver();
                     gameConfig.levelOver2 = true;
                 }

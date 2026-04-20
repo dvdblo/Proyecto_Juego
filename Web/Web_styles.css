@@ -11,6 +11,15 @@
     color: white;
 }
 
+#landing-page{
+    background-image: url("../Videojuego/assets/Fondos/back.png");
+    background-size: cover;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .navbar{
     background-color: indigo;
     height: 60px;
@@ -19,7 +28,7 @@
 }
 
 li{
-    display: inline-block;
+    display:inline-block;
 }
 
 li a{

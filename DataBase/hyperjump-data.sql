@@ -137,3 +137,4 @@ SELECT * FROM Partida;
 #TRUNCATE TABLE Plataforma;
 #TRUNCATE TABLE Nivel;
 #TRUNCATE TABLE ZonaGeneracion;
+

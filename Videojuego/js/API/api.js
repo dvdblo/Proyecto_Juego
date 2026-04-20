@@ -90,3 +90,42 @@ async function login(username, contraseña) {
         alert(data.error);
     }
 }
+
+async function createPartida(id_jugador) {
+    const res = await fetch('http://localhost:3000/partida/nueva', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_jugador })
+    });
+    const data = await res.json();
+    return data.id_partida; // Store this in gameConfig
+}
+
+async function savePartida(id_partida) {
+    await fetch('http://localhost:3000/partida/guardar', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id_partida,
+            puntaje_total: gameConfig.score,
+            niveles_completados: gameConfig.actualLevel, // assuming actualLevel starts at 1
+            enemigos_total: gameConfig.enemiesKilled, // add this to gameConfig
+            vidas_restantes: gameConfig.lives,  // add this to gameConfig
+            tiempo_total_seg: gameConfig.elapsedTime
+        })
+    });
+}
+
+async function continuarPartida(id_jugador) {
+    const res = await fetch(`http://localhost:3000/partida/continuar/${id_jugador}`);
+    const data = await res.json();
+    return data; // { found: true, partida: {...} } or { found: false }
+}
+
+async function finishPartida(id_partida) {
+    await fetch('http://localhost:3000/partida/terminar', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_partida })
+    });
+}
