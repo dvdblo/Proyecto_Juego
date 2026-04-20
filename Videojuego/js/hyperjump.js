@@ -155,7 +155,7 @@ class Game {
 
         this.platformSprite = new Image();
         this.platformSprite.src = "../../sprites/Plataformas/N1/Plataforma Básica N1.png";
-        for(let i = 0; i < 6; i++) {
+        for(let i = 0; i < 10; i++) {
         this.platform = new Cards(
             new Vector(0, 0),
             10,

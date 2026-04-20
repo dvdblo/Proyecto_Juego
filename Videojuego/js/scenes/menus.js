@@ -106,11 +106,11 @@ class MainMenu extends Phaser.Scene {
 
         //Button pressed
         buttonNew.on('pointerdown', () => {
-            this.cameras.main.fadeOut(0);
+            this.cameras.main.fadeOut(2000);
             this.tweens.add({
                 targets: this.menuMusic,
                 volume: 0,
-                duration: 0,
+                duration: 2000,
                 onComplete: () => {
                     this.scene.start('Introduction');  //Changes to this scene
                     this.menuMusic.stop();
