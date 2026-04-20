@@ -161,6 +161,23 @@ app.put('/partida/terminar', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Servidor en http://localhost:${port}`);
+// Login
+app.post('/login', async (req, res) => {
+    try {
+        const { username, contraseña } = req.body;
+        const [rows] = await pool.query('SELECT * FROM Jugador WHERE username = ?', [username]);
+        if (rows.length === 0) {
+            return res.status(401).json({ error: 'Información de inicio de sesión inválida' });
+        }
+
+        const correctPassword = rows[0].contraseña === contraseña;
+
+        if (!correctPassword) {
+            return res.status(401).json({ error: 'Información de inicio de sesión inválida' });
+        }
+
+        res.json({ success: true, username, id_jugador: rows[0].id_jugador });
+    } catch (error) {
+        res.status(500).json({ error: 'Información de inicio de sesión inválida' });
+    }
 });
