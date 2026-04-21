@@ -17,20 +17,113 @@ class Enemies extends AnimatedObject {
         this.platform = platform;
         this.lives = 1;
         this.points = 100;
+        this.alerted = false;
+        this.attackRange = 200;
+        this.setupByType();
+    }
+
+    setupByType(){
+        switch(this.type){
+            case "simple":
+                this.speed *=1.5;
+                this.points = 100;
+                break;
+            case "torreta":
+                this.speed = 0;
+                this.lives= 999;
+                this.shootCooldown = 2000;
+                this.lastShot = 0;
+                break;
+            case "alerta":
+                this.speed *= 0.5;
+                this.alertRadius = 150;
+                break;
+            case "divide":
+                this.lives = 1;
+                this.isDivisible = true;
+                break;
+        }
     }
     
-    update(deltaTime) {
-        this.position.x += this.speed * this.direction * deltaTime;
-        const leftBoundary = this.platform.position.x - this.platform.halfSize.x;
-        const rightBoundary = this.platform.position.x + this.platform.halfSize.x;
-        if (this.position.x - this.halfSize.x < leftBoundary || this.position.x + this.halfSize.x > rightBoundary) {
-            this.direction *= -1; // Reverse direction
+    update(deltaTime, game) {
+        if(this.type != "torreta"){
+            this.position.x += this.speed * this.direction * deltaTime;
+            const leftBoundary = this.platform.position.x - this.platform.halfSize.x;
+            const rightBoundary = this.platform.position.x + this.platform.halfSize.x;
+            if (this.position.x - this.halfSize.x < leftBoundary || this.position.x + this.halfSize.x > rightBoundary) {
+                this.direction *= -1; // Reverse direction
+            }
+        }
+
+        if(this.type == "torreta"){
+            this.lastShot += deltaTime;
+
+            if(this.lastShot>=this.shootCooldown){
+                this.shot(game);
+                this.lastShot = 0;
+            }
+        }
+
+        if(this.type == "alerta"){
+            const dx = game.player.position.x - this.position.x;
+
+            if(Math.abs(dx)<this.alertRadius){
+                this.alertEnemies(game);
+            }
         }
     }
 
-    receiveDamage(quantity = 1){
+    shot(game){
+        const dx = game.player.position.x - this.position.x;
+
+        if(Math.abs(dx) < this.attackRange){
+            console.log("Torreta dispara");
+
+            if(game.player.damageCooldown <=0){
+                gameConfig.lives--;
+                game.player.damageCooldown = 1000;
+            }
+        }
+    }
+
+    alertEnemies(game){
+        console.log("Perro alerta enemigos");
+
+        for (let enemy of game.enemies){
+            if(enemy.type == "simple" && !enemy.alerted){
+                enemy.alerted= true;
+                enemy.speed *= 1.2;
+            }
+        }
+    }
+
+    divide(game){
+        console.log("Enemigo se divide");
+
+        for (let i = 0; i<2; i++){
+            let newEnemy = new Enemies(this.platform, this.width * 0.7, this.height *0.7, this.color, "simple", this.speed * 1.2, 3);
+
+            if(i == 0){
+                 newEnemy.position.x = this.position.x - 10;
+            }
+            else{
+                newEnemy.position.x = this.position.x + 10;
+            }
+
+            game.enemies.push(newEnemy);
+        }
+    }
+
+    receiveDamage(quantity = 1, game){
         this.lives -=quantity;
-        return this.lives <=0;
+
+        if(this.lives<=0){
+            if(this.type == "divide"){
+                this.divide(game);
+            }
+            return true;
+        }
+        return false;
     }
 }
 
@@ -165,33 +258,54 @@ class Game {
         //The objects that depends on DB to load, are here.
         const loadMap = async () => {
             this.generation_zones = await initGenerationZones(this.level);
-
             this.powerUpInventory = await initCards();
             
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
             this.actualPlatforms.at(-1).setSprite('../Videojuego/assets/sprites/plataformas_auto/Final_Platform.png',
                             new Rect(0, 0, 1566, 688));
-            //Enemies
-            for(let i = 0; i < this.actualPlatforms.length; i++) {
+            
+            const enemiesData = await initEnemies(this.level);
+            console.log("ENEMIES DATA:", enemiesData);
+            function mapEnemyType(tipo){
+                if(!tipo) return "simple";
 
-                if(this.actualPlatforms[i].hostile == true) { //If the platform is hostile, an enemy is generated
-                    let platform = this.actualPlatforms[i];
-                    let enemy = new Enemies(
-                        platform,
-                        32,
-                        32,
-                        "red",
-                        "basic_enemy",
-                        gameConfig.enemySpeed,
-                        3
-                    );
-                    enemy.setSprite("../Videojuego/assets/sprites/blue_alien.png");
-                    this.enemies.push(enemy);
+                tipo = tipo.toLowerCase().trim();
+
+                switch(tipo){
+                    case "simple": return "simple";
+                    case "torreta": return "torreta";
+                    case "alerta": return "alerta";
+                    case "divide": return "divide";
+                    default: return "simple";
                 }
             }
-        }
-        await loadMap();
-    }
+
+            for(let data of enemiesData) {
+                console.log("ENEMY INDIVIDUAL:", data);
+                let platform = this.actualPlatforms[Math.floor(Math.random() * this.actualPlatforms.length)];
+                if(!platform){
+                    continue;
+                }
+                let enemy = new Enemies(
+                    platform,
+                    32,
+                    32,
+                    "red",
+                    mapEnemyType(data.tipo),
+                    gameConfig.enemySpeed,
+                    3
+                );
+                enemy.lives = data.vida_base;
+                enemy.damage = data["daño_base"];
+                enemy.attackRange = data.rango_ataque;
+                enemy.setSprite("../Videojuego/assets/sprites/blue_alien.png");
+                console.log(`Enemigo ${data.tipo} en X:${enemy.position.x} Y:${enemy.position.y}, plataforma en X:${platform.position.x} Y:${platform.position.y}`);
+                this.enemies.push(enemy);
+                console.log("ENEMY CREADO:", enemy);
+            }
+    };
+    await loadMap();
+}
 
     gameOver(){
             this.isGameOver=true;
@@ -278,7 +392,7 @@ class Game {
         
         //Player
         this.player.draw(ctx);
-
+        console.log("ENEMIES EN JUEGO:", this.enemies.length);
         for(let enemy of this.enemies) {
             enemy.draw(ctx);
         }
@@ -322,7 +436,7 @@ class Game {
                                           //While not, when player falls from a platform, there is a jump that should not be there
 
         for(let enemy of this.enemies) {
-            enemy.update(deltaTime);
+            enemy.update(deltaTime, this);
 
             let overlap = boxOverlap(this.player, enemy, deltaTime, 1);
             if(overlap == "top") {
@@ -330,7 +444,7 @@ class Game {
                 this.player.fallSpeed = 0;
                 this.player.onGround = true;
                 
-                if (enemy.receiveDamage()){
+                if (enemy.receiveDamage(1,this)){
                     gameConfig.score += enemy.points;
                     gameConfig.enemiesKilled += 1;
                     this.enemies.splice(this.enemies.indexOf(enemy), 1);

@@ -62,6 +62,14 @@ async function initPlatforms(auto, zones, unit) {  //auto = is auto_generated?
     return actualPlatforms;
 }
 
+async function initEnemies(level){
+    console.log("Buscando enemigos para nivel:", level);
+    const res = await fetch(`http://localhost:3000/enemigos/${level}`);
+    const data = await res.json();
+     console.log("ENEMIES DATA:", data);
+    return data;
+}
+
 async function register(username, contraseña, edad) {
     const response = await fetch('http://localhost:3000/register', {
         method: 'POST',
