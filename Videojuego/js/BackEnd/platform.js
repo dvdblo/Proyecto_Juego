@@ -20,7 +20,7 @@ app.use(express.json());
 const pool = mysql.createPool({
     host: '127.0.0.1',
     user: 'root',
-    password: 'Febrero_312',
+    password: 'Armasazar1',
     database: 'hyperjump'
 }).promise();
 
@@ -161,23 +161,21 @@ app.put('/partida/terminar', async (req, res) => {
     }
 });
 
-// Login
-app.post('/login', async (req, res) => {
-    try {
-        const { username, contraseña } = req.body;
-        const [rows] = await pool.query('SELECT * FROM Jugador WHERE username = ?', [username]);
-        if (rows.length === 0) {
-            return res.status(401).json({ error: 'Información de inicio de sesión inválida' });
-        }
+//Enemies by level
+app.get('/enemigos/:level', async (req, res) => {
+    try{
+        const level = parseInt(req.params.level); 
+        console.log("Nivel como número:", level);
+        const [enemies] = await pool.query('SELECT Enemigo.id_enemigo, Enemigo.nombre, Enemigo.tipo, Enemigo.descripcion, Enemigo.vida_base, Enemigo.daño_base, Enemigo.es_inmortal, Enemigo.rango_ataque, Enemigo.rango_deteccion, EnemigoNivel.cantidad_maxima FROM Enemigo JOIN EnemigoNivel ON Enemigo.id_enemigo = EnemigoNivel.id_enemigo JOIN Nivel ON EnemigoNivel.id_nivel = Nivel.id_nivel WHERE Nivel.numero_nivel = ?', [level]);
+        console.log("Enemies encontrados:", enemies.length);
+        res.json(enemies);
 
-        const correctPassword = rows[0].contraseña === contraseña;
-
-        if (!correctPassword) {
-            return res.status(401).json({ error: 'Información de inicio de sesión inválida' });
-        }
-
-        res.json({ success: true, username, id_jugador: rows[0].id_jugador });
     } catch (error) {
-        res.status(500).json({ error: 'Información de inicio de sesión inválida' });
+        console.error("ERROR COMPLETO:", error); 
+        res.status(500).json({ error: error.message }); 
     }
+});
+
+app.listen(port, () => {
+    console.log(`Servidor en http://localhost:${port}`);
 });

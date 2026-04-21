@@ -138,3 +138,21 @@ SELECT * FROM Partida;
 #TRUNCATE TABLE Nivel;
 #TRUNCATE TABLE ZonaGeneracion;
 
+USE hyperjump;
+INSERT INTO Enemigo 
+(nombre, tipo, descripcion, vida_base, daño_base, es_inmortal, rango_ataque, rango_deteccion)
+VALUES
+('Alien', 'simple', 'Más rápido y agresivo al enojarse, pero muere si lo pisas en la cabeza', 100, 20, 0, 0, 60),
+('Torreta Alien', 'torreta', 'Dispara en baja cadencia y no se mueve', 150, 15, 1, 1, 120),
+('Alien Perro', 'alerta', 'No ataca directamente, pero alerta a otros enemigos', 80, 0, 0, 0, 150), 
+('Slime Alien', 'divide', 'Se divide en dos al ser pisado, no muere', 60, 10, 1, 0, 40);
+
+INSERT INTO EnemigoNivel (id_nivel, id_enemigo, cantidad_maxima)
+VALUES
+(1, 1, 5),
+(1, 2, 2), 
+(1, 3, 3),
+(1, 4, 4);
+
+SELECT * FROM Enemigo;
+SELECT * FROM EnemigoNivel;
