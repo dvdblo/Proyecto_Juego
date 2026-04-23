@@ -258,15 +258,22 @@ BEGIN
 END $$
 DELIMITER ;
 
+
 DELIMITER $$
-CREATE TRIGGER aumentar_uso_carta
-AFTER INSERT ON CartaPartida
+CREATE TRIGGER cerrar_partida_activa
+BEFORE INSERT ON Partida
 FOR EACH ROW
 BEGIN
-    IF NEW.fue_usada = TRUE THEN
-        UPDATE CartaJugador
-        SET veces_usada_total = veces_usada_total + 1
-        WHERE id_carta = NEW.id_carta;
+    IF EXISTS (
+        SELECT *
+        FROM Partida
+        WHERE id_jugador = NEW.id_jugador
+          AND fecha_fin IS NULL LIMIT 1
+    ) THEN
+        UPDATE Partida
+        SET fecha_fin = NOW()
+        WHERE id_jugador = NEW.id_jugador
+          AND fecha_fin IS NULL;
     END IF;
 END $$
 DELIMITER ;
