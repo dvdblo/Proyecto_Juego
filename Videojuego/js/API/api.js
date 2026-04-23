@@ -8,7 +8,7 @@
 
 //Function to read and translate generation zones from DB to game
 //They are async functions so they can work properly with the connections (also async)
-async function initGenerationZones(level) {
+async function initGenerationZones(level, unit) {
     const res = await fetch(`http://localhost:3000/zonas/${level}`);  //It waits for a response (all the not async functions are still running)
     const data = await res.json();
 
@@ -16,7 +16,7 @@ async function initGenerationZones(level) {
 
     //Translate the zones from DB to zones game can understand
     for (const row of data) {
-        generation_zones.push(new generation_zone(row.coord_x, row.coord_y, row.hostil));
+        generation_zones.push(new generation_zone(row.coord_x*unit, row.coord_y*unit, row.hostil));
     }
     return generation_zones;
 }

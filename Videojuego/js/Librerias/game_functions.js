@@ -40,6 +40,7 @@ function boxOverlap(obj1, obj2, deltaTime, dephase) {
     if (!(L1 < R2 && R1 > L2 && T1 < B2 && B1 > T2)) {
         return false;
     }
+    
 
     //Previous limits
     const prevL1 = prevX - obj1.halfSize.x;

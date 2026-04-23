@@ -62,7 +62,7 @@ class Cards extends AnimatedObject {
             addPlatform(
                 // game.generation_zones[6].x, 
                 // game.generation_zones[6].y, 
-                player.position.x + game.mouseX-game.canvasWidth/2,
+                player.position.x + game.mouseX - game.canvasWidth / 2,
                 game.mouseY,
                 3, 1, 
                 game.actualPlatforms, 
@@ -168,7 +168,7 @@ class Game {
         //Funcion to connect front whit API
         //The objects that depends on DB to load, are here.
         const loadMap = async () => {
-            this.generation_zones = await initGenerationZones(this.level);
+            this.generation_zones = await initGenerationZones(this.level, gameConfig.unit);
 
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
             this.actualPlatforms.at(-1).setSprite('../assets/sprites/plataformas_auto/Final_Platform.png',
@@ -283,37 +283,12 @@ class Game {
         for(let enemy of this.enemies) {
             enemy.draw(ctx);
         }
-
-        // ctx.save();
-        // ctx.setTransform(1,0,0,1,0,0);
-        // if(this.isGameOver){
-        //     this.drawGameOver(ctx);
-        // }
-        // ctx.restore();
     }
-
-    // drawGameOver(ctx){
-    //     const centerX = this.canvasWidth / 2;
-    //     const centerY =  this.canvasHeight / 2;
-
-    //     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-    //     ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    //     ctx.fillStyle = "white";
-    //     ctx.textAlign = "center";
-    //     ctx.font = "bold 60px Arial";
-    //     ctx.textAlign = "center";
-    //     ctx.fillText("GAME OVER", centerX, centerY - 20);
-
-    //     ctx.font = "30px Arial";
-    //     ctx.fillText("Score: " + gameConfig.score, centerX, centerY + 20);
-
-    //     ctx.fillText("Time: " + gameConfig.elapsedTime + "s", centerX, centerY + 50);
-    // }
 
     //To update the position, sprites, collisions...
     update(deltaTime) {
         this.player.damageCooldown -= deltaTime;
-        //if(this.isGameOver) return;
+
         //Animate the background
         this.background.updateFrame(deltaTime);
 
@@ -435,17 +410,24 @@ class Game {
             }
         });
 
+        //For the mouse click
         const canvas = document.querySelector('canvas');
 
-        canvas.addEventListener('click', (event) => {
+        canvas.addEventListener('mousedown', (event) => {
             if (this.platformInventory.length > 0 && gameConfig.gameLoad == true) {
-                this.mouseX = event.offsetX;
-                this.mouseY = event.offsetY;
-                const powerUpToUse = this.platformInventory.shift() // Remove the first platform from the inventory
-                powerUpToUse.applyEffect(this.player,this);
+
+            //We need this for compatibitily with resolution change
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (event.clientX - rect.left) * (canvas.width / rect.width);
+            const mouseY = (event.clientY - rect.top) * (canvas.height / rect.height);
+
+            this.mouseX = mouseX;
+            this.mouseY = mouseY;
+
+            const powerUpToUse = this.platformInventory.shift();
+            powerUpToUse.applyEffect(this.player, this);
             }
-            console.log(`Clic en X: ${event.offsetX}, Y: ${event.offsetY}`);
-        });
+            });
 
         
     }

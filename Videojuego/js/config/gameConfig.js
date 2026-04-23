@@ -1,11 +1,12 @@
-
+let cWidth = 1400;
+let cHeight = 600;
 
 const gameConfig = {
-  canvasWidth: 1400,
-  canvasHeight: 600,
+  canvasWidth: cWidth,
+  canvasHeight: cHeight,
   levelSize: 4,
-  levelLenght: 1400*4,
-  unit: 50,
+  levelLenght: cWidth*4,
+  unit: cWidth/28,
   playerSpeed: 0.5,
   enemySpeed: 0.1,
   levelComplete: false,
@@ -15,7 +16,11 @@ const gameConfig = {
   elapsedTime: 0,
   actualLevel: 1,
   actualDiff : 1,
-  gameLoad: false
+  gameLoad: false,
+  letPause: false,
+  pause: false,
+  totalScore: 0,
+  musicVolume: 0
 };
 
 // Dictionary for the keys that will control player movement
@@ -62,3 +67,33 @@ function createPlayerMotion() {
         },
     };
 }
+
+//Pause Menu (it is with TAB and not with ESC, so there are no problems with the auto assignation of ESC for go out of the full screen)
+document.addEventListener('keydown', (event) => {
+            //For "Tab" (pause)
+            if (event.key === "Tab") {
+                event.preventDefault();
+                gameConfig.pause = !gameConfig.pause;
+            }
+});
+
+//Full Screen
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) {
+            container.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }
+});
+
+window.setResolution = function (width, height) {
+  // 1. Actualizas config
+  gameConfig.canvasWidth = width;
+  gameConfig.canvasHeight = height;
+
+  // 2. Phaser (acceso global al juego)
+  game.scale.resize(width, height);
+
+};

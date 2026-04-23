@@ -322,7 +322,7 @@ class GameOver1Screen extends Phaser.Scene {
 
         const textContinue = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
 
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, `Puntaje: ${gameConfig.score}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, `Puntaje de la partida: ${gameConfig.totalScore}`, textButton).setOrigin(0.5);
         this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.6, `Tiempo: ${gameConfig.elapsedTime}s`, textButton).setOrigin(0.5);
         
         button.on('pointerover', () => {
@@ -370,10 +370,12 @@ class GameOver2Screen extends Phaser.Scene {
     create() {
         let overMusic = this.sound.get('gameOverMusic2');
 
-        if (!overMusic) {
-            overMusic = this.sound.add('gameOverMusic2', {loop: true});
-            overMusic.play();
+        if (overMusic) {
+            overMusic.destroy();
         }
+
+        overMusic = this.sound.add('gameOverMusic2', { loop: true });
+        overMusic.play();
 
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundLose2');
         
@@ -395,7 +397,7 @@ class GameOver2Screen extends Phaser.Scene {
 
         const textContinue = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
 
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, `Puntaje: ${gameConfig.score}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, `Puntaje de la partida: ${gameConfig.totalScore}`, textButton).setOrigin(0.5);
         this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.6, `Tiempo: ${gameConfig.elapsedTime}s`, textButton).setOrigin(0.5);
         
         button.on('pointerover', () => {
