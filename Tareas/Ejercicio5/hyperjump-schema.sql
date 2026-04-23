@@ -279,16 +279,25 @@ BEGIN
 END $$
 DELIMITER ;
 
--- Trigger que actualiza el número de mejoras de una carta
+-- Trigger que añade fecha_fin a una partida anterior cuando se crea una nueva
 DELIMITER $$
-CREATE TRIGGER actualizar_mejoras_carta
-BEFORE UPDATE ON CartaJugador
+CREATE TRIGGER cerrar_partida_activa
+BEFORE INSERT ON Partida
 FOR EACH ROW
 BEGIN
-    IF NEW.nivel_actual > OLD.nivel_actual THEN
-        SET NEW.veces_mejorada = OLD.veces_mejorada + (NEW.nivel_actual - OLD.nivel_actual);
+    IF EXISTS (
+        SELECT *
+        FROM Partida
+        WHERE id_jugador = NEW.id_jugador
+          AND fecha_fin IS NULL LIMIT 1
+    ) THEN
+        UPDATE Partida
+        SET fecha_fin = NOW()
+        WHERE id_jugador = NEW.id_jugador
+          AND fecha_fin IS NULL;
     END IF;
 END $$
+
 DELIMITER ;
 
 -- Trigger que incrementa el uso de una carta al utilizarla en partida
