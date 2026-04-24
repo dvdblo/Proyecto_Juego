@@ -10,37 +10,39 @@
 
 class Enemies extends AnimatedObject {
     constructor(platform, width, height, color, type, speed, dephase) {
-        const position = new Vector(platform.position.x, platform.position.y - platform.halfSize.y/dephase - height/2);
+        const enemyVisualOffsetY = 8;
+        const position = new Vector(platform.position.x, platform.position.y - platform.halfSize.y/dephase - height/2 + enemyVisualOffsetY);
         super(position, width, height, color, type);
         this.speed = speed;
-        this.direction = 1; // 1 for right, -1 for left
+        this.direction = 1; 
         this.platform = platform;
         this.lives = 1;
         this.points = 100;
         this.alerted = false;
-        this.attackRange = 200;
-        this.setupByType();
+        this.attackRange = 0;
+        this.detectionRange = 0;
+        this.damage = 0;
+        this.isImmortal = false;
     }
 
     setupByType(){
         switch(this.type){
             case "simple":
-                this.speed *=1.5;
-                this.points = 100;
+                this.points = 200;
                 break;
             case "torreta":
                 this.speed = 0;
-                this.lives= 999;
                 this.shootCooldown = 2000;
                 this.lastShot = 0;
                 break;
             case "alerta":
-                this.speed *= 0.5;
-                this.alertRadius = 150;
+                this.points = 80;
+                this.alertRadius = this.detectionRange;
                 break;
             case "divide":
-                this.lives = 1;
                 this.isDivisible = true;
+                this.hasDivided = false;
+                 this.lives = 1; 
                 break;
         }
     }
@@ -51,7 +53,7 @@ class Enemies extends AnimatedObject {
             const leftBoundary = this.platform.position.x - this.platform.halfSize.x;
             const rightBoundary = this.platform.position.x + this.platform.halfSize.x;
             if (this.position.x - this.halfSize.x < leftBoundary || this.position.x + this.halfSize.x > rightBoundary) {
-                this.direction *= -1; // Reverse direction
+                this.direction *= -1;
             }
         }
 
@@ -75,14 +77,24 @@ class Enemies extends AnimatedObject {
 
     shot(game){
         const dx = game.player.position.x - this.position.x;
+        const dy = game.player.position.y - this.position.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if(Math.abs(dx) < this.attackRange){
+        if(distance < this.attackRange){
             console.log("Torreta dispara");
-
-            if(game.player.damageCooldown <=0){
-                gameConfig.lives--;
-                game.player.damageCooldown = 1000;
+            let direction = 1;
+            if(game.player.position.x < this.position.x){
+                direction = -1;
             }
+
+            let offsetX = this.halfSize.x;
+            if(direction == -1){
+                offsetX = -this.halfSize.x;
+            }
+            let bullet = new Bullet(new Vector(this.position.x +offsetX*2, this.position.y),45,25,"yellow",0.25,direction);
+            console.log("BALA CREADA:", bullet);
+            console.log("TOTAL BALAS:", game.bullets.length);
+            game.bullets.push(bullet);
         }
     }
 
@@ -92,37 +104,53 @@ class Enemies extends AnimatedObject {
         for (let enemy of game.enemies){
             if(enemy.type == "simple" && !enemy.alerted){
                 enemy.alerted= true;
-                enemy.speed *= 1.2;
+                enemy.speed *= 1.5;
+                enemy.color = "orange";
             }
         }
     }
 
     divide(game){
+        if(this.hasDivided) return;
+
         console.log("Enemigo se divide");
+        this.hasDivided = true;
 
         for (let i = 0; i<2; i++){
-            let newEnemy = new Enemies(this.platform, this.width * 0.7, this.height *0.7, this.color, "simple", this.speed * 1.2, 3);
-
+            let newEnemy = new Enemies(this.platform, 36, 36, this.color, "simple", this.speed * 1.2, 16);
             if(i == 0){
-                 newEnemy.position.x = this.position.x - 10;
+                newEnemy.position.x = this.position.x - 60;
+                newEnemy.direction = -1;
             }
             else{
-                newEnemy.position.x = this.position.x + 10;
+                newEnemy.position.x = this.position.x + 60;
+                newEnemy.direction = 1;
             }
-
-            game.enemies.push(newEnemy);
+            newEnemy.position.y = this.position.y + 20;
+            newEnemy.lives = 1;
+            newEnemy.damage = 10;
+            newEnemy.points = 50;
+            newEnemy.isImmortal = false;
+            newEnemy.alerted = false;
+            newEnemy.setSprite("../Videojuego/assets/sprites/slime_alien.png");
+            game.newEnemies.push(newEnemy);
         }
     }
 
     receiveDamage(quantity = 1, game){
-        this.lives -=quantity;
-
-        if(this.lives<=0){
-            if(this.type == "divide"){
-                this.divide(game);
-            }
-            return true;
+        if(this.type == "divide" && !this.hasDivided){
+            this.divide(game);
+            this.hasDivided = true;
+            return "divided";
         }
+        if(this.isImmortal){
+            return false;
+        }
+        this.lives -=quantity;
+        if(this.lives <= 0){
+            return "dead";
+        }
+
         return false;
     }
 }
@@ -185,7 +213,20 @@ class Cards extends AnimatedObject {
         }   
     }
 }
+class Bullet extends AnimatedObject {
+    constructor(position, width, height, color, speed, direction) {
+        super(position, width, height, color, "bullet");
 
+        this.speed = speed;
+        this.direction = direction;
+        this.damage = 1;
+        this.setSprite("../Videojuego/assets/sprites/bullet.png");
+    }
+
+    update(deltaTime) {
+        this.position.x += this.speed * this.direction * deltaTime;
+    }
+}
 
 // Class to keep track of all the events and objects in the game
 class Game {
@@ -195,6 +236,8 @@ class Game {
         this.level = level;
         this.mouseX = 0;
         this.mouseY = 0;
+        this.bullets = [];
+        this.newEnemies = [];
         this.createEventListeners();  //Initializes the event lsiteners
     }
 
@@ -294,26 +337,61 @@ class Game {
                     default: return "simple";
                 }
             }
+            function getEnemySprite(tipo){
+                switch(tipo){
+                    case "simple":
+                        return "../Videojuego/assets/sprites/blue_alien.png";
+                    case "torreta":
+                        return "../Videojuego/assets/sprites/torreta_alien.png";
+                    case "alerta":
+                        return "../Videojuego/assets/sprites/alien_perro.png";
+                    case "divide":
+                        return "../Videojuego/assets/sprites/slime_alien.png";
+                    default:
+                        return "../Videojuego/assets/sprites/blue_alien.png";
+                }
+            }
 
+            let hostilPlatforms = this.actualPlatforms.filter(platform => platform.hostil == true);
             for(let data of enemiesData) {
                 console.log("ENEMY INDIVIDUAL:", data);
-                let platform = this.actualPlatforms[Math.floor(Math.random() * this.actualPlatforms.length)];
-                if(!platform){
+                if(hostilPlatforms.length == 0){
+                    console.log("No hay plataformas hostiles para generar enemigos");
                     continue;
                 }
+                let platform = hostilPlatforms[Math.floor(Math.random() * hostilPlatforms.length)];
+                let enemyType = mapEnemyType(data.tipo);
+                let width = 32;
+                let height = 32;
+                if(enemyType == "torreta"){
+                    width = 80;
+                    height = 80;
+                }
+                else if(enemyType == "alerta"){
+                    width = 80;
+                    height = 80;
+                }
+                else if(enemyType == "divide"){
+                    width = 60;
+                    height = 60;
+                }
+
                 let enemy = new Enemies(
                     platform,
-                    32,
-                    32,
+                    width,
+                    height,
                     "red",
-                    mapEnemyType(data.tipo),
+                    enemyType,
                     gameConfig.enemySpeed,
                     (platform.size.y/gameConfig.unit < 12) ? 4 : 1.3
                 );
                 enemy.lives = data.vida_base;
                 enemy.damage = data["daño_base"];
-                enemy.attackRange = data.rango_ataque;
-                enemy.setSprite("../Videojuego/assets/sprites/blue_alien.png");
+                enemy.isImmortal = data.es_inmortal;
+                enemy.attackRange = 500;
+                enemy.detectionRange = data.rango_deteccion;
+                enemy.setupByType();
+                enemy.setSprite(getEnemySprite(enemyType));
                 console.log(`Enemigo ${data.tipo} en X:${enemy.position.x} Y:${enemy.position.y}, plataforma en X:${platform.position.x} Y:${platform.position.y}`);
                 this.enemies.push(enemy);
                 console.log("ENEMY CREADO:", enemy);
@@ -407,10 +485,29 @@ class Game {
         
         //Player
         this.player.draw(ctx);
+
+        //Enemies
         console.log("ENEMIES EN JUEGO:", this.enemies.length);
         for(let enemy of this.enemies) {
             enemy.draw(ctx);
         }
+<<<<<<< HEAD
+
+        //Bullets
+        for(let bullet of this.bullets){
+            bullet.draw(ctx);
+        }
+
+        
+
+        // ctx.save();
+        // ctx.setTransform(1,0,0,1,0,0);
+        // if(this.isGameOver){
+        //     this.drawGameOver(ctx);
+        // }
+        // ctx.restore();
+=======
+>>>>>>> a442946ebeb6b64b8474de5b96f69f2fe898179c
     }
 
     //To update the position, sprites, collisions...
@@ -435,7 +532,13 @@ class Game {
                 this.player.fallSpeed = 0;
                 this.player.onGround = true;
                 
-                if (enemy.receiveDamage(1,this)){
+                let damageResult=enemy.receiveDamage(1, this);
+                if (damageResult == "divided"){
+                    gameConfig.score += enemy.points;
+                    gameConfig.enemiesKilled += 1;
+                    this.enemies.splice(this.enemies.indexOf(enemy), 1);
+                }
+                else if(damageResult == "dead"){
                     gameConfig.score += enemy.points;
                     gameConfig.enemiesKilled += 1;
                     this.enemies.splice(this.enemies.indexOf(enemy), 1);
@@ -444,9 +547,25 @@ class Game {
             else if (overlap != false && this.player.damageCooldown <= 0){
                 gameConfig.lives--;
                 this.player.damageCooldown = 1000;
+                if(enemy.type != "torreta"){
+                    gameConfig.lives -= enemy.damage;
+                    this.player.damageCooldown = 1000;
+                } 
                 if(gameConfig.lives <=0){
                     //this.gameOver();
                     gameConfig.levelOver2 = true;
+                }
+            }
+        }
+        for(let bullet of this.bullets){
+            bullet.update(deltaTime);
+            let overlap = boxOverlap(this.player, bullet, deltaTime, 1);
+            if(overlap != false && this.player.damageCooldown <= 0){
+                gameConfig.lives -= bullet.damage;
+                this.player.damageCooldown = 1000;
+                this.bullets.splice(this.bullets.indexOf(bullet), 1);
+                if(gameConfig.lives<=0){
+                    gameConfig.levelOver2=true;
                 }
             }
         }
@@ -490,6 +609,10 @@ class Game {
                 }
             }
         }
+        for(let newEnemy of this.newEnemies){
+            this.enemies.push(newEnemy);
+        }
+        this.newEnemies = [];
     }
 
     //To create the parallel events to detect the keys
