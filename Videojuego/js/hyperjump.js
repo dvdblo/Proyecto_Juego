@@ -196,14 +196,18 @@ class Cards extends AnimatedObject {
         else if(this.type == "Plataforma Random") {
             //This power-up generates a temporary platform under the player, allowing him to jump again
             addPlatform(
-                //game.generation_zones[6].x, 
-                //game.generation_zones[6].y, 
-                player.position.x + game.mouseX-game.canvasWidth/2,
+                // game.generation_zones[6].x, 
+                // game.generation_zones[6].y, 
+                player.position.x + game.mouseX - game.canvasWidth / 2,
                 game.mouseY,
                 3, 1, 
                 game.actualPlatforms, 
                 50, 
-                true
+                true,
+                1,
+                IMG[`p1`].xIMG, 
+                IMG[`p1`].yIMG
+
             );
 
         }   
@@ -254,6 +258,17 @@ class Game {
                                     new Rect(1376, 0, 1376, 768));
         //this.background.setAnimation(0, 44, true, 100);
 
+        this.decoration_floor = new AnimatedObject(
+            new Vector(this.canvasWidth / 2, this.canvasHeight / 1.1),
+            this.canvasWidth + this.canvasWidth*0.1,
+            this.canvasHeight/3,
+            "gray",
+            "background",
+            45
+        );
+        this.decoration_floor.setSprite(`../Videojuego/assets/Decoracion/decoracion_suelo_${gameConfig.actualDiff}.png`,
+                                    new Rect(2027, 0, 2027, 242));
+
         //Player
         this.player = new AnimatedPlayer(
             new Vector(30, 0),
@@ -300,7 +315,7 @@ class Game {
         //Funcion to connect front whit API
         //The objects that depends on DB to load, are here.
         const loadMap = async () => {
-            this.generation_zones = await initGenerationZones(this.level);
+            this.generation_zones = await initGenerationZones(this.level, gameConfig.unit);
             this.powerUpInventory = await initCards();
             
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
@@ -368,7 +383,7 @@ class Game {
                     "red",
                     enemyType,
                     gameConfig.enemySpeed,
-                    3
+                    (platform.size.y/gameConfig.unit < 12) ? 4 : 1.3
                 );
                 enemy.lives = data.vida_base;
                 enemy.damage = data["daño_base"];
@@ -476,6 +491,7 @@ class Game {
         for(let enemy of this.enemies) {
             enemy.draw(ctx);
         }
+<<<<<<< HEAD
 
         //Bullets
         for(let bullet of this.bullets){
@@ -490,32 +506,17 @@ class Game {
         //     this.drawGameOver(ctx);
         // }
         // ctx.restore();
+=======
+>>>>>>> a442946ebeb6b64b8474de5b96f69f2fe898179c
     }
-
-    // drawGameOver(ctx){
-    //     const centerX = this.canvasWidth / 2;
-    //     const centerY =  this.canvasHeight / 2;
-
-    //     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-    //     ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    //     ctx.fillStyle = "white";
-    //     ctx.textAlign = "center";
-    //     ctx.font = "bold 60px Arial";
-    //     ctx.textAlign = "center";
-    //     ctx.fillText("GAME OVER", centerX, centerY - 20);
-
-    //     ctx.font = "30px Arial";
-    //     ctx.fillText("Score: " + gameConfig.score, centerX, centerY + 20);
-
-    //     ctx.fillText("Time: " + gameConfig.elapsedTime + "s", centerX, centerY + 50);
-    // }
 
     //To update the position, sprites, collisions...
     update(deltaTime) {
         this.player.damageCooldown -= deltaTime;
-        //if(this.isGameOver) return;
+
         //Animate the background
         this.background.updateFrame(deltaTime);
+        this.decoration_floor.updateFrame(deltaTime);
 
         //Move the player
         this.player.update(deltaTime, {width:this.canvasWidth, height:this.canvasHeight});
@@ -582,7 +583,7 @@ class Game {
 
             if(platform.collision == true) {
                 
-                const dephase = 3;  //To move the collision with the platform. Allows the player to be in a pleasant visual spot
+                let dephase = (platform.size.y/gameConfig.unit < 12) ? 4 : 1.3;  //To move the collision with the platform. Allows the player to be in a pleasant visual spot
 
                 let overlap = boxOverlap(this.player, platform, deltaTime, dephase); //Checks the direction of the collision
 
@@ -662,17 +663,24 @@ class Game {
             }
         });
 
+        //For the mouse click
         const canvas = document.querySelector('canvas');
 
-        canvas.addEventListener('click', (event) => {
+        canvas.addEventListener('mousedown', (event) => {
             if (this.platformInventory.length > 0 && gameConfig.gameLoad == true) {
-                this.mouseX = event.offsetX;
-                this.mouseY = event.offsetY;
-                const powerUpToUse = this.platformInventory.shift() // Remove the first platform from the inventory
-                powerUpToUse.applyEffect(this.player,this);
+
+            //We need this for compatibitily with resolution change
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (event.clientX - rect.left) * (canvas.width / rect.width);
+            const mouseY = (event.clientY - rect.top) * (canvas.height / rect.height);
+
+            this.mouseX = mouseX;
+            this.mouseY = mouseY;
+
+            const powerUpToUse = this.platformInventory.shift();
+            powerUpToUse.applyEffect(this.player, this);
             }
-            console.log(`Clic en X: ${event.offsetX}, Y: ${event.offsetY}`);
-        });
+            });
 
         
     }

@@ -15,7 +15,7 @@ class Level extends Phaser.Scene {
     }
 
     create(data) {
-        gameConfig.gameLoad = true;
+        gameConfig.pause = false;
 
         if (!this.levelMusic || !this.levelMusic.isPlaying) {
             this.levelMusic = this.sound.add(`levelMusic${gameConfig.actualDiff}`, { loop: true });
@@ -40,6 +40,8 @@ class Level extends Phaser.Scene {
 
     //Main loop for the game (It used to be a function outside of Phaser, but now it's the one that controls the loop)
     update(time, delta) {
+        gameConfig.gameLoad = true;
+        gameConfig.letPause = true;
 
         this.ctx.clearRect(0, 0, gameConfig.canvasWidth, gameConfig.canvasHeight);
 
@@ -51,6 +53,7 @@ class Level extends Phaser.Scene {
 
         //We draw the background outside the draw function to maintain it static
         this.game.background.draw(this.ctx);
+        this.game.decoration_floor.draw(this.ctx);
 
         //Calculates the position of the camera (implemented like a dephase of the drawing)
         const cameraX = gameConfig.canvasWidth / 2 - this.game.player.position.x;
@@ -69,20 +72,33 @@ class Level extends Phaser.Scene {
         if(gameConfig.levelComplete == true) {
             gameConfig.levelComplete = false;
             gameConfig.gameLoad = false;
+            gameConfig.letPause = false;
+            gameConfig.totalScore += gameConfig.score;
             this.scene.start(`WinScreen${gameConfig.actualDiff}`);
             this.levelMusic.stop();
         }
         if(gameConfig.levelOver1 == true) {
             gameConfig.levelOver1 = false;
             gameConfig.gameLoad = false;
+            gameConfig.letPause = false;
+            gameConfig.totalScore += gameConfig.score;
             this.scene.start('GameOver1Screen');
             this.levelMusic.stop();
         }
         if(gameConfig.levelOver2 == true) {
             gameConfig.levelOver2 = false;
             gameConfig.gameLoad = false;
+            gameConfig.letPause = false;
+            gameConfig.totalScore += gameConfig.score;
             this.scene.start('GameOver2Screen');
             this.levelMusic.stop();
+        }
+        if(gameConfig.pause && gameConfig.letPause) {
+            gameConfig.letPause = false;
+            gameConfig.gameLoad = false;
+            this.scene.pause('Level');
+            this.scene.launch('PauseMenu');
+            this.scene.bringToTop('PauseMenu');
         }
     }
 }
