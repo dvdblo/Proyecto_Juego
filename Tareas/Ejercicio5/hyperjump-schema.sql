@@ -1,7 +1,9 @@
+-- CREACION DE BASE DE DATOS
 DROP DATABASE IF EXISTS hyperjump;
 CREATE DATABASE hyperjump;
 USE hyperjump;
 
+-- Tabla de jugadores del juego
 CREATE TABLE Jugador(id_jugador INT AUTO_INCREMENT,
     username VARCHAR(50) NOT NULL,
 	contraseña VARCHAR(15) NOT NULL,
@@ -12,6 +14,7 @@ CREATE TABLE Jugador(id_jugador INT AUTO_INCREMENT,
     CONSTRAINT uq_jugador_username UNIQUE (username)
     ) ENGINE=InnoDB;
 
+-- Tabla de estadísticas de cada jugador
 CREATE TABLE Estadisticas(id_estadistica INT AUTO_INCREMENT,
     id_jugador INT NOT NULL,
     enemigos_eliminados MEDIUMINT UNSIGNED DEFAULT 0,
@@ -28,6 +31,7 @@ CREATE TABLE Estadisticas(id_estadistica INT AUTO_INCREMENT,
     CONSTRAINT fk_estadisticas_jugador FOREIGN KEY (id_jugador) REFERENCES Jugador(id_jugador) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de partidas jugadas
 CREATE TABLE Partida(id_partida INT AUTO_INCREMENT,
     id_jugador INT NOT NULL,
     fecha_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -42,6 +46,7 @@ CREATE TABLE Partida(id_partida INT AUTO_INCREMENT,
     CONSTRAINT fk_partida_jugador FOREIGN KEY (id_jugador) REFERENCES Jugador(id_jugador) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de niveles del juego
 CREATE TABLE Nivel(id_nivel INT AUTO_INCREMENT,
     numero_nivel TINYINT UNSIGNED NOT NULL,
     dificultad ENUM('facil', 'medio', 'dificil') NOT NULL,
@@ -49,6 +54,7 @@ CREATE TABLE Nivel(id_nivel INT AUTO_INCREMENT,
     CONSTRAINT pk_nivel PRIMARY KEY(id_nivel)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de jefes por nivel
 CREATE TABLE JefeNivel(id_jefe_nivel INT AUTO_INCREMENT,
 	id_nivel INT NOT NULL,
     nombre_jefe VARCHAR(50) NOT NULL,
@@ -56,6 +62,7 @@ CREATE TABLE JefeNivel(id_jefe_nivel INT AUTO_INCREMENT,
     CONSTRAINT fk_JefeNivel_nivel FOREIGN KEY (id_nivel) REFERENCES Nivel(id_nivel) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de relación entre nivel y partida
 CREATE TABLE NivelPartida(id_nivel_partida INT AUTO_INCREMENT,
     id_partida INT NOT NULL,
     id_nivel INT NOT NULL,
@@ -72,6 +79,7 @@ CREATE TABLE NivelPartida(id_nivel_partida INT AUTO_INCREMENT,
     CONSTRAINT fk_NivelPartida_nivel FOREIGN KEY (id_nivel) REFERENCES Nivel(id_nivel) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de cartas disponibles en el juego
 CREATE TABLE Carta(id_carta INT AUTO_INCREMENT,
     descripcion VARCHAR(100) NOT NULL,
     nivel_maximo TINYINT UNSIGNED NOT NULL,
@@ -79,6 +87,7 @@ CREATE TABLE Carta(id_carta INT AUTO_INCREMENT,
     CONSTRAINT pk_Carta PRIMARY KEY(id_carta)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de cartas asignadas a jugadores
 CREATE TABLE CartaJugador(id_carta_jugador INT AUTO_INCREMENT,
     id_jugador INT NOT NULL,
     id_carta INT NOT NULL,
@@ -92,6 +101,7 @@ CREATE TABLE CartaJugador(id_carta_jugador INT AUTO_INCREMENT,
     CONSTRAINT uq_carta_jugador UNIQUE (id_jugador, id_carta)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de cartas utilizadas en partidas
 CREATE TABLE CartaPartida(id_carta_partida INT AUTO_INCREMENT,
     id_nivel_partida INT NOT NULL,
     id_carta INT NOT NULL,
@@ -105,6 +115,7 @@ CREATE TABLE CartaPartida(id_carta_partida INT AUTO_INCREMENT,
     CONSTRAINT fk_CartaPartida_carta FOREIGN KEY (id_carta) REFERENCES Carta(id_carta) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de enemigos del juego
 CREATE TABLE Enemigo(id_enemigo INT AUTO_INCREMENT,
     nombre VARCHAR(60) NOT NULL,
     tipo VARCHAR(60) NOT NULL,
@@ -118,6 +129,7 @@ CREATE TABLE Enemigo(id_enemigo INT AUTO_INCREMENT,
     CONSTRAINT uq_enemigo_nombre UNIQUE (nombre)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de enemigos por nivel
 CREATE TABLE EnemigoNivel(id_enemigo_nivel INT AUTO_INCREMENT,
     id_nivel INT NOT NULL,
     id_enemigo INT NOT NULL,
@@ -128,6 +140,7 @@ CREATE TABLE EnemigoNivel(id_enemigo_nivel INT AUTO_INCREMENT,
     CONSTRAINT uq_enemigo_nivel UNIQUE (id_nivel, id_enemigo)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de plataformas del juego
 CREATE TABLE Plataforma(id_plataforma INT AUTO_INCREMENT,
     id_carta INT,
     nombre VARCHAR(60) NOT NULL,
@@ -137,6 +150,7 @@ CREATE TABLE Plataforma(id_plataforma INT AUTO_INCREMENT,
     CONSTRAINT fk_Plataforma_carta FOREIGN KEY (id_carta) REFERENCES Carta(id_carta) ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de niveles de plataformas
 CREATE TABLE PlataformaNivel(id_plataforma_nivel INT AUTO_INCREMENT,
     id_plataforma INT NOT NULL,
     nivel_plataforma TINYINT UNSIGNED NOT NULL,
@@ -150,6 +164,7 @@ CREATE TABLE PlataformaNivel(id_plataforma_nivel INT AUTO_INCREMENT,
     CONSTRAINT uq_plataforma_nivel UNIQUE (id_plataforma, nivel_plataforma)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de power-ups
 CREATE TABLE PowerUp(id_powerUp INT AUTO_INCREMENT,
     id_carta INT NOT NULL,
     nombre VARCHAR(60) NOT NULL,
@@ -157,6 +172,7 @@ CREATE TABLE PowerUp(id_powerUp INT AUTO_INCREMENT,
     CONSTRAINT fk_PowerUp_carta FOREIGN KEY (id_carta) REFERENCES Carta(id_carta) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de niveles de power-ups
 CREATE TABLE PowerUpNivel(id_powerup_nivel INT AUTO_INCREMENT,
     id_powerUp INT NOT NULL,
     nivel_powerUp TINYINT UNSIGNED NOT NULL,
@@ -170,6 +186,7 @@ CREATE TABLE PowerUpNivel(id_powerup_nivel INT AUTO_INCREMENT,
     CONSTRAINT uq_powerup_nivel UNIQUE (id_powerUp, nivel_powerUp)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Tabla de zonas de generación
 CREATE TABLE ZonaGeneracion(id_zona INT AUTO_INCREMENT,
 	id_nivel INT NOT NULL,
     coord_x SMALLINT,
@@ -179,53 +196,67 @@ CREATE TABLE ZonaGeneracion(id_zona INT AUTO_INCREMENT,
     CONSTRAINT fk_ZonaGeneracion_nivel FOREIGN KEY (id_nivel) REFERENCES Nivel(id_nivel) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-#View
+-- VIEWS
+
+-- Vista que muestra jugadores junto con sus estadísticas
 CREATE VIEW jugadores_estadisticas AS
 SELECT A.id_jugador, A.username, A.edad, A.fecha_registro, B.enemigos_eliminados, B.cartas_usadas, B.cartas_mejoradas, B.victorias, B.derrotas, B.tiempo_jugado, B.nivel_maximo_alcanzado, B.puntuacion_maxima
 FROM Jugador AS A INNER JOIN Estadisticas AS B ON A.id_jugador = B.id_jugador;
 
+-- Vista que muestra partidas junto con su jugador
 CREATE VIEW partidas_jugador AS
 SELECT A.id_partida, B.id_jugador, B.username, A.fecha_inicio, A.fecha_fin, A.tiempo_total_seg, A.puntaje_total, A.niveles_completados, A.enemigos_total, A.vidas_restantes
 FROM Partida AS A INNER JOIN Jugador AS B ON A.id_jugador = B.id_jugador;
 
+-- Vista que muestra detalle de niveles jugados en cada partida
 CREATE VIEW niveles_partida AS
 SELECT A.id_nivel_partida, A.id_partida, B.id_nivel, B.numero_nivel, B.dificultad, A.puntaje_nivel, A.tiempo_segundos, A.enemigos_eliminados, A.cartas_usadas, A.cartas_no_usadas, A.multiplicador_tiempo, A.completado
 FROM NivelPartida AS A INNER JOIN Nivel AS B ON A.id_nivel = B.id_nivel;
 
+-- Vista que muestra cartas que tiene cada jugador
 CREATE VIEW cartas_jugador AS
 SELECT A.id_carta_jugador, B.id_jugador, B.username, C.id_carta, C.descripcion, C.nivel_maximo, C.dificultad_requerida, A.nivel_actual, A.veces_mejorada, A.veces_usada_total
 FROM CartaJugador AS A INNER JOIN Jugador AS B ON A.id_jugador = B.id_jugador INNER JOIN Carta AS C ON A.id_carta = C.id_carta;
 
+-- Vista que muestra cartas usadas en partidas
 CREATE VIEW cartas_partida AS
 SELECT A.id_carta_partida, A.id_nivel_partida, A.id_carta, B.descripcion, A.nivel_carta_repartir, A.fue_usada, A.fue_almacenada, A.veces_usada
 FROM CartaPartida AS A INNER JOIN Carta AS B ON A.id_carta = B.id_carta;
 
+-- Vista que muestra enemigos asignados a cada nivel
 CREATE VIEW enemigos_nivel AS
 SELECT A.id_enemigo_nivel, B.id_nivel, B.numero_nivel, B.dificultad, C.id_enemigo, C.nombre, C.tipo, C.vida_base, C.daño_base, A.cantidad_maxima
 FROM EnemigoNivel AS A INNER JOIN Nivel AS B ON A.id_nivel = B.id_nivel INNER JOIN Enemigo AS C ON A.id_enemigo = C.id_enemigo;
 
+-- Vista que muestra jefes por nivel
 CREATE VIEW jefes_nivel AS
 SELECT A.id_jefe_nivel, B.id_nivel, B.numero_nivel, B.dificultad, A.nombre_jefe
 FROM JefeNivel AS A INNER JOIN Nivel AS B ON A.id_nivel = B.id_nivel;
 
+-- Vista que muestra plataformas asociadas a cartas
 CREATE VIEW plataformas_carta AS
 SELECT A.id_plataforma, A.nombre, A.es_autogenerada, B.id_carta, B.descripcion
 FROM Plataforma AS A INNER JOIN Carta AS B ON A.id_carta = B.id_carta;
 
+-- Vista que muestra detalle de plataformas por nivel
 CREATE VIEW plataformas_nivel AS
 SELECT A.id_plataforma_nivel, B.id_plataforma, B.nombre, A.nivel_plataforma, A.ancho_base, A.alto_base, A.duracion, A.es_destruible, A.enemigo_encima
 FROM PlataformaNivel AS A INNER JOIN Plataforma AS B ON A.id_plataforma = B.id_plataforma;
 
+-- Vista que muestra power-ups y sus niveles
 CREATE VIEW powerups AS
 SELECT A.id_powerUp, A.nombre, B.id_carta, B.descripcion, C.id_powerup_nivel, C.nivel_powerUp, C.duracion_base, C.modificador_velocidad, C.modificador_salto, C.da_vida, C.rango_actuacion
 FROM PowerUp AS A INNER JOIN Carta AS B ON A.id_carta = B.id_carta INNER JOIN PowerUpNivel AS C ON A.id_powerUp = C.id_powerUp;
 
+-- Vista que muestra zonas de generación por nivel
 CREATE VIEW zonas_generacion AS
 SELECT A.id_zona, B.id_nivel, B.numero_nivel, B.dificultad, A.coord_x, A.coord_y, A.hostil
 FROM ZonaGeneracion AS A INNER JOIN Nivel AS B ON A.id_nivel = B.id_nivel;
 
 
-#Trigger
+-- TRIGGERS
+
+-- Trigger que crea automáticamente estadísticas al registrar un jugador
 DELIMITER $$
 CREATE TRIGGER asignar_jugador_estadisticas
 AFTER INSERT ON Jugador
@@ -236,6 +267,7 @@ BEGIN
 END $$
 DELIMITER ;
 
+-- Trigger que valida que el nivel de carta sea mínimo 1
 DELIMITER $$
 CREATE TRIGGER validar_nivel_carta_jugador
 BEFORE INSERT ON CartaJugador
@@ -247,6 +279,7 @@ BEGIN
 END $$
 DELIMITER ;
 
+-- Trigger que actualiza el número de mejoras de una carta
 DELIMITER $$
 CREATE TRIGGER actualizar_mejoras_carta
 BEFORE UPDATE ON CartaJugador
@@ -258,7 +291,7 @@ BEGIN
 END $$
 DELIMITER ;
 
-
+-- Trigger que añade fecha_fin a una partida anterior cuando se crea una nueva
 DELIMITER $$
 CREATE TRIGGER cerrar_partida_activa
 BEFORE INSERT ON Partida
@@ -279,16 +312,18 @@ END $$
 DELIMITER ;
 
 
-#Stored Procedures
+-- STORED PROCEDURES
+
+-- Procedimiento para agregar enemigos a un nivel
 DELIMITER $$
 CREATE PROCEDURE agregar_enemigo_nivel(IN p_id_nivel INT, IN p_id_enemigo INT, IN p_cantidad SMALLINT)
 BEGIN
     INSERT INTO EnemigoNivel(id_nivel, id_enemigo, cantidad_maxima)
     VALUES (p_id_nivel, p_id_enemigo, p_cantidad);
 END $$
-
 DELIMITER ;
 
+-- Procedimiento para asignar una carta a un jugador
 DELIMITER $$
 CREATE PROCEDURE asignar_carta_jugador(IN p_id_jugador INT,IN p_id_carta INT)
 BEGIN
@@ -297,6 +332,7 @@ BEGIN
 END $$
 DELIMITER ;
 
+-- Procedimiento para resetear estadísticas de un jugador
 DELIMITER $$
 CREATE PROCEDURE resetear_estadisticas_jugador(IN p_id_jugador INT)
 BEGIN
@@ -304,6 +340,7 @@ BEGIN
 END $$
 DELIMITER ;
 
+-- Procedimiento para aumentar enemigos en un nivel
 DELIMITER $$
 CREATE PROCEDURE aumentar_enemigos_nivel(IN p_id_nivel INT, IN p_id_enemigo INT, IN p_incremento SMALLINT)
 BEGIN

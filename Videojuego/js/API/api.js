@@ -57,7 +57,11 @@ async function initPlatforms(auto, zones, unit) {  //auto = is auto_generated?
             }
 
             for(let j = 0; j < plat.composicion.formas.length; j++) {
+<<<<<<< HEAD
+                addPlatform(zone.x + plat.composicion.formas[j].x * unit, zone.y + plat.composicion.formas[j].y * unit, plat.composicion.formas[j].base, plat.composicion.formas[j].altura, actualPlatforms, unit, zone.hostil);
+=======
                 addPlatform(zone.x + plat.composicion.formas[j].x*unit, zone.y + plat.composicion.formas[j].y*unit, plat.composicion.formas[j].base, plat.composicion.formas[j].altura, actualPlatforms, unit, zone.hostile, rand+1, IMG[`p${rand+1}`].xIMG, IMG[`p${rand+1}`].yIMG);
+>>>>>>> a442946ebeb6b64b8474de5b96f69f2fe898179c
             }
         }
     return actualPlatforms;

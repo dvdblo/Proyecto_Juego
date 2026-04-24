@@ -20,9 +20,9 @@ class Rect {
 
 //Region for generation of platforms 
 class generation_zone {
-    constructor(x, y, hostile) {
+    constructor(x, y, hostil) {
         this.x = x;
         this.y = y;
-        this.hostile = hostile;
+        this.hostil = hostil;
     }
 }
