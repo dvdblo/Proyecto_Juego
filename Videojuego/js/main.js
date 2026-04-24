@@ -4,10 +4,15 @@ const config = {
   height: gameConfig.canvasHeight,
   backgroundColor: '#4e4751',
   parent: 'game-container',
-  scene: [MainMenu, Settings, Introduction, LoadingGame1, LoadingGame2, LoadingGame3, Level, WinLevelScreen1, WinLevelScreen2, WinLevelScreen3, GoodEnding, GameOver1Screen, BadEnding1, GameOver2Screen, BadEnding2]
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
+  },
+  scene: [MainMenu, Settings, PauseMenu, Introduction, LoadingGame1, LoadingGame2, LoadingGame3, Level, WinLevelScreen1, WinLevelScreen2, WinLevelScreen3, GoodEnding, GameOver1Screen, BadEnding1, GameOver2Screen, BadEnding2]
 };
 
 const game = new Phaser.Game(config);
+window.game = game;
 
 const container = document.getElementById('game-container');
 

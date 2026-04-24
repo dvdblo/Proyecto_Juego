@@ -18,6 +18,8 @@ class MainMenu extends Phaser.Scene {
         gameConfig.actualLevel = 1;
         gameConfig.actualDiff = 1;
         gameConfig.gameLoad = false;
+        gameConfig.totalScore = 0;
+        this.sound.volume = gameConfig.musicVolume;
 
         if (!this.menuMusic || !this.menuMusic.isPlaying) {
             this.menuMusic = this.sound.add('menuMusic', { loop: true });
@@ -182,21 +184,68 @@ class Settings extends Phaser.Scene {
     }
 
     preload() {
-        //this.load.image('backgroundIntro', '../assets/Fondos/backIntro.png');
+        this.load.image('backgroundSettings', '../Videojuego/assets/Fondos/backSettings.png');
         this.load.image('buttonReturnMenu', '../Videojuego/assets/sprites/botones/botonLargoOver.png');
+        this.load.image('knobVolume', '../Videojuego/assets/sprites/botones/knobVolume2.png');
+        this.load.image('barVolume', '../Videojuego/assets/sprites/botones/barVolume2.png');
         this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
     }
 
     create () {
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'Aqui van settings').setOrigin(0.5);
+
+        const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundSettings');
+        back.displayWidth = gameConfig.canvasWidth;
+        back.displayHeight = gameConfig.canvasHeight;
 
         const scale = 1/5;
+
+        //SOUND VOLUME---------------------------------------------------------------------------------------
+        const barX = gameConfig.canvasWidth/2;
+        const barY = gameConfig.canvasHeight/2;
+        const barWidth = gameConfig.canvasWidth/5;
+        const barHeight = gameConfig.canvasHeight/20;
+        this.barX = barX;
+        this.barWidth = barWidth;
+
+        //Draw the bar and knob
+        const bar = this.add.image(barX, barY, 'barVolume').setOrigin(0.5);
+        bar.setDisplaySize(barWidth, barHeight);
+        const knob = this.add.image(barX - barWidth/2 + barWidth*gameConfig.musicVolume, barY, 'knobVolume');
+        knob.setScale(scale/2);
+
+        this.knob = knob;
+
+        //Interactive knob
+        knob.setInteractive({ draggable: true });
+
+        //Draggable knob
+        this.input.setDraggable(knob);
+
+        this.input.on('drag', (pointer, gameObject, dragX) => {
+
+            //To limit the movement of tthe knob
+            let minX = this.barX - this.barWidth/2;
+            let maxX = this.barX + this.barWidth/2;
+
+            gameObject.x = Phaser.Math.Clamp(dragX, minX, maxX);
+
+            //To obtain a value from 0 to 1 according to the position of the knob respect the bar
+            gameConfig.musicVolume = (gameObject.x - this.barX + this.barWidth/2) / this.barWidth;
+
+            //To have a valid range
+            gameConfig.musicVolume = Phaser.Math.Clamp(gameConfig.musicVolume, 0, 1);
+
+            //Apply the volume to every sound in the game
+            this.sound.volume = gameConfig.musicVolume;
+        });
+
+        //BUTTONS
         const button = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2, 'buttonReturnMenu').setInteractive();
-        
-        //Adjusts the size
         button.setScale(scale);
 
-        //Like CSS but for Phaser
+        const buttonFull = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.5, 'buttonReturnMenu').setInteractive();
+        buttonFull.setScale(scale);
+        
         const textButton = {
             fontFamily: 'myTextFont',
             fontSize: '40px',
@@ -206,8 +255,25 @@ class Settings extends Phaser.Scene {
             align: 'center'
         };
 
+        const styteTitle = {
+            fontFamily: 'myTextFont',
+            fontSize: '90px',
+            color: '#ffffff',
+            stroke: '#525c64',
+            strokeThickness: 8,
+            align: 'center'
+        };
+
         //Text for the button
         const textReturn = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2-scale*gameConfig.canvasHeight/20, 'Regresar', textButton).setOrigin(0.5);
+        const textFull = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.5-scale*gameConfig.canvasHeight/20, 'Pantalla Completa', textButton).setOrigin(0.5);
+        const textTitle = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/6, 'HyperJump', styteTitle).setOrigin(0.5);
+
+        const backMusic = this.add.image(barX, barY-barHeight*3, 'buttonReturnMenu').setInteractive();
+        backMusic.setScale(scale/1.2);
+        backMusic.rotation = Math.PI;
+        this.add.text(barX, barY-barHeight*3, 'Música', textButton).setOrigin(0.5);
+        
 
         //Detects the selection of the button
         button.on('pointerover', () => {
@@ -225,5 +291,171 @@ class Settings extends Phaser.Scene {
         button.on('pointerdown', () => {
             this.scene.start('MainMenu');   //Changes to this scene
         });
+
+        buttonFull.on('pointerover', () => {
+            buttonFull.setScale(scale*1.1);
+            textFull.setScale(1.1);
+        });
+
+        //Detects the deselection of the button
+        buttonFull.on('pointerout', () => {
+            buttonFull.setScale(scale);
+            textFull.setScale(1);
+        });
+
+        //Button pressed
+        buttonFull.on('pointerdown', () => {
+            if (!document.fullscreenElement) {
+                container.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        });
+    }
+}
+
+class PauseMenu extends Phaser.Scene {
+    constructor() {
+        super('PauseMenu');
+    }
+
+    preload() {
+        this.load.image('backgroundPause', '../Videojuego/assets/Fondos/backPause2.png');
+        this.load.image('buttonResume', '../Videojuego/assets/sprites/botones/botonLargoPause.png');
+        this.load.image('knobVolume', '../Videojuego/assets/sprites/botones/knobVolume2.png');
+        this.load.image('barVolume', '../Videojuego/assets/sprites/botones/barVolume2.png');
+        this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
+    }
+
+    create () {
+
+        const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundPause');
+        back.displayWidth = gameConfig.canvasWidth;
+        back.displayHeight = gameConfig.canvasHeight;
+
+        const scale = 1/5;
+
+        //SOUND VOLUME---------------------------------------------------------------------------------------
+        const barX = gameConfig.canvasWidth/2;
+        const barY = gameConfig.canvasHeight/2;
+        const barWidth = gameConfig.canvasWidth/5;
+        const barHeight = gameConfig.canvasHeight/20;
+        this.barX = barX;
+        this.barWidth = barWidth;
+
+        //Draw the bar and knob
+        const bar = this.add.image(barX, barY, 'barVolume').setOrigin(0.5);
+        bar.setDisplaySize(barWidth, barHeight);
+        const knob = this.add.image(barX - barWidth/2 + barWidth*gameConfig.musicVolume, barY, 'knobVolume');
+        knob.setScale(scale/2);
+
+        this.knob = knob;
+
+        //Interactive knob
+        knob.setInteractive({ draggable: true });
+
+        //Draggable knob
+        this.input.setDraggable(knob);
+
+        this.input.on('drag', (pointer, gameObject, dragX) => {
+
+            //To limit the movement of tthe knob
+            let minX = this.barX - this.barWidth/2;
+            let maxX = this.barX + this.barWidth/2;
+
+            gameObject.x = Phaser.Math.Clamp(dragX, minX, maxX);
+
+            //To obtain a value from 0 to 1 according to the position of the knob respect the bar
+            gameConfig.musicVolume = (gameObject.x - this.barX + this.barWidth/2) / this.barWidth;
+
+            //To have a valid range
+            gameConfig.musicVolume = Phaser.Math.Clamp(gameConfig.musicVolume, 0, 1);
+
+            //Apply the volume to every sound in the game
+            this.sound.volume = gameConfig.musicVolume;
+        });
+
+        const button = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2, 'buttonResume').setInteractive();
+        const buttonFull = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.5, 'buttonResume').setInteractive();
+        buttonFull.setScale(scale);
+
+        //Adjusts the size
+        button.setScale(scale);
+
+        //Like CSS but for Phaser
+        const textButton = {
+            fontFamily: 'myTextFont',
+            fontSize: '40px',
+            color: '#ffffff',
+            stroke: '#ff296d',
+            strokeThickness: 8,
+            align: 'center'
+        };
+
+        const styteTitle = {
+            fontFamily: 'myTextFont',
+            fontSize: '90px',
+            color: '#ffffff',
+            stroke: '#525c64',
+            strokeThickness: 8,
+            align: 'center'
+        };
+
+        //Text for the button
+        const textReturn = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2-scale*gameConfig.canvasHeight/20, 'Reanudar', textButton).setOrigin(0.5);
+        const textFull = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.5-scale*gameConfig.canvasHeight/20, 'Pantalla Completa', textButton).setOrigin(0.5);
+        const textTitle = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/6, 'HyperJump', styteTitle).setOrigin(0.5);
+
+        const backMusic = this.add.image(barX, barY-barHeight*3, 'buttonResume').setInteractive();
+        backMusic.setScale(scale/1.2);
+        backMusic.rotation = Math.PI;
+        this.add.text(barX, barY-barHeight*3, 'Música', textButton).setOrigin(0.5);
+
+        //Detects the selection of the button
+        button.on('pointerover', () => {
+            button.setScale(scale*1.1);
+            textReturn.setScale(1.1);
+        });
+
+        //Detects the deselection of the button
+        button.on('pointerout', () => {
+            button.setScale(scale);
+            textReturn.setScale(1);
+        });
+
+        //Button pressed
+        button.on('pointerdown', () => {
+            gameConfig.pause = false;
+        });
+
+        buttonFull.on('pointerover', () => {
+            buttonFull.setScale(scale*1.1);
+            textFull.setScale(1.1);
+        });
+
+        //Detects the deselection of the button
+        buttonFull.on('pointerout', () => {
+            buttonFull.setScale(scale);
+            textFull.setScale(1);
+        });
+
+        //Button pressed
+        buttonFull.on('pointerdown', () => {
+            if (!document.fullscreenElement) {
+                container.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+    }
+
+    update() {
+        if(!gameConfig.pause) {
+            gameConfig.letPause = true;
+            gameConfig.gameLoad = true;
+            this.scene.stop('PauseMenu');
+            this.scene.resume('Level');
+        }
     }
 }

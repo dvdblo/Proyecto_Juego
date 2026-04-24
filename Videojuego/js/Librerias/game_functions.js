@@ -40,6 +40,7 @@ function boxOverlap(obj1, obj2, deltaTime, dephase) {
     if (!(L1 < R2 && R1 > L2 && T1 < B2 && B1 > T2)) {
         return false;
     }
+    
 
     //Previous limits
     const prevL1 = prevX - obj1.halfSize.x;
@@ -84,7 +85,7 @@ function randomRange(size, start) {
 }
 
 //To add a platform in the game (thus was a method in class Game, now it is here)
-function addPlatform(x, y, width, height, lst, unit, hostile) {
+function addPlatform(x, y, width, height, lst, unit, hostile, sprite, widthSprite, heightSprite) {
 
     const box = new AnimatedObject(
         new Vector(x, y),
@@ -95,8 +96,10 @@ function addPlatform(x, y, width, height, lst, unit, hostile) {
         6
     );
     
-    box.setSprite(`../Videojuego/assets/sprites/plataformas_auto/1_${gameConfig.actualDiff}.png`,
-                            new Rect(1024, 0, 1024, 450));  // If we want to draw the whole sprite, no need to add a rect
+    console.log(sprite);
+    
+    box.setSprite(`../Videojuego/assets/sprites/plataformas_auto/${sprite}_${gameConfig.actualDiff}.png`,
+                            new Rect(widthSprite, 0, widthSprite, heightSprite));  // If we want to draw the whole sprite, no need to add a rect
     //box.setAnimation(1, 1, true, 200);
     box.destroy = false;
     box.hostile = hostile;
@@ -115,28 +118,28 @@ function addCard(x, y, width, height, lst, type, duration) {
     );
     card.sprite = new Image();
         if(type == "Esprint") {
-            card.sprite.src = "../../sprites/PowerUps/Nivel1/Esprint N1.png";
+            card.sprite.src = "../sprites/PowerUps/Nivel1/Esprint N1.png";
         }
         else if (type == "Doble Salto") {
-            card.sprite.src = "../../sprites/PowerUps/Nivel1/Doble Salto N1.png";
+            card.sprite.src = "../sprites/PowerUps/Nivel1/Doble Salto N1.png";
         }
         else if (type == "Vida Extra") {
-            card.sprite.src = "../../sprites/PowerUps/Nivel1/Vida Extra N1.png";
+            card.sprite.src = "../sprites/PowerUps/Nivel1/Vida Extra N1.png";
         }
         else if (type == "Bomba") {
-            card.sprite.src = "../../sprites/PowerUps/Nivel1/Bomba N1.png";
+            card.sprite.src = "../sprites/PowerUps/Nivel1/Bomba N1.png";
         }
         else if (type == "Plataforma Random") {
-            card.sprite.src = "../../sprites/PowerUps/Nivel1/Plataforma Random N1.png";
+            card.sprite.src = "../sprites/PowerUps/Nivel1/Plataforma Random N1.png";
         }
         else if (type == "Escudo") {
-            card.sprite.src = "../../sprites/PowerUps/Nivel1/Escudo N1.png";
+            card.sprite.src = "../sprites/PowerUps/Nivel1/Escudo N1.png";
         }
         else if (type == "Jetpack") {
-            card.sprite.src = "../../sprites/PowerUps/Nivel1/Jetpack N1.png";
+            card.sprite.src = "../sprites/PowerUps/Nivel1/Jetpack N1.png";
         }
         else {
-            card.sprite.src = "../../sprites/PowerUps/Nivel3/Escudo N3.png";
+            card.sprite.src = "../sprites/PowerUps/Nivel3/Escudo N3.png";
         }
     lst.push(card);
 }
