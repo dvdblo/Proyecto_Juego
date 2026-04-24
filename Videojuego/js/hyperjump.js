@@ -491,23 +491,11 @@ class Game {
         for(let enemy of this.enemies) {
             enemy.draw(ctx);
         }
-<<<<<<< HEAD
 
         //Bullets
         for(let bullet of this.bullets){
             bullet.draw(ctx);
         }
-
-        
-
-        // ctx.save();
-        // ctx.setTransform(1,0,0,1,0,0);
-        // if(this.isGameOver){
-        //     this.drawGameOver(ctx);
-        // }
-        // ctx.restore();
-=======
->>>>>>> a442946ebeb6b64b8474de5b96f69f2fe898179c
     }
 
     //To update the position, sprites, collisions...
