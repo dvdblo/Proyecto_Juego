@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 const pool = mysql.createPool({
-    host: '192.168.1.8',
+    host: '10.49.108.217',
     user: 'root',
     password: 'bl200611',
     database: 'hyperjump'

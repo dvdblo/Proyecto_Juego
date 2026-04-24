@@ -1,8 +1,19 @@
+@font-face {
+  font-family: 'myTextFont';
+  src: url('../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
 #Main_title{
     margin: 0px;
-    color: violet;
-    font-size: 40px;
+    color: rgb(255, 255, 255);
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #0087fe;
+    font-size: 90px;
     text-align: center;
+    font-family: myTextFont;
+    margin: 20px;
 }
 
 #fondo{
@@ -20,14 +31,41 @@
     align-items: center;
 }
 
-.navbar{
+.navbar {
     background-color: indigo;
     height: 60px;
     display: flex;
-    align-items: center;     /* Centers items vertically */
+    align-items: center;
+    justify-content: center; /* centra el ul */
 }
 
-li{
+.navbar ul {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.navbar li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar li:hover {
+    background-color: #b0a8a3;
+    transform: translateY(-5px);
+}
+
+.navbar li a {
+    color: white;
+    font-size: 25px;
+    padding: 5px 10px;
+}
+
+/* li{
     display:inline-block;
 }
 
@@ -35,7 +73,7 @@ li a{
     color: white;
     font-size: 25px;
     margin-right: 15px;
-}
+} */
 
 .displays{
     display: flex;

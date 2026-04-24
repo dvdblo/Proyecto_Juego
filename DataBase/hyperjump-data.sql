@@ -128,15 +128,15 @@ INSERT INTO PowerUp(id_carta, nombre) VALUES
 (7, "Vida Extra");
 COMMIT;
 
-select * from hyperjump.ZonaGeneracion;
-SELECT * FROM Plataforma;
-SELECT * FROM Carta;
-SELECT * FROM PowerUp;
-SELECT * FROM Jugador;
-SELECT * FROM Partida;
+#select * from hyperjump.ZonaGeneracion;
+#SELECT * FROM Plataforma;
+#SELECT * FROM Carta;
+#SELECT * FROM PowerUp;
+#SELECT * FROM Jugador;
+#SELECT * FROM Partida;
 #TRUNCATE TABLE Plataforma;
 #TRUNCATE TABLE Nivel;
-TRUNCATE TABLE ZonaGeneracion;
+#TRUNCATE TABLE ZonaGeneracion;
 
 USE hyperjump;
 INSERT INTO Enemigo 
@@ -154,5 +154,5 @@ VALUES
 (1, 3, 3),
 (1, 4, 4);
 
-SELECT * FROM Enemigo;
-SELECT * FROM EnemigoNivel;
+#SELECT * FROM Enemigo;
+#SELECT * FROM EnemigoNivel;
