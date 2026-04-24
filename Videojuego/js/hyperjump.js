@@ -17,20 +17,113 @@ class Enemies extends AnimatedObject {
         this.platform = platform;
         this.lives = 1;
         this.points = 100;
+        this.alerted = false;
+        this.attackRange = 200;
+        this.setupByType();
+    }
+
+    setupByType(){
+        switch(this.type){
+            case "simple":
+                this.speed *=1.5;
+                this.points = 100;
+                break;
+            case "torreta":
+                this.speed = 0;
+                this.lives= 999;
+                this.shootCooldown = 2000;
+                this.lastShot = 0;
+                break;
+            case "alerta":
+                this.speed *= 0.5;
+                this.alertRadius = 150;
+                break;
+            case "divide":
+                this.lives = 1;
+                this.isDivisible = true;
+                break;
+        }
     }
     
-    update(deltaTime) {
-        this.position.x += this.speed * this.direction * deltaTime;
-        const leftBoundary = this.platform.position.x - this.platform.halfSize.x;
-        const rightBoundary = this.platform.position.x + this.platform.halfSize.x;
-        if (this.position.x - this.halfSize.x < leftBoundary || this.position.x + this.halfSize.x > rightBoundary) {
-            this.direction *= -1; // Reverse direction
+    update(deltaTime, game) {
+        if(this.type != "torreta"){
+            this.position.x += this.speed * this.direction * deltaTime;
+            const leftBoundary = this.platform.position.x - this.platform.halfSize.x;
+            const rightBoundary = this.platform.position.x + this.platform.halfSize.x;
+            if (this.position.x - this.halfSize.x < leftBoundary || this.position.x + this.halfSize.x > rightBoundary) {
+                this.direction *= -1; // Reverse direction
+            }
+        }
+
+        if(this.type == "torreta"){
+            this.lastShot += deltaTime;
+
+            if(this.lastShot>=this.shootCooldown){
+                this.shot(game);
+                this.lastShot = 0;
+            }
+        }
+
+        if(this.type == "alerta"){
+            const dx = game.player.position.x - this.position.x;
+
+            if(Math.abs(dx)<this.alertRadius){
+                this.alertEnemies(game);
+            }
         }
     }
 
-    receiveDamage(quantity = 1){
+    shot(game){
+        const dx = game.player.position.x - this.position.x;
+
+        if(Math.abs(dx) < this.attackRange){
+            console.log("Torreta dispara");
+
+            if(game.player.damageCooldown <=0){
+                gameConfig.lives--;
+                game.player.damageCooldown = 1000;
+            }
+        }
+    }
+
+    alertEnemies(game){
+        console.log("Perro alerta enemigos");
+
+        for (let enemy of game.enemies){
+            if(enemy.type == "simple" && !enemy.alerted){
+                enemy.alerted= true;
+                enemy.speed *= 1.2;
+            }
+        }
+    }
+
+    divide(game){
+        console.log("Enemigo se divide");
+
+        for (let i = 0; i<2; i++){
+            let newEnemy = new Enemies(this.platform, this.width * 0.7, this.height *0.7, this.color, "simple", this.speed * 1.2, 3);
+
+            if(i == 0){
+                 newEnemy.position.x = this.position.x - 10;
+            }
+            else{
+                newEnemy.position.x = this.position.x + 10;
+            }
+
+            game.enemies.push(newEnemy);
+        }
+    }
+
+    receiveDamage(quantity = 1, game){
         this.lives -=quantity;
-        return this.lives <=0;
+
+        if(this.lives<=0){
+            if(this.type == "divide"){
+                this.divide(game);
+            }
+            return true;
+        }
+        return false;
     }
 }
 
@@ -43,7 +136,7 @@ class Cards extends AnimatedObject {
 
 
     applyEffect(player,game) {
-        if (this.type == "Esprint N1") {
+        if (this.type == "Esprint") {
             player.setSpeed(player.speed * 1.5);
         setTimeout(() => { /*Had to google what setTimeout was, but it allows to
                             delay the execution of a function, in this case, to set
@@ -51,13 +144,28 @@ class Cards extends AnimatedObject {
                 player.setSpeed(player.speed / 1.5);
             }, this.duration);
         }
-        else if (this.type == "Doble Salto N1") {
+        else if (this.type == "Doble Salto") {
             player.setJumpForce(player.jumpForce * 1.5);
         setTimeout(() => {
                 player.setJumpForce(player.jumpForce / 1.5);
             }, this.duration);
         }
-        else if(this.type == "Plataforma") {
+        else if (this.type == "Bomba") {
+            game.enemies.splice(0, game.enemies.length); //Removes all the enemies in the game, simulating a bomb explosion that kills all the enemies on the screen
+        }
+        else if (this.type == "Vida Extra") {
+            gameConfig.lives += 1;
+        }
+        else if (this.type == "Escudo") {
+            player.damageCooldown = this.duration; //The player will be invulnerable for the duration of the power-up, simulating a shield
+        }
+        else if (this.type == "Jetpack") {
+            player.setJumpForce(player.jumpForce * 1.5);
+        setTimeout(() => {
+                player.setJumpForce(player.jumpForce / 1.5);
+            }, this.duration);
+        }
+        else if(this.type == "Plataforma Random") {
             //This power-up generates a temporary platform under the player, allowing him to jump again
             addPlatform(
                 // game.generation_zones[6].x, 
@@ -67,7 +175,11 @@ class Cards extends AnimatedObject {
                 3, 1, 
                 game.actualPlatforms, 
                 50, 
-                true
+                true,
+                1,
+                IMG[`p1`].xIMG, 
+                IMG[`p1`].yIMG
+
             );
 
         }   
@@ -99,9 +211,20 @@ class Game {
             "background",
             45
         );
-        this.background.setSprite(`../assets/Fondos/back_${gameConfig.actualDiff}.png`,
+        this.background.setSprite(`../Videojuego/assets/Fondos/back_${gameConfig.actualDiff}.png`,
                                     new Rect(1376, 0, 1376, 768));
         //this.background.setAnimation(0, 44, true, 100);
+
+        this.decoration_floor = new AnimatedObject(
+            new Vector(this.canvasWidth / 2, this.canvasHeight / 1.1),
+            this.canvasWidth + this.canvasWidth*0.1,
+            this.canvasHeight/3,
+            "gray",
+            "background",
+            45
+        );
+        this.decoration_floor.setSprite(`../Videojuego/assets/Decoracion/decoracion_suelo_${gameConfig.actualDiff}.png`,
+                                    new Rect(2027, 0, 2027, 242));
 
         //Player
         this.player = new AnimatedPlayer(
@@ -113,17 +236,17 @@ class Game {
             createPlayerMotion()
         );
 
-        this.player.lives = 3;
+        gameConfig.lives = 3;
         this.lifeSprite =  new Image();
-        this.lifeSprite.src = "../../sprites/Lives/lives.png";
-        this.player.Maxlives = 6;
+        this.lifeSprite.src = "../sprites/Lives/lives.png";
+        gameConfig.maxlives = 6;
         gameConfig.score = 0;
         this.isGameOver = false;
         this.startTime= Date.now();
         gameConfig.elapsedTime = 0;
         this.player.damageCooldown = 0;
         this.scoreApplied = false;
-        this.player.setSprite('../assets/sprites/blordrough_quartermaster-NESW.png',
+        this.player.setSprite('../Videojuego/assets/sprites/blordrough_quartermaster-NESW.png',
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(gameConfig.playerSpeed);
 
@@ -134,33 +257,14 @@ class Game {
         this.powerUpInventory = [];  //To store the power-ups the player can use
         this.platformInventory = [];  //To store the platforms the player can use
 
-        this.powerUpType = randomRange(2,0) == 0 ? "Esprint N1" : "Doble Salto N1";  //Randomly selects a power-up to generate in the game
-        this.powerUpSprite = new Image();
-        if(this.powerUpType == "Esprint N1") {
-            this.powerUpSprite.src = "../../sprites/PowerUps/Nivel1/Esprint N1.png";
-        }
-        else {
-            this.powerUpSprite.src = "../../sprites/PowerUps/Nivel1/Doble Salto N1.png";
-        }
-
-        this.powerUp = new Cards(
-            new Vector(0, 0),
-            10,
-            10,
-            this.powerUpType,
-            5000 // Duration of the power-up effect
-        );
-        this.powerUpInventory.push(this.powerUp);  //Adds the power-up to the inventory, so the player can use it when he wants
-        
-
         this.platformSprite = new Image();
-        this.platformSprite.src = "../../sprites/Plataformas/N1/Plataforma Básica N1.png";
+        this.platformSprite.src = "../sprites/Plataformas/N1/Plataforma Básica N1.png";
         for(let i = 0; i < 10; i++) {
         this.platform = new Cards(
             new Vector(0, 0),
             10,
             10,
-            "Plataforma",
+            "Plataforma Random",
             5000 // Duration of the power-up effect
         );
         this.platformInventory.push(this.platform);  //Adds the platform to the inventory, so the player can use it when he wants
@@ -169,31 +273,54 @@ class Game {
         //The objects that depends on DB to load, are here.
         const loadMap = async () => {
             this.generation_zones = await initGenerationZones(this.level, gameConfig.unit);
-
+            this.powerUpInventory = await initCards();
+            
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
-            this.actualPlatforms.at(-1).setSprite('../assets/sprites/plataformas_auto/Final_Platform.png',
+            this.actualPlatforms.at(-1).setSprite('../Videojuego/assets/sprites/plataformas_auto/Final_Platform.png',
                             new Rect(0, 0, 1566, 688));
-            //Enemies
-            for(let i = 0; i < this.actualPlatforms.length; i++) {
+            
+            const enemiesData = await initEnemies(this.level);
+            console.log("ENEMIES DATA:", enemiesData);
+            function mapEnemyType(tipo){
+                if(!tipo) return "simple";
 
-                if(this.actualPlatforms[i].hostile == true) { //If the platform is hostile, an enemy is generated
-                    let platform = this.actualPlatforms[i];
-                    let enemy = new Enemies(
-                        platform,
-                        32,
-                        32,
-                        "red",
-                        "basic_enemy",
-                        gameConfig.enemySpeed,
-                        3
-                    );
-                    enemy.setSprite("../assets/sprites/blue_alien.png");
-                    this.enemies.push(enemy);
+                tipo = tipo.toLowerCase().trim();
+
+                switch(tipo){
+                    case "simple": return "simple";
+                    case "torreta": return "torreta";
+                    case "alerta": return "alerta";
+                    case "divide": return "divide";
+                    default: return "simple";
                 }
             }
-        }
-        await loadMap();
-    }
+
+            for(let data of enemiesData) {
+                console.log("ENEMY INDIVIDUAL:", data);
+                let platform = this.actualPlatforms[Math.floor(Math.random() * this.actualPlatforms.length)];
+                if(!platform){
+                    continue;
+                }
+                let enemy = new Enemies(
+                    platform,
+                    32,
+                    32,
+                    "red",
+                    mapEnemyType(data.tipo),
+                    gameConfig.enemySpeed,
+                    (platform.size.y/gameConfig.unit < 12) ? 4 : 1.3
+                );
+                enemy.lives = data.vida_base;
+                enemy.damage = data["daño_base"];
+                enemy.attackRange = data.rango_ataque;
+                enemy.setSprite("../Videojuego/assets/sprites/blue_alien.png");
+                console.log(`Enemigo ${data.tipo} en X:${enemy.position.x} Y:${enemy.position.y}, plataforma en X:${platform.position.x} Y:${platform.position.y}`);
+                this.enemies.push(enemy);
+                console.log("ENEMY CREADO:", enemy);
+            }
+    };
+    await loadMap();
+}
 
     gameOver(){
             this.isGameOver=true;
@@ -227,7 +354,7 @@ class Game {
         ctx.font = "18px Arial";
         ctx.textAlign = "left";
 
-        for(let i = 0; i < this.player.lives; i++){
+        for(let i = 0; i < gameConfig.lives; i++){
             ctx.drawImage(
                this.lifeSprite,
                margin + i * (lifeWidth + 5),
@@ -238,19 +365,20 @@ class Game {
         }
         
         
-        if(this.powerUpInventory.length > 0) {
+        for(let i = 0; i < this.powerUpInventory.length; i++) {
             ctx.drawImage(
-                this.powerUpSprite,
-                this.canvasWidth - margin - cardWidth,
+                this.powerUpInventory[i].sprite,
+                this.canvasWidth - margin - cardWidth - (i * (cardWidth + 10)),
                 margin,
                 cardWidth,
                 cardHeight
             );
         }
+
         if(this.platformInventory.length > 0) {
             ctx.drawImage(
                 this.platformSprite,
-                this.canvasWidth - margin - cardWidth*2,
+                this.canvasWidth - margin - cardWidth - (this.powerUpInventory.length * (cardWidth + 10)),
                 margin,
                 cardWidth,
                 cardHeight
@@ -279,7 +407,7 @@ class Game {
         
         //Player
         this.player.draw(ctx);
-
+        console.log("ENEMIES EN JUEGO:", this.enemies.length);
         for(let enemy of this.enemies) {
             enemy.draw(ctx);
         }
@@ -291,6 +419,7 @@ class Game {
 
         //Animate the background
         this.background.updateFrame(deltaTime);
+        this.decoration_floor.updateFrame(deltaTime);
 
         //Move the player
         this.player.update(deltaTime, {width:this.canvasWidth, height:this.canvasHeight});
@@ -298,7 +427,7 @@ class Game {
                                           //While not, when player falls from a platform, there is a jump that should not be there
 
         for(let enemy of this.enemies) {
-            enemy.update(deltaTime);
+            enemy.update(deltaTime, this);
 
             let overlap = boxOverlap(this.player, enemy, deltaTime, 1);
             if(overlap == "top") {
@@ -306,15 +435,16 @@ class Game {
                 this.player.fallSpeed = 0;
                 this.player.onGround = true;
                 
-                if (enemy.receiveDamage()){
+                if (enemy.receiveDamage(1,this)){
                     gameConfig.score += enemy.points;
+                    gameConfig.enemiesKilled += 1;
                     this.enemies.splice(this.enemies.indexOf(enemy), 1);
                 }
             }
             else if (overlap != false && this.player.damageCooldown <= 0){
-                this.player.lives--;
+                gameConfig.lives--;
                 this.player.damageCooldown = 1000;
-                if(this.player.lives <=0){
+                if(gameConfig.lives <=0){
                     //this.gameOver();
                     gameConfig.levelOver2 = true;
                 }
@@ -334,7 +464,7 @@ class Game {
 
             if(platform.collision == true) {
                 
-                const dephase = 3;  //To move the collision with the platform. Allows the player to be in a pleasant visual spot
+                let dephase = (platform.size.y/gameConfig.unit < 12) ? 4 : 1.3;  //To move the collision with the platform. Allows the player to be in a pleasant visual spot
 
                 let overlap = boxOverlap(this.player, platform, deltaTime, dephase); //Checks the direction of the collision
 

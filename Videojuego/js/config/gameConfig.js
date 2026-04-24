@@ -13,6 +13,9 @@ const gameConfig = {
   levelOver1: false,
   levelOver2: false,
   score: 0,
+  lives: 3,
+  maxlives: 6,
+  enemiesKilled: 0,
   elapsedTime: 0,
   actualLevel: 1,
   actualDiff : 1,
@@ -20,7 +23,9 @@ const gameConfig = {
   letPause: false,
   pause: false,
   totalScore: 0,
-  musicVolume: 0
+  musicVolume: 0,
+  id_jugador: null,
+  id_partida: null
 };
 
 // Dictionary for the keys that will control player movement
@@ -33,6 +38,18 @@ const keyDirections = {
     ArrowRight: 'right',
     Space: 'up',
 };
+
+const IMG = {
+    p1: {xIMG: 1024, yIMG: 450},
+    p2: {xIMG: 1024, yIMG: 450},
+    p3: {xIMG: 1024, yIMG: 450},
+    p4: {xIMG: 2048, yIMG: 230},
+    p5: {xIMG: 659, yIMG: 1799},
+    p6: {xIMG: 1024, yIMG: 450},
+    p7: {xIMG: 1024, yIMG: 450}
+};
+console.log(IMG['p1'].xIMG);
+
 
 // Data structure with the directions a character can move, the
 // direction sign and the related animation.

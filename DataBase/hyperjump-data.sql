@@ -5,28 +5,27 @@ VALUES (null, "cuadrada", '{"formas": [{"base": 1, "altura": 1, "x": 0, "y": 0}]
 (null, "rect_3:1", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', true),
 (null, "rect_9:2", '{"formas": [{"base": 9, "altura": 2, "x": 0, "y": 0}]}', true),
 (null, "rect_12:2", '{"formas": [{"base": 12, "altura": 2, "x": 0, "y": 0}]}', true),
-(null, "rect_3:12", '{"formas": [{"base": 3, "altura": 12, "x": 0, "y": 1}]}', true),
+(null, "rect_3:12", '{"formas": [{"base": 3, "altura": 12, "x": 0, "y": 2}]}', true),
 (null, "circulo", '{"formas": [{"base": 2, "altura": 2, "x": 0, "y": 0}]}', true),
 (null, "ele", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', true);
 COMMIT;
 
 #TRUNCATE TABLE Plataforma;
 #SET SQL_SAFE_UPDATES = 0;
-DELETE FROM Plataforma;
-ALTER TABLE Plataforma AUTO_INCREMENT = 1;
-select * from hyperjump.Plataforma;
+#DELETE FROM Plataforma;
+#ALTER TABLE Plataforma AUTO_INCREMENT = 1;
+#select * from hyperjump.Plataforma;
 
-INSERT INTO Nivel(dificultad, numero_nivel, tiempo_limite_seg, tiene_jefe, tiene_jefe2)
-VALUES (1, 1, null, false, false),
-(1, 2, null, false, false),
-(1, 3, null, false, false),
-(2, 4, null, false, false),
-(2, 5, null, false, false),
-(2, 6, null, false, false),
-(3, 7, null, false, false),
-(3, 8, null, false, false),
-(3, 9, null, false, false),
-(4, 10, null, true, false);
+INSERT INTO Nivel(dificultad, numero_nivel, tiempo_limite_seg)
+VALUES (1, 1, null),
+(1, 2, null),
+(1, 3, null),
+(2, 4, null),
+(2, 5, null),
+(2, 6, null),
+(3, 7, null),
+(3, 8, null),
+(3, 9, null);
 COMMIT;
 
 #select * from hyperjump.Nivel;
@@ -42,76 +41,118 @@ VALUES  (1, 1, 10, false),
 (1, 104, 10, false),
 (1, 112, 10, false),
 
-(2, 1, 500, false),
-(2, 12, 400, false),
-(2, 28, 300, false),
-(2, 40, 400, True),
-(2, 3200, 500, TRUE),
-(2, 3900, 400, false),
-(2, 4800, 400, TRUE),
-(2, 112, 300, false),
+(2, 1, 10, false),
+(2, 12, 8, false),
+(2, 28, 6, false),
+(2, 40, 8, True),
+(2, 64, 10, TRUE),
+(2, 78, 8, false),
+(2, 96, 8, TRUE),
+(2, 112, 6, false),
 
-(3, 1, 200, false),
-(3, 22, 400, True),
-(3, 1800, 200, false),
-(3, 3000, 400, false),
-(3, 3700, 500, TRUE),
-(3, 4400, 500, True),
-(3, 5600, 400, false),
+(3, 1, 4, false),
+(3, 22, 8, True),
+(3, 36, 4, false),
+(3, 60, 8, false),
+(3, 74, 10, TRUE),
+(3, 88, 10, True),
+(3, 112, 8, false),
 
-(4, 30, 550, false),
-(4, 22, 600, True),
-(4, 40, 200, false),
-(4, 2600, 400, True),
-(4, 3800, 400, true),
-(4, 4700, 400, true),
-(4, 112, 200, false),
+(4, 1, 11, false),
+(4, 22, 12, True),
+(4, 40, 4, false),
+(4, 52, 8, True),
+(4, 76, 8, true),
+(4, 94, 8, true),
+(4, 112, 4, false),
 
-(5, 1, 300, false),
-(5, 20, 300, true),
-(5, 1800, 200, false),
-(5, 3800, 400, true),
-(5, 4800, 200, TRUE),
-(5, 112, 500, false),
+(5, 1, 6, false),
+(5, 20, 6, true),
+(5, 36, 4, false),
+(5, 76, 8, true),
+(5, 96, 4, TRUE),
+(5, 112, 10, false),
 
-(6, 1, 500, false),
-(6, 20, 300, false),
-(6, 30, 300, true),
-(6, 2500, 600, true),
-(6, 3300, 300, false),
-(6, 4400, 400, true),
-(6, 112, 500, true),
+(6, 1, 10, false),
+(6, 20, 6, false),
+(6, 30, 6, true),
+(6, 50, 12, true),
+(6, 66, 6, false),
+(6, 88, 8, true),
+(6, 112, 10, true),
 
-(7, 1, 500, false),
-(7, 1800, 500, true),
-(7, 2100, 200, TRUE),
-(7, 2600, 200, false),
-(7, 3500, 500, TRUE),
-(7, 4100, 300, false),
-(7, 4800, 300, TRUE),
-(7, 112, 100, false),
+(7, 1, 10, false),
+(7, 36, 10, true),
+(7, 42, 4, TRUE),
+(7, 52, 4, false),
+(7, 70, 10, TRUE),
+(7, 82, 6, false),
+(7, 96, 6, TRUE),
+(7, 112, 2, false),
 
-(8, 1, 550, false),
-(8, 500, 200, false),
-(8, 800, 500, TRUE),
-(8, 1400, 200, true),
-(8, 2400, 300, false),
-(8, 3800, 300, true),
-(8, 4800, 500, TRUE),
-(8, 112, 100, false),
+(8, 1, 11, false),
+(8, 10, 4, false),
+(8, 16, 10, TRUE),
+(8, 28, 4, true),
+(8, 48, 6, false),
+(8, 76, 6, true),
+(8, 96, 10, TRUE),
+(8, 112, 2, false),
 
-(9, 1, 100, false),
-(9, 20, 100, false),
-(9, 2400, 500, TRUE),
-(9, 2700, 200, true),
-(9, 3600, 400, TRUE),
-(9, 4200, 100, true),
-(9, 112, 500, true);
+(9, 1, 2, false),
+(9, 20, 2, false),
+(9, 48, 10, TRUE),
+(9, 54, 4, true),
+(9, 72, 8, TRUE),
+(9, 84, 2, true),
+(9, 112, 10, true);
 COMMIT;
-TRUNCATE TABLE ZonaGeneracion;
+
+INSERT INTO Carta(descripcion, nivel_maximo, dificultad_requerida) 
+VALUES ("Una bomba que explota y daña a los enemigos cercanos", 3, "facil"),
+("Aumenta la altura del salto del jugador", 3, "facil"),
+("Crea un escudo temporal que protege al jugador de un golpe", 3, "medio"),
+("Aumenta la velocidad de movimiento del jugador", 3, "facil"),
+("Otorga al jugador un jetpack, el cual permite que desactive la gravedad 5 segundos", 3, "dificil"),
+("Permite al jugador generar una plataforma aleatoria", 3, "facil"),
+("Otorga al jugador una vida extra", 3, "facil");
+COMMIT;
+
+INSERT INTO PowerUp(id_carta, nombre) VALUES
+(1, "Bomba"),
+(2, "Doble Salto"),
+(3, "Escudo"),
+(4, "Esprint"),
+(5, "Jetpack"),
+(6, "Plataforma Random"),
+(7, "Vida Extra");
+COMMIT;
 
 select * from hyperjump.ZonaGeneracion;
-#SELECT * FROM Plataforma;
+SELECT * FROM Plataforma;
+SELECT * FROM Carta;
+SELECT * FROM PowerUp;
+SELECT * FROM Jugador;
+SELECT * FROM Partida;
 #TRUNCATE TABLE Plataforma;
 #TRUNCATE TABLE Nivel;
+TRUNCATE TABLE ZonaGeneracion;
 
+USE hyperjump;
+INSERT INTO Enemigo 
+(nombre, tipo, descripcion, vida_base, daño_base, es_inmortal, rango_ataque, rango_deteccion)
+VALUES
+('Alien', 'simple', 'Más rápido y agresivo al enojarse, pero muere si lo pisas en la cabeza', 100, 20, 0, 0, 60),
+('Torreta Alien', 'torreta', 'Dispara en baja cadencia y no se mueve', 150, 15, 1, 1, 120),
+('Alien Perro', 'alerta', 'No ataca directamente, pero alerta a otros enemigos', 80, 0, 0, 0, 150), 
+('Slime Alien', 'divide', 'Se divide en dos al ser pisado, no muere', 60, 10, 1, 0, 40);
+
+INSERT INTO EnemigoNivel (id_nivel, id_enemigo, cantidad_maxima)
+VALUES
+(1, 1, 5),
+(1, 2, 2), 
+(1, 3, 3),
+(1, 4, 4);
+
+SELECT * FROM Enemigo;
+SELECT * FROM EnemigoNivel;

@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <title>Hyperjump</title>
     <link rel="stylesheet" href="Web_styles.css">
-    <script src="../Videojuego/js/hyperjump.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
 </head>
 <body>
-
-        <main id="fondo">
+    <main id="fondo">
         <nav class="navbar">
             <ul>
                 <li><a href="#inicio">Inicio</a></li>
@@ -20,11 +19,21 @@
 
         <section id="inicio">
             <h1 id="Main_title">HyperJump</h1>
+            <section id="login">
+                <h2>Iniciar Sesión</h2>
+                <ul>
+                <input type="text" id="username" class = "displays" placeholder="Usuario">
+                <input type="password" id="password" class = "displays" placeholder="Contraseña">
+                <input type="number" id="edad" class = "displays" placeholder="Edad">
+                <li><button class = "displays" onclick="login(document.getElementById('username').value, 
+                          document.getElementById('password').value)">Iniciar Sesion</button></li>
+                <li><button class = "displays" onclick="register(document.getElementById('username').value, 
+                             document.getElementById('password').value, document.getElementById('edad').value)">Crear Cuenta</button></li>
+                </ul>
+            </section>
             <h2>Ayuda a Astro en su epico viaje de regreso a casa.</h2>
-            <ul>
-                <li><img class = "game_images" src="../Videojuego/assets/Decoracion/Nivel 1.jpg" height="200"></li>
-                <li><img class = "game_images" src="../Videojuego/assets/Decoracion/Nivel 2.jpg" height="200"></li>
-                <li><img class = "game_images" src="../Videojuego/assets/Decoracion/Nivel 3.jpg" height="200"></li>
+             <ul>
+            <li class = "displays"><button id="start-button" class="btn" onclick="startGame()">Jugar Ahora</button></li>
             </ul>
         </section>
 
@@ -69,6 +78,38 @@
             </table>
         </section>
     </main>
+    <div id="game-container" style="display: none;"></div>
 
+            <script src="../Videojuego/js/config/gameConfig.js"></script>
+            <script src="../Videojuego/js/Librerias/Regions.js"></script>
+            <script src="../Videojuego/js/Librerias/Vector.js"></script>
+            <script src="../Videojuego/js/Librerias/GameObject.js"></script>
+            <script src="../Videojuego/js/Librerias/AnimatedObject.js"></script>
+            <script src="../Videojuego/js/Librerias/game_functions.js"></script>
+            <script src="../Videojuego/js/Librerias/AnimatedPlayer.js"></script>
+            <script src="../Videojuego/js/API/api.js"></script>
+            <script src="../Videojuego/js/hyperjump.js"></script>
+            <script src="../Videojuego/js/scenes/menus.js"></script>
+            <script src="../Videojuego/js/scenes/history.js"></script>
+            <script src="../Videojuego/js/scenes/levels.js"></script>
+            <script src="../Videojuego/js/scenes/states.js"></script>
+            <script src="../Videojuego/js/main.js"></script>
+
+            <script>
+                function startGame() {
+                    if (!gameConfig.id_jugador) {
+                        alert('Debes iniciar sesión primero');
+                        return; // stops the function here
+            }
+            // 1. Hide the website
+                    document.getElementById('fondo').style.display = 'none';
+            
+            // 2. Show the game container
+                    document.getElementById('game-container').style.display = 'block';
+            
+            // 3. Initialize Phaser (If your main.js doesn't auto-start)
+            // If main.js has 'new Phaser.Game(config)', it will start now.
+                }
+            </script>
 </body>
 </html>

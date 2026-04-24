@@ -6,11 +6,11 @@ class Level extends Phaser.Scene {
 
     preload() {
         if(gameConfig.actualDiff == 1) {
-            this.load.audio('levelMusic1', `../assets/Musica/music${gameConfig.actualDiff}.mp3`);
+            this.load.audio('levelMusic1', `../Videojuego/assets/Musica/music${gameConfig.actualDiff}.mp3`);
         } else if(gameConfig.actualDiff == 2) {
-            this.load.audio('levelMusic2', `../assets/Musica/music${gameConfig.actualDiff}.mp3`);
-        }else if(gameConfig.actualDiff = 3) {
-            this.load.audio('levelMusic3', `../assets/Musica/music${gameConfig.actualDiff}.mp3`);
+            this.load.audio('levelMusic2', `../Videojuego/assets/Musica/music${gameConfig.actualDiff}.mp3`);
+        }else if(gameConfig.actualDiff == 3) {
+            this.load.audio('levelMusic3', `../Videojuego/assets/Musica/music${gameConfig.actualDiff}.mp3`);
         }
     }
 
@@ -53,6 +53,7 @@ class Level extends Phaser.Scene {
 
         //We draw the background outside the draw function to maintain it static
         this.game.background.draw(this.ctx);
+        this.game.decoration_floor.draw(this.ctx);
 
         //Calculates the position of the camera (implemented like a dephase of the drawing)
         const cameraX = gameConfig.canvasWidth / 2 - this.game.player.position.x;
@@ -96,7 +97,6 @@ class Level extends Phaser.Scene {
             gameConfig.letPause = false;
             gameConfig.gameLoad = false;
             this.scene.pause('Level');
-            console.log('Voy a launch pause');
             this.scene.launch('PauseMenu');
             this.scene.bringToTop('PauseMenu');
         }
