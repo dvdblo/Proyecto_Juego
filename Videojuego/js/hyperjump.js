@@ -388,7 +388,7 @@ class Game {
                 enemy.lives = data.vida_base;
                 enemy.damage = data["daño_base"];
                 enemy.isImmortal = data.es_inmortal;
-                enemy.attackRange = 500;
+                enemy.attackRange = data.rango_deteccion;
                 enemy.detectionRange = data.rango_deteccion;
                 enemy.setupByType();
                 enemy.setSprite(getEnemySprite(enemyType));
@@ -533,10 +533,8 @@ class Game {
                 }
             }
             else if (overlap != false && this.player.damageCooldown <= 0){
-                gameConfig.lives--;
-                this.player.damageCooldown = 1000;
                 if(enemy.type != "torreta"){
-                    gameConfig.lives -= enemy.damage;
+                    gameConfig.lives -= 1;
                     this.player.damageCooldown = 1000;
                 } 
                 if(gameConfig.lives <=0){
