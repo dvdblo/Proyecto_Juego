@@ -1,42 +1,81 @@
 @font-face {
-  font-family: 'myTextFont';
-  src: url('../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf') format('ttf');
+  font-family: 'myText';
+  src: url('../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
-#Main_title{
-    margin: 0px;
-    color: rgb(255, 255, 255);
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: #0087fe;
+h1, h2 {
     font-size: 90px;
-    text-align: center;
-    font-family: myTextFont;
-    margin: 20px;
+    font-family: myText;
+    margin: 0;
 }
 
-#fondo{
-    background-image: url("../Videojuego/assets/Fondos/back.png");
-    background-size: auto;
+h3, p {
+    font-size: 20px;
+    font-family:cursive;
+    margin:0;
+}
+
+.fondo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("../Videojuego/assets/Fondos/backMenu.png") center/cover no-repeat;
+    z-index: -1;
+}
+
+#general{
     color: white;
 }
 
-#landing-page{
-    background-image: url("../Videojuego/assets/Fondos/back.png");
+.backText {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 20px;
+    border: 2px solid rgb(255, 255, 255);
+    padding: 20px;
+
+}
+
+.backText2 {
+    background-color: rgba(0, 0, 0, 0.781);
+    border-radius: 20px;
+    border: 2px solid rgb(255, 115, 1);
+    padding: 20px;
+}
+
+.backText3 {
+    background-color: rgba(0, 0, 0, 0.781);
+    border-radius: 20px;
+    border: 2px solid rgb(255, 1, 162);
+    padding: 20px;
+}
+
+#Main_title{
+    background-image: url("../Videojuego/assets/Fondos/back_1.png");
     background-size: cover;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-position: center;
+    margin: 0px;
+    padding: 20px;
+    color: rgb(255, 255, 255);
+    -webkit-text-stroke-width: 4px;
+    -webkit-text-stroke-color: #0087fe;
+    paint-order: stroke fill;
+    font-size: 90px;
+    text-align: center;
+    font-family: myText;
 }
 
 .navbar {
-    background-color: indigo;
+    background-color: rgb(219, 56, 178);
+    border: 2px solid rgb(255, 255, 255);
     height: 60px;
     display: flex;
     align-items: center;
-    justify-content: center; /* centra el ul */
+    justify-content: center;
+    font-family: myText;
 }
 
 .navbar ul {
@@ -55,8 +94,9 @@
 }
 
 .navbar li:hover {
-    background-color: #b0a8a3;
-    transform: translateY(-5px);
+    background-color: rgb(243, 80, 142);
+    border-radius: 12px;
+    transform: scale(1.1);
 }
 
 .navbar li a {
@@ -65,36 +105,188 @@
     padding: 5px 10px;
 }
 
-/* li{
-    display:inline-block;
+#inicio {
+    background-image: url("../Videojuego/assets/Fondos/backIntro.png");
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px; 
+    margin: 20px;
 }
 
-li a{
-    color: white;
-    font-size: 25px;
-    margin-right: 15px;
-} */
+#inicio ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    gap: 10px;
+}
 
 .displays{
     display: flex;
-    justify-content: start;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    margin-right: 10px;
 }
+
+.bt{
+    background-color: indigo;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 30px;
+    cursor: pointer;
+    margin: 20px;
+    font-family: myText;
+}
+
+.bt:hover {
+    background-color: rgb(130, 126, 0);
+    transform: scale(1.2);
+}
+
+#tutorial {
+    background-image: url("../Videojuego/assets/Fondos/back_22.png");
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px; 
+    margin: 20px;
+}
+
+#tutorial h1 {
+    -webkit-text-stroke: 6px rgb(255, 140, 0);
+    paint-order: stroke fill;
+    margin: 20px;
+}
+
+#tutorial h2 {
+    -webkit-text-stroke: 4px rgb(255, 124, 1);
+    paint-order: stroke fill;
+    margin: 0;
+}
+
+#historia {
+    background-image: url("../Videojuego/assets/Fondos/backPause2.png");
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px; 
+    margin: 20px;
+}
+
+#historia h1, #historia h2 {
+    -webkit-text-stroke: 4px rgb(255, 1, 136);
+    paint-order: stroke fill;
+    margin: 0;
+}
+
+#personajes {
+    background-image: url("../Videojuego/assets/Fondos/back_3.png");
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px; 
+    margin: 20px;
+}
+
+#personajes h1, #personajes h2 {
+    -webkit-text-stroke: 6px rgb(71, 64, 68);
+    paint-order: stroke fill;
+    margin: 0;
+}
+
+.personaje {
+    display: flex;
+    flex-direction:row;
+    justify-content:center;
+    align-items: center;
+    text-align: center;
+    gap:70px;
+}
+
+.imgLimit {
+  height: 300px;
+  object-fit: contain;
+}
+
+#estadisticas {
+    background-image: url("../Videojuego/assets/Fondos/backGoodEnd.png");
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px; 
+    margin: 20px;
+}
+
+#top_players {
+    width: 30%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+#top_players th, #top_players td{
+    border: 1px solid rgb(255, 255, 255); /* líneas entre todos */
+    padding: 8px;
+}
+
+.tab {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+.tab th, .tab td{
+    border: 1px solid rgb(255, 255, 255); /* líneas entre todos */
+    padding: 8px;
+}
+
+.graphs {
+    width: 100%;
+    background-color: #ffffff;
+}
+
+
+
+
 
 .game_images{
     margin-right: 40px;
 }
 
-.btn{
-    background-color: indigo;
-    color: white;
-    padding: 20px 40px;
-    border-radius: 8px;
-    font-size: 30px;
-    cursor: pointer;
-    margin-bottom: 20px;
-}
+
 
 .hidden{
     display: none;

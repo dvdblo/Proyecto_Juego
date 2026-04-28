@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Hyperjump</title>
+    <link rel="stylesheet" href="Web_styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- CHART JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+<body onload="get_top_players()">
+    <div class="fondo"></div>
+    <main id="general">
+        <h1 id="Main_title">HyperJump</h1>
+<!----------------------------------------------------------------------------------------------------------->
+        <nav class="navbar">
+            <ul>
+                <li><a href="#inicio">Identifícate</a></li>
+                <li><a href="#estadisticas">Estadísticas</a></li>
+            </ul>
+        </nav>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+        <section id="inicio">
+            
+            <h2 class="backText">Sumérgete en un innexplorado mundo y ayuda a los Desarrolladores a alcanzar las metas
+                en su juego.</h2>
+            <br>
+
+            <section class="backText" id="login">
+                <h2>Iniciar Sesión</h2>
+                <ul>
+                    <input type="text" id="username" class = "displays" placeholder="Usuario">
+                    <input type="password" id="password" class = "displays" placeholder="Contraseña">
+                    <li><button class = "displays" onclick="validate_admin(document.getElementById('username').value, 
+                            document.getElementById('password').value)">Iniciar Sesion</button></li>
+                </ul>
+            </section>
+        </section>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+        <section id="estadisticas">
+            <h1>Ranking Global</h1>
+            <table id="top_players"></table>
+            <br>
+
+            <div class="displays" id="admin_stats"><h1><i><u>Accede como administrador para ver las estadísticas globales</u></i></h1></div>
+            <br>
+
+            <div id="admin_graphics">
+            </div>
+
+            <h1>Consulta estadísticas de un usuario</h1>
+            <ul>
+                <input type="text" id="usernameS" class = "displays" placeholder="Usuario">
+                <input type="password" id="passwordS" class = "displays" placeholder="Contraseña">
+            </ul>
+            <ul>
+                <li class = "displays"><button class="bt" onclick="get_user_stats(document.getElementById('usernameS').value, 
+                        document.getElementById('passwordS').value)">Consultar</button></li>
+            </ul>
+
+            <table class="tab" id="user_stats"></table>
+            <br>
+
+        </section>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+    </main>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+            <script src="../Videojuego/js/API/api.js"></script>
+            <script src="stats_api.js"></script>
+</body>
+</html>

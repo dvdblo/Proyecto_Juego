@@ -352,7 +352,7 @@ class Game {
                 }
             }
 
-            let hostilPlatforms = this.actualPlatforms.filter(platform => platform.hostil == true);
+            let hostilPlatforms = this.actualPlatforms.filter(platform => platform.hostile == true);
             for(let data of enemiesData) {
                 console.log("ENEMY INDIVIDUAL:", data);
                 if(hostilPlatforms.length == 0){
