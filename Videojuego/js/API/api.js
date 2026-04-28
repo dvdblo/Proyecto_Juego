@@ -79,6 +79,14 @@ async function initEnemies(level){
     return data;
 }
 
+async function initBoss(level){
+    const res = await fetch(`http://localhost:3000/jefe/${level}`);
+    const data = await res.json();
+
+    console.log("BOSS DATA:", data);
+    return data;
+}
+
 async function register(username, contraseña, edad) {
     const response = await fetch('http://localhost:3000/register', {
         method: 'POST',
