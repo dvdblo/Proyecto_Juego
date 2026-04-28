@@ -201,4 +201,32 @@ VALUES
 (9, 'Jefe Dificil');
 
 
-SELECT * FROM JefeNivel;
+#SELECT * FROM JefeNivel;
+
+UPDATE Enemigo
+SET vida_base = 5, daño_base = 1, rango_ataque = 1, rango_deteccion = 350
+WHERE tipo = 'jefe' AND descripcion = 'facil';
+
+UPDATE Enemigo
+SET vida_base = 8, daño_base = 1, rango_ataque = 1, rango_deteccion = 450
+WHERE tipo = 'jefe' AND descripcion = 'medio';
+
+UPDATE Enemigo
+SET vida_base = 12, daño_base = 1, rango_ataque = 1, rango_deteccion = 600
+WHERE tipo = 'jefe' AND descripcion = 'dificil';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 1, rango_ataque = 0, rango_deteccion = 80
+WHERE tipo = 'simple';
+
+UPDATE Enemigo
+SET vida_base = 3, daño_base = 1, rango_ataque = 1, rango_deteccion = 600
+WHERE tipo = 'torreta';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 0, rango_ataque = 0, rango_deteccion = 250
+WHERE tipo = 'alerta';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 1, rango_ataque = 0, rango_deteccion = 80
+WHERE tipo = 'divide';
