@@ -185,6 +185,7 @@ app.get('/jefe/:level', async (req, res) => {
 
         const [boss] = await pool.query(`SELECT Enemigo.id_enemigo, Enemigo.nombre, Enemigo.tipo,Enemigo.descripcion, Enemigo.vida_base, Enemigo.daño_base,Enemigo.es_inmortal, Enemigo.rango_ataque, Enemigo.rango_deteccion, JefeNivel.nombre_jefe FROM JefeNivel JOIN Nivel ON JefeNivel.id_nivel = Nivel.id_nivel JOIN Enemigo ON Enemigo.descripcion = Nivel.dificultad WHERE Nivel.numero_nivel = ? AND Enemigo.tipo = 'jefe'`, [level]);
         console.log("Jefes encontrados:", boss.length);
+        console.log("Datos del jefe:", boss);
         res.json(boss);
 
     } catch (error) {
