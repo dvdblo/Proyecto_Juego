@@ -186,3 +186,19 @@ VALUES
 
 #SELECT * FROM Enemigo;
 #SELECT * FROM EnemigoNivel;
+
+INSERT INTO Enemigo
+(nombre, tipo, descripcion, vida_base, daño_base, es_inmortal, rango_ataque, rango_deteccion)
+VALUES
+('Jefe_1', 'jefe', 'facil', 300, 1, 0, 1, 250),
+('Jefe_2', 'jefe', 'medio', 450, 1, 0, 1, 300),
+('Jefe_3', 'jefe', 'dificil', 650, 1, 0, 1, 350);
+
+INSERT INTO JefeNivel(id_nivel, nombre_jefe)
+VALUES
+(3, 'Jefe Facil'),
+(6, 'Jefe Medio'),
+(9, 'Jefe Dificil');
+
+
+SELECT * FROM JefeNivel;
