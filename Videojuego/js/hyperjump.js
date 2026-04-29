@@ -233,6 +233,8 @@ class Cards extends AnimatedObject {
         super(position, width, height, type);
         this.duration = duration; // Duration of the power-up effect
         this.type = type; // Type of power-up (e.g., "Esprint N1", "Doble Salto N1")
+        this.composicion = null; // For platform cards, this will hold the platform composition data
+        this.id_carta = null; // To store the card ID from the database, useful for upgrades
     }
 
 
@@ -283,9 +285,36 @@ class Cards extends AnimatedObject {
 
             );
 
-        }   
+        } 
+        else if (this.type == "normal_carta" || this.type == "one-time" || 
+            this.type == "hielo" || this.type == "bloquea_proyectiles" || this.type == "turbina" ||
+            this.type == "teletransportador") {
+    
+            for (let forma of this.composicion.formas) {
+                let plat = addPlatform(
+                player.position.x + game.mouseX - game.canvasWidth / 2,
+                game.mouseY + forma.y,
+                forma.base,
+                forma.altura,
+                game.actualPlatforms,
+                gameConfig.unit,
+                false,
+                1,
+                IMG[`p1`].xIMG,
+                IMG[`p1`].yIMG
+            );
+                plat.tipo = this.type; // so the update loop can apply special behavior
+                plat.composicion = this.composicion; // to access the special properties of the platform, like the destination of the teletransportador
+                if(this.type == "turbina"){
+                    plat.baseY = plat.position.y;  // remember starting position
+                    plat.timer = 0;
+                }
+            }
+    }
+
     }
 }
+
 class Bullet extends AnimatedObject {
     constructor(position, width, height, color, speed, direction) {
         super(position, width, height, color, "bullet");
@@ -384,27 +413,20 @@ class Game {
         this.enemies = [];
         this.powerUpInventory = [];  //To store the power-ups the player can use
         this.platformInventory = [];  //To store the platforms the player can use
-
+        this.upgradeCards = []; // To store the platform cards that will be upgraded at the end of the level
+        this.screenCompleteBonusApplied = false;
         this.platformSprite = new Image();
         this.platformSprite.src = "../sprites/Plataformas/N1/Plataforma Básica N1.png";
-        for(let i = 0; i < 10; i++) {
-        this.platform = new Cards(
-            new Vector(0, 0),
-            10,
-            10,
-            "Plataforma Random",
-            5000 // Duration of the power-up effect
-        );
-        this.platformInventory.push(this.platform);  //Adds the platform to the inventory, so the player can use it when he wants
-        }
-        this.screenCompleteBonusApplied = false;
         //Funcion to connect front whit API
         //The objects that depends on DB to load, are here.
         const loadMap = async () => {
             this.generation_zones = await initGenerationZones(this.level, gameConfig.unit);
+            console.log("ZONAS DE GENERACION:", this.generation_zones);
             this.powerUpInventory = await initCards();
-            this.initialPowerUps = this.powerUpInventory.length;
-            this.initialPlatforms = this.platformInventory.length;
+            console.log("POWER-UPS:", this.powerUpInventory);
+            this.platformInventory = await initPlatformCards();
+            console.log("plat:", this.platformInventory);
+
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
             let finalPlatform = this.actualPlatforms.at(-1);
             finalPlatform.isFinalPlatform = true;
@@ -634,8 +656,8 @@ class Game {
         ctx.setTransform(1,0,0,1,0,0);
         const lifeWidth = 32;
         const lifeHeight = 32;
-        const cardWidth = 160;
-        const cardHeight = 240;
+        const cardWidth = 80;
+        const cardHeight = 120;
         const margin = 10;
         
         ctx.fillStyle = "white";
@@ -663,11 +685,11 @@ class Game {
             );
         }
 
-        if(this.platformInventory.length > 0) {
+        for(let i = 0; i < this.platformInventory.length; i++) {
             ctx.drawImage(
-                this.platformSprite,
-                this.canvasWidth - margin - cardWidth - (this.powerUpInventory.length * (cardWidth + 10)),
-                margin,
+                this.platformInventory[i].sprite,
+                this.canvasWidth - margin - cardWidth - (i * (cardWidth + 10)),
+                margin * 2 +  cardHeight,
                 cardWidth,
                 cardHeight
             );
@@ -767,6 +789,19 @@ class Game {
         // Check collision against platforms
         for (let platform of this.actualPlatforms) {
             platform.updateFrame(deltaTime);  //Important to update the platform first
+            this.player.onIce = false;  //Reset the ice state, it will be set to true again if the player is still on the ice platform after the collision check
+
+            if (platform.tipo == "turbina" && platform.baseY !== undefined) {
+                platform.timer += (deltaTime * platform.composicion.velocidad) /500;
+                const newY = platform.baseY + Math.sin(platform.timer) * (platform.composicion.amplitud * gameConfig.unit);
+                let dephase = (platform.size.y/gameConfig.unit < 12) ? 4 : 1.3;  //To move the collision with the platform. Allows the player to be in a pleasant visual spot
+                platform.deltaY = newY - platform.position.y;
+                if (this.player.onGround && boxOverlap(this.player, platform, deltaTime, dephase) == "top") {
+                    this.player.position.y += platform.deltaY;
+                }
+                platform.position.y = newY;
+
+            }
 
             if(platform.collision == true) {
                 
@@ -777,7 +812,24 @@ class Game {
                 if (overlap == "top") {
                     this.player.position.y = platform.position.y - platform.halfSize.y / dephase - this.player.halfSize.y;
                     this.player.fallSpeed = 0;
-                    this.player.onGround = true;
+                    this.player.onGround = true;  //Activates the jump
+
+                    // Special platform effects on landing
+                    if (platform.tipo == "one-time") {
+                        this.actualPlatforms.splice(this.actualPlatforms.indexOf(platform), 1);
+                    }
+                    else if (platform.tipo == "hielo") {   
+                        this.player.onIce = true;      
+                    }
+                    else if (platform.tipo == "bloquea_proyectiles") {
+                        this.player.damageCooldown = 2000; //The player will be invulnerable for the duration of the power-up, simulating a shield
+                    }
+                    else if (platform.tipo == "teletransportador" && !platform.teleportCooldown) {
+                        this.player.position.x = platform.composicion.destino_x * gameConfig.unit;
+                        this.player.position.y = platform.composicion.destino_y * gameConfig.unit;
+                        platform.teleportCooldown = 2000;
+                    }
+
                     if(platform.isFinalPlatform == true){
                         if(this.canFinishLevel()){
                             this.applyScreenCompleteBonus();
@@ -786,8 +838,8 @@ class Game {
                         else{
                             console.log("Debes eliminar al jefe final");
                         }
-                    }
                 }
+            }
 
                 if (overlap == "bottom") {
                     this.player.position.y = platform.position.y + platform.halfSize.y + this.player.halfSize.y;
@@ -844,18 +896,42 @@ class Game {
             }
         });
 
-        //For the powerup, when "0" is pressed, the first power-up in the inventory is used
+        //Select which platform or power-up to use with the number keys, 1-4 for platforms and 5-7 for power-ups
         window.addEventListener('keydown', (event) => {
-            if (event.key == "0" && this.powerUpInventory.length > 0) {
-                const powerUpToUse = this.powerUpInventory.shift() // Remove the first power-up from the inventory
-                powerUpToUse.applyEffect(this.player,this);
+            const num = parseInt(event.key);
+            if (isNaN(num)) return; // Ignore non-number keys immediately
+
+            // Handle Platforms (1-4)
+            if (num >= 1 && num <= 4) {
+                if (num <= this.platformInventory.length) {
+                    this.selectedPlatformIndex = num - 1;
+                }
+            } 
+    
+            // Handle Power-ups (5-7)
+            else if (num >= 5 && num <= 7) {
+                const powerIndex = num - 5;
+                if (this.powerUpInventory[powerIndex]) { // Check if the power-up actually exists
+                    const powerUpToUse = this.powerUpInventory.splice(powerIndex, 1)[0];
+                    powerUpToUse.applyEffect(this.player, this);
+                }
             }
         });
 
-        window.addEventListener('keydown', (event) => {
-            if (event.key == "9" && this.platformInventory.length > 0) {
-                const powerUpToUse = this.platformInventory.shift() // Remove the first platform from the inventory
-                powerUpToUse.applyEffect(this.player,this);
+        window.addEventListener('keydown', async (event) => {
+            if (event.key == "u" && this.platformInventory.length > 0 && this.upgradeCards.length < 1) {
+            if (this.selectedPlatformIndex >= this.platformInventory.length) {
+                this.selectedPlatformIndex = 0;
+            }
+            const card = this.platformInventory.splice(this.selectedPlatformIndex, 1)[0];
+            this.upgradeCards.push(card.id_carta); // mark for upgrade at level end
+
+            await upgradeCard(gameConfig.id_jugador, card.id_carta);
+            console.log("Card with ID " + card.id_carta + " marked for upgrade");
+            console.log("Jugador: " + gameConfig.id_jugador);
+            console.log("Database updated successfully");
+
+            this.selectedPlatformIndex = 0;
             }
         });
 
@@ -872,9 +948,14 @@ class Game {
 
             this.mouseX = mouseX;
             this.mouseY = mouseY;
+            
+            if (this.selectedPlatformIndex >= this.platformInventory.length) {
+                this.selectedPlatformIndex = 0;
+            }
 
-            const powerUpToUse = this.platformInventory.shift();
+            const powerUpToUse = this.platformInventory.splice(this.selectedPlatformIndex, 1)[0]; // Remove the selected platform from the inventory
             powerUpToUse.applyEffect(this.player, this);
+            this.selectedPlatformIndex = 0; // reset to first after placing
             }
             });
 
