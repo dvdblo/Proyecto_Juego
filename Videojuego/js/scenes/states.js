@@ -6,10 +6,16 @@ class LoadingGame1 extends Phaser.Scene {
         super('LoadingGame1');
     }
 
+    preload() {
+        this.load.image('backgroundLoad1', '../Videojuego/assets/Fondos/backLoad_1.png');
+    }
+
     //Initializes the game
     async create() {
         gameConfig.gameLoad = false;
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'Cargando...').setOrigin(0.5).setScale(4);
+        const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundLoad1');
+        back.displayWidth = gameConfig.canvasWidth;
+        back.displayHeight = gameConfig.canvasHeight;
 
         //New game (level)
         const game = new Game(gameConfig.canvasWidth, gameConfig.canvasHeight, gameConfig.actualLevel);
@@ -28,10 +34,16 @@ class LoadingGame2 extends Phaser.Scene {
         super('LoadingGame2');
     }
 
+    preload() {
+        this.load.image('backgroundLoad2', '../Videojuego/assets/Fondos/backLoad_2.png');
+    }
+
     //Initializes the game
     async create() {
         gameConfig.gameLoad = false;
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'Cargando...').setOrigin(0.5).setScale(4);
+        const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundLoad2');
+        back.displayWidth = gameConfig.canvasWidth;
+        back.displayHeight = gameConfig.canvasHeight;
 
         //New game (level)
         const game = new Game(gameConfig.canvasWidth, gameConfig.canvasHeight, gameConfig.actualLevel);
@@ -50,10 +62,16 @@ class LoadingGame3 extends Phaser.Scene {
         super('LoadingGame3');
     }
 
+    preload() {
+        this.load.image('backgroundLoad3', '../Videojuego/assets/Fondos/backLoad_3.png');
+    }
+
     //Initializes the game
     async create() {
         gameConfig.gameLoad = false;
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'Cargando...').setOrigin(0.5).setScale(4);
+        const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundLoad3');
+        back.displayWidth = gameConfig.canvasWidth;
+        back.displayHeight = gameConfig.canvasHeight;
 
         //New game (level)
         const game = new Game(gameConfig.canvasWidth, gameConfig.canvasHeight, gameConfig.actualLevel);
@@ -76,10 +94,17 @@ class WinLevelScreen1 extends Phaser.Scene {
         this.load.image('backgroundWin1', '../Videojuego/assets/Fondos/backLevelWin_1.png');
         this.load.image('buttonContinue1', '../Videojuego/assets/sprites/botones/botonLargoWin_1.png');
         this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('winMusic', '../Videojuego/assets/Musica/musicWin.mp3');
     }
 
     //At the moment, almost the same as the main menu
     create() {
+        this.cameras.main.fadeIn(2000);
+
+        if (!this.winMusic || !this.winMusic.isPlaying) {
+            this.winMusic = this.sound.add(`winMusic`, { loop: false });
+            this.winMusic.play();
+        }
 
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundWin1');
         
@@ -119,6 +144,7 @@ class WinLevelScreen1 extends Phaser.Scene {
             await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
             console.log(gameConfig.actualLevel);
+            this.winMusic.stop();
             if (gameConfig.actualLevel > 3) {
                 this.scene.start('LoadingGame2');
             } else {this.scene.start('LoadingGame1');}
@@ -148,10 +174,17 @@ class WinLevelScreen2 extends Phaser.Scene {
         this.load.image('backgroundWin2', '../Videojuego/assets/Fondos/backLevelWin_2.png');
         this.load.image('buttonContinue2', '../Videojuego/assets/sprites/botones/botonLargoWin_2.png');
         this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('winMusic', '../Videojuego/assets/Musica/musicWin.mp3');
     }
 
     //At the moment, almost the same as the main menu
     create() {
+        this.cameras.main.fadeIn(2000);
+
+        if (!this.winMusic || !this.winMusic.isPlaying) {
+            this.winMusic = this.sound.add(`winMusic`, { loop: false });
+            this.winMusic.play();
+        }
 
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundWin2');
         
@@ -191,6 +224,7 @@ class WinLevelScreen2 extends Phaser.Scene {
             await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
             console.log(gameConfig.actualLevel);
+            this.winMusic.stop();
             if (gameConfig.actualLevel > 6) {
                 this.scene.start('LoadingGame3');
             } else {this.scene.start('LoadingGame2');}
@@ -219,10 +253,17 @@ class WinLevelScreen3 extends Phaser.Scene {
         this.load.image('backgroundWin3', '../Videojuego/assets/Fondos/backLevelWin_3.png');
         this.load.image('buttonContinue3', '../Videojuego/assets/sprites/botones/botonLargoWin_3.png');
         this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('winMusic', '../Videojuego/assets/Musica/musicWin.mp3');
     }
 
     //At the moment, almost the same as the main menu
     create() {
+        this.cameras.main.fadeIn(2000);
+
+        if (!this.winMusic || !this.winMusic.isPlaying) {
+            this.winMusic = this.sound.add(`winMusic`, { loop: false });
+            this.winMusic.play();
+        }
 
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundWin3');
         
@@ -262,6 +303,7 @@ class WinLevelScreen3 extends Phaser.Scene {
             await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
             console.log(gameConfig.actualLevel);
+            this.winMusic.stop();
             if (gameConfig.actualLevel > 9) {
                 this.scene.start('GoodEnding');
             } else {this.scene.start('LoadingGame3');}
@@ -295,6 +337,7 @@ class GameOver1Screen extends Phaser.Scene {
 
     //At the moment, almost the same as the main menu
     create() {
+        this.cameras.main.fadeIn(2000);
 
         let overMusic = this.sound.get('gameOverMusic');
 
@@ -372,6 +415,8 @@ class GameOver2Screen extends Phaser.Scene {
 
     //At the moment, almost the same as the main menu
     create() {
+        this.cameras.main.fadeIn(2000);
+
         let overMusic = this.sound.get('gameOverMusic2');
 
         if (overMusic) {

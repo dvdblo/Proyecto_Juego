@@ -10,9 +10,15 @@ class Introduction extends Phaser.Scene {
         this.load.image('backgroundIntro', '../Videojuego/assets/Fondos/backIntro.png');
         this.load.image('buttonContinue', '../Videojuego/assets/sprites/botones/botonLargoWin_1.png');
         this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('introMusic', '../Videojuego/assets/Musica/musicIntro.mp3');
     }
 
     create() {
+        this.cameras.main.fadeIn(2000);
+        if (!this.introMusic || !this.introMusic.isPlaying) {
+            this.introMusic = this.sound.add(`introMusic`, { loop: true });
+            this.introMusic.play();
+        }
 
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundIntro');
 
@@ -52,6 +58,7 @@ class Introduction extends Phaser.Scene {
 
         //Button pressed
         button.on('pointerdown', () => {
+            this.introMusic.stop();
             this.scene.start('LoadingGame1');   //Changes to this scene
         });
 
@@ -79,9 +86,16 @@ class GoodEnding extends Phaser.Scene {
         this.load.image('backgroundGood', '../Videojuego/assets/Fondos/backGoodEnd.png');
         this.load.image('buttonContinue', '../Videojuego/assets/sprites/botones/botonLargoWin_1.png');
         this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
+        this.load.audio('endMusic', '../Videojuego/assets/Musica/musicEnd.mp3');
     }
 
     create() {
+        this.cameras.main.fadeIn(2000);
+
+        if (!this.endMusic || !this.endMusic.isPlaying) {
+            this.endMusic = this.sound.add(`endMusic`, { loop: true });
+            this.endMusic.play();
+        }
 
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundGood');
 
@@ -121,6 +135,7 @@ class GoodEnding extends Phaser.Scene {
 
         //Button pressed
         button.on('pointerdown', () => {
+            this.endMusic.stop();
             this.scene.start('MainMenu');   //Changes to this scene
         });
 

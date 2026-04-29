@@ -44,6 +44,12 @@ class Enemies extends AnimatedObject {
                 this.hasDivided = false;
                  this.lives = 1; 
                 break;
+            case "jefe":
+                this.shootCooldown = 1200;
+                this.lastShot = 0;
+                this.points = 1000;
+                break;
+
         }
     }
     
@@ -57,7 +63,7 @@ class Enemies extends AnimatedObject {
             }
         }
 
-        if(this.type == "torreta"){
+        if(this.type == "torreta" || this.type == "jefe"){
             this.lastShot += deltaTime;
 
             if(this.lastShot>=this.shootCooldown){
@@ -76,12 +82,13 @@ class Enemies extends AnimatedObject {
     }
 
     shot(game){
+        if(this.attackRange <= 0) return;
         const dx = game.player.position.x - this.position.x;
         const dy = game.player.position.y - this.position.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if(distance < this.attackRange){
-            console.log("Torreta dispara");
+            console.log(this.type + " dispara");
             let direction = 1;
             if(game.player.position.x < this.position.x){
                 direction = -1;
@@ -91,10 +98,18 @@ class Enemies extends AnimatedObject {
             if(direction == -1){
                 offsetX = -this.halfSize.x;
             }
-            let bullet = new Bullet(new Vector(this.position.x +offsetX*2, this.position.y),45,25,"yellow",0.25,direction);
+            let bulletWidth = 20;
+            let bulletHeight = 10;
+            let bulletSpeed = 0.15;
+            if(this.type == "jefe"){
+                bulletWidth = 50;
+                bulletHeight = 25;
+                bulletSpeed = 0.25;
+            }
+            let bullet = new Bullet(new Vector(this.position.x +offsetX*2, this.position.y),bulletWidth,bulletHeight,"yellow",bulletSpeed,direction);
+            game.bullets.push(bullet);
             console.log("BALA CREADA:", bullet);
             console.log("TOTAL BALAS:", game.bullets.length);
-            game.bullets.push(bullet);
         }
     }
 
@@ -282,6 +297,10 @@ class Game {
         gameConfig.lives = 3;
         this.lifeSprite =  new Image();
         this.lifeSprite.src = "../sprites/Lives/lives.png";
+        this.contScore = new Image();
+        this.contScore.src = "../Videojuego/assets/sprites/botones/contScore.png";
+        this.contLevel = new Image();
+        this.contLevel.src = "../Videojuego/assets/sprites/botones/contLevel.png";
         gameConfig.maxlives = 6;
         gameConfig.score = 0;
         this.isGameOver = false;
@@ -321,6 +340,7 @@ class Game {
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
             this.actualPlatforms.at(-1).setSprite('../Videojuego/assets/sprites/plataformas_auto/Final_Platform.png',
                             new Rect(0, 0, 1566, 688));
+            this.winPlat = this.actualPlatforms.at(-1);
             
             const enemiesData = await initEnemies(this.level);
             console.log("ENEMIES DATA:", enemiesData);
@@ -334,6 +354,7 @@ class Game {
                     case "torreta": return "torreta";
                     case "alerta": return "alerta";
                     case "divide": return "divide";
+                    case "jefe": return "jefe";
                     default: return "simple";
                 }
             }
@@ -347,19 +368,21 @@ class Game {
                         return "../Videojuego/assets/sprites/alien_perro.png";
                     case "divide":
                         return "../Videojuego/assets/sprites/slime_alien.png";
+                    case "jefe":
+                        return "../Videojuego/assets/sprites/jefe_alien.png";
                     default:
                         return "../Videojuego/assets/sprites/blue_alien.png";
                 }
             }
 
-            let hostilPlatforms = this.actualPlatforms.filter(platform => platform.hostile == true);
+            let hostilPlatforms = this.actualPlatforms.filter(platform => platform.hostil == true);
+            let enemyCounter = 0;
             for(let data of enemiesData) {
                 console.log("ENEMY INDIVIDUAL:", data);
                 if(hostilPlatforms.length == 0){
                     console.log("No hay plataformas hostiles para generar enemigos");
                     continue;
                 }
-                let platform = hostilPlatforms[Math.floor(Math.random() * hostilPlatforms.length)];
                 let enemyType = mapEnemyType(data.tipo);
                 let width = 32;
                 let height = 32;
@@ -375,26 +398,71 @@ class Game {
                     width = 60;
                     height = 60;
                 }
-
-                let enemy = new Enemies(
-                    platform,
-                    width,
-                    height,
-                    "red",
-                    enemyType,
-                    gameConfig.enemySpeed,
-                    (platform.size.y/gameConfig.unit < 12) ? 4 : 1.3
-                );
+                else if(enemyType=="jefe"){
+                    width = 140;
+                    height=140;
+                }
+                for(let i = 0; i < data.cantidad_maxima; i++){
+                    let platform = hostilPlatforms[enemyCounter % hostilPlatforms.length];
+                    let enemy = new Enemies(
+                        platform,
+                        width,
+                        height,
+                        "red",
+                        enemyType,
+                        gameConfig.enemySpeed,
+                        (platform.size.y/gameConfig.unit < 12) ? 4 : 1.3
+                    );
+                let minX = platform.position.x - platform.halfSize.x + enemy.halfSize.x + 10;
+                let maxX = platform.position.x + platform.halfSize.x - enemy.halfSize.x - 10;
+                if(maxX > minX){
+                    enemy.position.x = minX + Math.random() * (maxX - minX);
+                }
                 enemy.lives = data.vida_base;
                 enemy.damage = data["daño_base"];
                 enemy.isImmortal = data.es_inmortal;
-                enemy.attackRange = 500;
+                if(data.rango_ataque == 1){
+                    enemy.attackRange = data.rango_deteccion;
+                }
+                else{
+                    enemy.attackRange = 0;
+                }
                 enemy.detectionRange = data.rango_deteccion;
                 enemy.setupByType();
                 enemy.setSprite(getEnemySprite(enemyType));
                 console.log(`Enemigo ${data.tipo} en X:${enemy.position.x} Y:${enemy.position.y}, plataforma en X:${platform.position.x} Y:${platform.position.y}`);
                 this.enemies.push(enemy);
                 console.log("ENEMY CREADO:", enemy);
+                enemyCounter++;
+                }
+            }
+            const bossData = await initBoss(this.level);
+            if(bossData.length > 0){
+                let data = bossData[0];
+                let bossPlatform = this.actualPlatforms[this.actualPlatforms.length - 2];
+                let boss = new Enemies(
+                    bossPlatform,
+                    140,
+                    140,
+                    "red",
+                    "jefe",
+                    gameConfig.enemySpeed,
+                    (bossPlatform.size.y / gameConfig.unit < 12) ? 4 : 1.3
+                );
+                boss.lives = data.vida_base;
+                boss.damage = data["daño_base"];
+                boss.isImmortal = data.es_inmortal;
+                if(data.rango_ataque == 1){
+                    boss.attackRange = data.rango_deteccion;
+                }
+                else{
+                    boss.attackRange = 0;
+                }
+                boss.detectionRange = data.rango_deteccion;
+                boss.points = 1000;
+                boss.setupByType();
+                boss.setSprite(getEnemySprite("jefe"));
+                this.enemies.push(boss);
             }
     };
     await loadMap();
@@ -420,6 +488,29 @@ class Game {
 
     //To draw the game objects
     draw(ctx) {
+
+        //Background now is loaded from the Phaser scene
+
+        //Actual Platforms
+        for(let platform of this.actualPlatforms) {
+            platform.draw(ctx);
+        }
+        
+        //Player
+        this.player.draw(ctx);
+
+        //Enemies
+        console.log("ENEMIES EN JUEGO:", this.enemies.length);
+        for(let enemy of this.enemies) {
+            enemy.draw(ctx);
+        }
+
+        //Bullets
+        for(let bullet of this.bullets){
+            bullet.draw(ctx);
+        }
+
+        //Interface
         ctx.save();
         ctx.setTransform(1,0,0,1,0,0);
         const lifeWidth = 32;
@@ -436,7 +527,7 @@ class Game {
             ctx.drawImage(
                this.lifeSprite,
                margin + i * (lifeWidth + 5),
-               margin,
+               margin*8,
                lifeWidth,
                lifeHeight
             );
@@ -463,39 +554,7 @@ class Game {
             );
         }
 
-        ctx.fillText(
-            "Score: " + gameConfig.score,
-            margin,
-            margin + 50
-        );
-
-        ctx.fillText(
-            "Time: " + gameConfig.elapsedTime + "s",
-            margin,
-            margin + 80
-        );
         ctx.restore();
-
-        //Background now is loaded from the Phaser scene
-
-        //Actual Platforms
-        for(let platform of this.actualPlatforms) {
-            platform.draw(ctx);
-        }
-        
-        //Player
-        this.player.draw(ctx);
-
-        //Enemies
-        console.log("ENEMIES EN JUEGO:", this.enemies.length);
-        for(let enemy of this.enemies) {
-            enemy.draw(ctx);
-        }
-
-        //Bullets
-        for(let bullet of this.bullets){
-            bullet.draw(ctx);
-        }
     }
 
     //To update the position, sprites, collisions...
@@ -532,11 +591,13 @@ class Game {
                     this.enemies.splice(this.enemies.indexOf(enemy), 1);
                 }
             }
+            else if(overlap != false && enemy.type == "jefe"){
+                gameConfig.lives = 0;
+                gameConfig.levelOver2 = true;
+            }
             else if (overlap != false && this.player.damageCooldown <= 0){
-                gameConfig.lives--;
-                this.player.damageCooldown = 1000;
                 if(enemy.type != "torreta"){
-                    gameConfig.lives -= enemy.damage;
+                    gameConfig.lives -= 1;
                     this.player.damageCooldown = 1000;
                 } 
                 if(gameConfig.lives <=0){
@@ -579,6 +640,9 @@ class Game {
                     this.player.position.y = platform.position.y - platform.halfSize.y/dephase - this.player.halfSize.y;
                     this.player.fallSpeed = 0;
                     this.player.onGround = true;  //Activates the jump
+                    if(this.winPlat == platform) {
+                        gameConfig.levelComplete = true;
+                    }
                 }
 
                 if (overlap == "bottom") {

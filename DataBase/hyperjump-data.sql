@@ -156,3 +156,49 @@ VALUES
 
 #SELECT * FROM Enemigo;
 #SELECT * FROM EnemigoNivel;
+
+#SELECT * FROM Partida;
+
+INSERT INTO Enemigo 
+(nombre, tipo, descripcion, vida_base, daño_base, es_inmortal, rango_ataque, rango_deteccion)
+VALUES
+('Alien N2', 'simple', 'Alien simple más resistente', 120, 23, 0, 0, 75),
+('Torreta Alien N2', 'torreta', 'Torreta con mayor rango', 180, 18, 1, 1, 150),
+('Alien Perro N2', 'alerta', 'Alerta con mayor rango', 95, 0, 0, 0, 185),
+('Slime Alien N2', 'divide', 'Slime más resistente', 70, 12, 1, 0, 55),
+
+('Alien N3', 'simple', 'Alien simple más fuerte', 140, 26, 0, 0, 85),
+('Torreta Alien N3', 'torreta', 'Torreta más peligrosa', 210, 20, 1, 1, 180),
+('Alien Perro N3', 'alerta', 'Alerta con mucho mayor rango', 110, 0, 0, 0, 210),
+('Slime Alien N3', 'divide', 'Slime más peligroso', 85, 14, 1, 0, 70);
+
+INSERT INTO EnemigoNivel (id_nivel, id_enemigo, cantidad_maxima)
+VALUES
+(2, 5, 6),
+(2, 6, 3),
+(2, 7, 4),
+(2, 8, 5),
+
+(3, 9, 8),
+(3, 10, 3),
+(3, 11, 5),
+(3, 12, 6);
+
+#SELECT * FROM Enemigo;
+#SELECT * FROM EnemigoNivel;
+
+INSERT INTO Enemigo
+(nombre, tipo, descripcion, vida_base, daño_base, es_inmortal, rango_ataque, rango_deteccion)
+VALUES
+('Jefe_1', 'jefe', 'facil', 300, 1, 0, 1, 250),
+('Jefe_2', 'jefe', 'medio', 450, 1, 0, 1, 300),
+('Jefe_3', 'jefe', 'dificil', 650, 1, 0, 1, 350);
+
+INSERT INTO JefeNivel(id_nivel, nombre_jefe)
+VALUES
+(3, 'Jefe Facil'),
+(6, 'Jefe Medio'),
+(9, 'Jefe Dificil');
+
+
+SELECT * FROM JefeNivel;

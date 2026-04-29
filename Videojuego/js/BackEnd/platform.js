@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 const pool = mysql.createPool({
-    host: '192.168.1.10',
+    host: '10.49.108.217',
     user: 'root',
     password: 'bl200611',
     database: 'hyperjump'
@@ -173,6 +173,23 @@ app.get('/enemigos/:level', async (req, res) => {
     } catch (error) {
         console.error("ERROR COMPLETO:", error); 
         res.status(500).json({ error: error.message }); 
+    }
+});
+
+//Boss by level
+app.get('/jefe/:level', async (req, res) => {
+    try{
+        const level = parseInt(req.params.level);
+
+        console.log("Nivel como número:", level);
+
+        const [boss] = await pool.query(`SELECT Enemigo.id_enemigo, Enemigo.nombre, Enemigo.tipo,Enemigo.descripcion, Enemigo.vida_base, Enemigo.daño_base,Enemigo.es_inmortal, Enemigo.rango_ataque, Enemigo.rango_deteccion, JefeNivel.nombre_jefe FROM JefeNivel JOIN Nivel ON JefeNivel.id_nivel = Nivel.id_nivel JOIN Enemigo ON Enemigo.descripcion = Nivel.dificultad WHERE Nivel.numero_nivel = ? AND Enemigo.tipo = 'jefe'`, [level]);
+        console.log("Jefes encontrados:", boss.length);
+        res.json(boss);
+
+    } catch (error) {
+        console.error("ERROR COMPLETO:", error);
+        res.status(500).json({ error: error.message });
     }
 });
 

@@ -23,7 +23,7 @@ h3, p {
     left: 0;
     width: 100%;
     height: 100%;
-    background: url("../Videojuego/assets/Fondos/backMenu.png") center/cover no-repeat;
+    background: url("../Videojuego/assets/Fondos/back_1.png") center/cover no-repeat;
     z-index: -1;
 }
 
@@ -54,13 +54,13 @@ h3, p {
 }
 
 #Main_title{
-    background-image: url("../Videojuego/assets/Fondos/back_1.png");
+    background-image: url("../Videojuego/assets/Fondos/backMenu2.png");
     background-size: cover;
-    background-position: center;
-    margin: 0px;
+    background-position: right;
+    margin-bottom:20px;
     padding: 20px;
     color: rgb(255, 255, 255);
-    -webkit-text-stroke-width: 4px;
+    -webkit-text-stroke-width: 10px;
     -webkit-text-stroke-color: #0087fe;
     paint-order: stroke fill;
     font-size: 90px;
@@ -69,7 +69,7 @@ h3, p {
 }
 
 .navbar {
-    background-color: rgb(219, 56, 178);
+    background-color: rgb(166, 0, 255);
     border: 2px solid rgb(255, 255, 255);
     height: 60px;
     display: flex;
@@ -94,9 +94,9 @@ h3, p {
 }
 
 .navbar li:hover {
-    background-color: rgb(243, 80, 142);
+    /* background-color: rgb(255, 255, 255); */
     border-radius: 12px;
-    transform: scale(1.1);
+    transform: scale(1.3);
 }
 
 .navbar li a {
@@ -138,7 +138,7 @@ h3, p {
 }
 
 .bt{
-    background-color: indigo;
+    background-color: rgb(136, 0, 255);
     color: white;
     padding: 10px;
     border-radius: 8px;
@@ -149,7 +149,7 @@ h3, p {
 }
 
 .bt:hover {
-    background-color: rgb(130, 126, 0);
+    background-color: rgb(87, 252, 255);
     transform: scale(1.2);
 }
 
@@ -251,31 +251,61 @@ h3, p {
     margin: 20px;
 }
 
-#top_players {
+.tab {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: sans-serif;
+    background: rgba(255, 255, 255, 0.167); /* ligero contraste */
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* HEADER */
+.tab th {
+    padding: 12px 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.39);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* CELDAS */
+.tab td {
+    padding: 12px 10px;
+    color: rgba(255,255,255,0.85);
+    border: 1px solid rgba(255, 255, 255, 0.39);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* HOVER SUAVE */
+.tab tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* ACENTO ELEGANTE (primera columna) */
+.tab td:first-child {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* FILA FINAL LIMPIA */
+.tab tr:last-child td {
+    border: 1px solid rgba(255, 255, 255, 0.39);
+}
+
+#top_players, #user_stats {
     width: 30%;
     border-collapse: collapse;
     font-family: Arial, sans-serif;
 }
 
-#top_players th, #top_players td{
-    border: 1px solid rgb(255, 255, 255); /* líneas entre todos */
-    padding: 8px;
-}
-
-.tab {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: Arial, sans-serif;
-}
-
-.tab th, .tab td{
-    border: 1px solid rgb(255, 255, 255); /* líneas entre todos */
-    padding: 8px;
-}
-
-.graphs {
-    width: 100%;
-    background-color: #ffffff;
+.graph-container {
+    position: relative;
+    height: 300px;
+    background: linear-gradient(145deg, #0a0a0a60, #1a1a1a60);
+    border-radius: 12px;
+    padding: 10px;
 }
 
 

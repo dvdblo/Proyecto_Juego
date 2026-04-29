@@ -48,8 +48,8 @@ async function get_user_stats(username, contraseña) {
 
         $("#user_stats").append(`
             <tr>
-                <th>Jugador</th>
-                <th>Puntaje</th>
+                <th>Estadística</th>
+                <th>Valor</th>
             </tr>
         `);
 
@@ -68,6 +68,23 @@ async function get_user_stats(username, contraseña) {
         alert(comp.error);
     }
 }
+
+Chart.defaults.color = '#e0e0e0';
+Chart.defaults.font.family = 'Orbitron, sans-serif'; // estilo gamer
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.pointStyle = 'circle';
+const glowPlugin = {
+    id: 'glowEffect',
+    beforeDraw: (chart) => {
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.shadowColor = '#00ffcc';
+        ctx.shadowBlur = 15;
+    },
+    afterDraw: (chart) => {
+        chart.ctx.restore();
+    }
+};
 
 async function validate_admin(username, contraseña) {
     const val = await fetch('http://localhost:3000/stats/user/validation', {
@@ -118,18 +135,35 @@ async function validate_admin(username, contraseña) {
             <h1>Gráficas Globales</h1>
             <br>
 
-            <div>
-                <canvas class="graphs" id="graph_runs_days"></canvas>
+            <div class="container">
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <div class="graph-container">
+                        <canvas id="graph_runs_days"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="graph-container">
+                        <canvas id="graph_victory_fail"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="graph-container">
+                        <canvas id="graph_started_ended"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="graph-container">
+                        <canvas id="graph_cards_dealt_used"></canvas>
+                    </div>
+                </div>
+
             </div>
-            <div>
-                <canvas class="graphs" id="graph_victory_fail"></canvas>
-            </div>
-            <div>
-                <canvas class="graphs" id="graph_started_ended"></canvas>
-            </div>
-            <div>
-                <canvas class="graphs" id="graph_cards_dealt_used"></canvas>
-            </div>
+        </div>
         `);
 
         let labs = [];
@@ -149,11 +183,39 @@ async function validate_admin(username, contraseña) {
                 datasets: [{
                     label: 'Partidas por Día',
                     data: vals,
-                    fill: false,
+                    fill: true,
+                    backgroundColor: 'rgba(43, 255, 0, 0.1)',
                     borderColor: 'rgb(43, 255, 0)',
-                    tension: 0.1
+                    borderWidth: 3,
+                    pointBackgroundColor: '#00ffcc',
+                    pointBorderColor: '#000',
+                    pointRadius: 5,
+                    tension: 0.3
                 }]
-            }
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#fff' }
+                    },
+                    tooltip: {
+                        backgroundColor: '#111',
+                        titleColor: '#00ffcc',
+                        bodyColor: '#fff'
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    }
+                }
+            },
+            plugins: [glowPlugin]
         });
 
 
@@ -163,13 +225,24 @@ async function validate_admin(username, contraseña) {
             data: {
                 labels: ['Victorias', 'Derrotas'],
                 datasets: [{
-                    label: 'Victorias vs Derrotas',
+                    label: 'Resultado',
                     data: [data[4].victorias, data[5].derrotas],
-                    fill: false,
-                    borderColor: 'rgb(43, 255, 0)',
-                    tension: 0.1
+                    backgroundColor: [
+                        'rgba(0, 255, 150, 0.7)',
+                        'rgba(255, 50, 50, 0.7)'
+                    ],
+                    borderRadius: 10,
+                    borderWidth: 0
                 }]
-            }
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            },
+            plugins: [glowPlugin]
         });
 
 
@@ -181,13 +254,23 @@ async function validate_admin(username, contraseña) {
             data: {
                 labels: ['Iniciadas', 'Terminadas'],
                 datasets: [{
-                    label: 'Partidas Iniciadas vs Terminadas',
+                    label: 'Flujo de partidas',
                     data: [s_e.iniciadas, s_e.terminadas],
-                    fill: false,
-                    borderColor: 'rgb(43, 255, 0)',
-                    tension: 0.1
+                    backgroundColor: [
+                        'rgba(255, 200, 0, 0.7)',
+                        'rgba(0, 200, 255, 0.7)'
+                    ],
+                    borderRadius: 10
                 }]
-            }
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            },
+            plugins: [glowPlugin]
         });
 
         $("#admin_graphics").append(`
@@ -230,21 +313,39 @@ async function validate_admin(username, contraseña) {
             type: 'bar',
             data: {
                 labels: labs,
-                datasets: [{
-                    label: 'Carta repartida',
+                datasets: [
+                {
+                    label: 'Repartidas',
                     data: vals,
-                    fill: false,
-                    borderColor: 'rgb(43, 255, 0)',
-                    tension: 0.1
+                    backgroundColor: 'rgba(43, 255, 0, 0.6)',
+                    borderRadius: 8
                 },
                 {
-                    label: 'Carta usada',
+                    label: 'Usadas',
                     data: vals2,
-                    fill: false,
-                    borderColor: 'rgb(0, 229, 255)',
-                    tension: 0.1
+                    backgroundColor: 'rgba(0, 229, 255, 0.6)',
+                    borderRadius: 8
                 }]
-            }
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#fff' }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: false,
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    }
+                }
+            },
+            plugins: [glowPlugin]
         });
 
 
