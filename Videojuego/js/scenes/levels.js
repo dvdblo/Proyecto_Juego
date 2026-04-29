@@ -12,6 +12,9 @@ class Level extends Phaser.Scene {
         }else if(gameConfig.actualDiff == 3) {
             this.load.audio('levelMusic3', `../Videojuego/assets/Musica/music${gameConfig.actualDiff}.mp3`);
         }
+
+        this.load.image('contLevel', '../Videojuego/assets/sprites/botones/contLevel.png');
+        this.load.image('contScore', '../Videojuego/assets/sprites/botones/contScore.png');
         this.load.audio('shootSound', '../Videojuego/assets/sprites/shoot.mp3');
         this.load.audio('hitSound', '../Videojuego/assets/sprites/hit.mp3');
         this.load.audio('enemyDeadSound', '../Videojuego/assets/sprites/enemy_dead.mp3');
@@ -49,6 +52,46 @@ class Level extends Phaser.Scene {
        
         this.ctx = canvasTexture.getContext();
         this.canvasImage = this.add.image(0, 0, 'gameCanvas').setOrigin(0);
+
+        //Game Interface
+        const textScore = {
+            fontFamily: 'myTextFont',
+            fontSize: '25px',
+            color: '#ffffff',
+            stroke: '#faca0b',
+            strokeThickness: 1,
+            align: 'center'
+        };
+        const texts = {
+            fontFamily: 'myTextFont',
+            fontSize: '20px',
+            color: '#ffffff',
+            stroke: '#faca0b',
+            strokeThickness: 1,
+            align: 'center'
+        };
+
+        const margin = 10;
+
+        const contScore = this.add.image(gameConfig.canvasWidth/2, margin, 'contScore').setOrigin(0.5, 0);
+        contScore.displayWidth = gameConfig.canvasWidth/4;
+        contScore.displayHeight = gameConfig.canvasHeight/10;
+
+        const contLevel = this.add.image(0, margin, 'contLevel').setOrigin(0, 0);
+        contLevel.displayWidth = gameConfig.canvasWidth/8;
+        contLevel.displayHeight = gameConfig.canvasHeight/12;
+
+        const contTime = this.add.image(0, margin*2 + gameConfig.canvasHeight/12, 'contLevel').setOrigin(0, 0);
+        contTime.displayWidth = gameConfig.canvasWidth/8;
+        contTime.displayHeight = gameConfig.canvasHeight/12;
+
+        this.score = this.add.text(gameConfig.canvasWidth/2, margin+gameConfig.canvasHeight/10/2, `Score: ${gameConfig.score}`, textScore).setOrigin(0.5);
+        this.actLevel = this.add.text(gameConfig.canvasWidth/8/2-margin, margin+gameConfig.canvasHeight/12/2, `Level ${gameConfig.actualDiff}-${(gameConfig.actualLevel-1)%3 +1}`, texts).setOrigin(0.5);
+        this.time = this.add.text(gameConfig.canvasWidth/8/2-margin, margin*2+gameConfig.canvasHeight/12+gameConfig.canvasHeight/12/2, `Time: ${gameConfig.elapsedTime}s`, texts).setOrigin(0.5);
+        
+
+        
+
     }
 
     //Main loop for the game (It used to be a function outside of Phaser, but now it's the one that controls the loop)
@@ -67,6 +110,9 @@ class Level extends Phaser.Scene {
         //We draw the background outside the draw function to maintain it static
         this.game.background.draw(this.ctx);
         this.game.decoration_floor.draw(this.ctx);
+
+        this.score.setText(`Score: ${gameConfig.score}`);
+        this.time.setText(`Time: ${gameConfig.elapsedTime}s`);
 
         //Calculates the position of the camera (implemented like a dephase of the drawing)
         const cameraX = gameConfig.canvasWidth / 2 - this.game.player.position.x;

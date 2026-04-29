@@ -175,6 +175,7 @@ CREATE TABLE ZonaGeneracion(id_zona INT AUTO_INCREMENT,
     CONSTRAINT fk_ZonaGeneracion_nivel FOREIGN KEY (id_nivel) REFERENCES Nivel(id_nivel) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+#select * from jugadores_estadisticas;
 #View
 CREATE VIEW jugadores_estadisticas AS
 SELECT A.id_jugador, A.username, A.edad, A.fecha_registro, B.enemigos_eliminados, B.cartas_usadas, B.cartas_mejoradas, B.victorias, B.derrotas, B.tiempo_jugado, B.nivel_maximo_alcanzado, B.puntuacion_maxima
@@ -220,6 +221,10 @@ CREATE VIEW zonas_generacion AS
 SELECT A.id_zona, B.id_nivel, B.numero_nivel, B.dificultad, A.coord_x, A.coord_y, A.hostil
 FROM ZonaGeneracion AS A INNER JOIN Nivel AS B ON A.id_nivel = B.id_nivel;
 
+CREATE VIEW top_players AS
+SELECT A.username, B.puntuacion_maxima
+FROM Jugador AS A INNER JOIN Estadisticas AS B USING(id_jugador)
+ORDER BY B.puntuacion_maxima DESC, B.nivel_maximo_alcanzado DESC LIMIT 10;
 
 #Trigger
 DELIMITER $$
@@ -369,8 +374,41 @@ END $$
 
 DELIMITER ;
              
-CALL GetPlayerPlatforms (1);
-SELECT * FROM Partida;
-SELECT * FROM Jugador;
-SELECT * FROM NivelPartida;
-SELECT * FROM CartaJugador;
+#CALL GetPlayerPlatforms (1);
+#SELECT * FROM Partida;
+#SELECT * FROM Jugador;
+#SELECT * FROM NivelPartida;
+#SELECT * FROM CartaJugador;
+
+DELIMITER $$
+CREATE PROCEDURE jugador_stats(IN jugador VARCHAR(50))
+BEGIN
+    SELECT * FROM jugadores_estadisticas AS A
+    WHERE A.username = jugador;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE count_stats(IN tab VARCHAR(50), IN col VARCHAR(50))
+BEGIN
+    SET @consult = CONCAT('SELECT SUM(', col, ') AS ',col,' FROM ', tab);
+    PREPARE statement FROM @consult;
+    EXECUTE statement;
+    DEALLOCATE PREPARE statement;
+END $$
+DELIMITER ;
+
+#SELECT COUNT(A.id_partida) AS runs, DATE_FORMAT(fecha_inicio, "%M") AS month, DATE_FORMAT(fecha_inicio, "%d") AS day FROM partidas_jugador AS A GROUP BY DATE_FORMAT(fecha_inicio, "%M"), DATE_FORMAT(fecha_inicio, "%d");
+
+#SELECT COUNT(A.fecha_inicio) AS iniciadas, COUNT(A.fecha_fin <> NULL) AS terminadas FROM partidas_jugador AS A;
+
+#SELECT AVG(partidas) AS promedio_partidas FROM (SELECT COUNT(A.id_partida) AS partidas FROM partidas_jugador AS A GROUP BY A.id_jugador) AS t;
+
+#SELECT AVG(tiempo) AS promedio_tiempo FROM (SELECT COUNT(A.id_partida) AS tiempo FROM partidas_jugador AS A WHERE A.fecha_fin <> NULL) AS t;
+
+#SELECT A.id_carta AS id, A.descripcion AS nombre, COUNT(A.id_carta) AS repartida, SUM(A.fue_usada) AS usada FROM cartas_partida AS A GROUP BY A.id_carta;
+
+#SELECT * FROM cartas_partida;
+
+
+

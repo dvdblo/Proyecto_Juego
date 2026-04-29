@@ -392,6 +392,10 @@ class Game {
         gameConfig.lives = 3;
         this.lifeSprite =  new Image();
         this.lifeSprite.src = "../sprites/Lives/lives.png";
+        this.contScore = new Image();
+        this.contScore.src = "../Videojuego/assets/sprites/botones/contScore.png";
+        this.contLevel = new Image();
+        this.contLevel.src = "../Videojuego/assets/sprites/botones/contLevel.png";
         gameConfig.maxlives = 6;
         gameConfig.score = 0;
         this.isGameOver = false;
@@ -428,6 +432,7 @@ class Game {
             finalPlatform.isFinalPlatform = true;
             finalPlatform.setSprite('../Videojuego/assets/sprites/plataformas_auto/Final_Platform.png',
                             new Rect(0, 0, 1566, 688));
+            this.winPlat = this.actualPlatforms.at(-1);
             
             const enemiesData = await initEnemies(this.level);
             console.log("ENEMIES DATA:", enemiesData);
@@ -572,7 +577,7 @@ class Game {
         return true;
     }
     applyScreenCompleteBonus(){
-        if(this.screenCompleteBonusApplied){
+        if(this.screenCompleteBonusApplied || gameConfig.levelOver1 || gameConfig.levelOver2){
             return;
         }
         let baseBonus = 500;
@@ -582,13 +587,14 @@ class Game {
         let platformBonus = unusedPlatforms * 100;
         let timeBonus = 0;
         if(gameConfig.elapsedTime <= 30){
-        timeBonus = 300;
+        timeBonus = 2;
         }
         else if(gameConfig.elapsedTime <= 60){
-        timeBonus = 150;
+        timeBonus = 1.5;
         }
-        let totalBonus = baseBonus + powerUpBonus + platformBonus + timeBonus;
+        let totalBonus = baseBonus + powerUpBonus + platformBonus;
         gameConfig.score += totalBonus;
+        gameConfig.score *= timeBonus;
         console.log("Bonus ganado:", totalBonus);
         console.log("PowerUps sin usar:", unusedPowerUps);
         console.log("Plataformas sin usar:", unusedPlatforms);
@@ -623,6 +629,29 @@ class Game {
 
     //To draw the game objects
     draw(ctx) {
+
+        //Background now is loaded from the Phaser scene
+
+        //Actual Platforms
+        for(let platform of this.actualPlatforms) {
+            platform.draw(ctx);
+        }
+        
+        //Player
+        this.player.draw(ctx);
+
+        //Enemies
+        console.log("ENEMIES EN JUEGO:", this.enemies.length);
+        for(let enemy of this.enemies) {
+            enemy.draw(ctx);
+        }
+
+        //Bullets
+        for(let bullet of this.bullets){
+            bullet.draw(ctx);
+        }
+
+        //Interface
         ctx.save();
         ctx.setTransform(1,0,0,1,0,0);
         const lifeWidth = 32;
@@ -639,7 +668,7 @@ class Game {
             ctx.drawImage(
                this.lifeSprite,
                margin + i * (lifeWidth + 5),
-               margin,
+               margin*3 + 2*gameConfig.canvasHeight/12,
                lifeWidth,
                lifeHeight
             );
@@ -666,39 +695,7 @@ class Game {
             );
         }
 
-        ctx.fillText(
-            "Score: " + gameConfig.score,
-            margin,
-            margin + 50
-        );
-
-        ctx.fillText(
-            "Time: " + gameConfig.elapsedTime + "s",
-            margin,
-            margin + 80
-        );
         ctx.restore();
-
-        //Background now is loaded from the Phaser scene
-
-        //Actual Platforms
-        for(let platform of this.actualPlatforms) {
-            platform.draw(ctx);
-        }
-        
-        //Player
-        this.player.draw(ctx);
-
-        //Enemies
-        console.log("ENEMIES EN JUEGO:", this.enemies.length);
-        for(let enemy of this.enemies) {
-            enemy.draw(ctx);
-        }
-
-        //Bullets
-        for(let bullet of this.bullets){
-            bullet.draw(ctx);
-        }
     }
 
     //To update the position, sprites, collisions...

@@ -48,8 +48,6 @@ const IMG = {
     p6: {xIMG: 1024, yIMG: 450},
     p7: {xIMG: 1024, yIMG: 450}
 };
-console.log(IMG['p1'].xIMG);
-
 
 // Data structure with the directions a character can move, the
 // direction sign and the related animation.
@@ -114,3 +112,11 @@ window.setResolution = function (width, height) {
   game.scale.resize(width, height);
 
 };
+
+//Function to obtain the position in Y automaticaly for elements
+function hei(i, n, pInitial, pFinal) {
+            const posInitial = gameConfig.canvasHeight/pInitial;
+            const posFinal = gameConfig.canvasHeight/pFinal;
+            const paso = (posFinal - posInitial) / (n - 1);
+            return posInitial + paso * i;
+        }

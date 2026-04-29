@@ -18,9 +18,9 @@ app.use(cors());
 app.use(express.json());
 
 const pool = mysql.createPool({
-    host: '127.0.0.1',
+    host: '10.49.108.217',
     user: 'root',
-    password: 'Febrero_312',
+    password: 'bl200611',
     database: 'hyperjump'
 }).promise();
 
@@ -238,3 +238,105 @@ app.put('/carta/mejorar', async (req, res) => {
 app.listen(port, () => {
     console.log(`Servidor en http://localhost:${port}`);
 });
+
+//---------------------------------------------------------------------------------------------------------------------
+//STATS----------------------------------------------------------------------------------------------------------------
+app.get('/stats/top', async (req, res) => {
+    try{
+    
+    const [top_players] = await pool.query('SELECT * FROM top_players');
+
+    res.json(top_players);
+    }catch(error){
+        console.error('Error fetching top_players:', error);
+        res.status(500).json({ error: 'Error fetching generation zones' });
+    }
+});
+
+app.post('/stats/user/validation', async (req, res) => {
+    try {
+        const { username, contraseña } = req.body;
+        const [rows] = await pool.query('SELECT contraseña FROM Jugador WHERE username = ?', [username]);
+        if (rows.length === 0) {
+            return res.status(401).json({ error: 'Información de inicio de sesión inválida' });
+        }
+
+        const correctPassword = rows[0].contraseña === contraseña;
+        if (!correctPassword) {
+            return res.status(401).json({ error: 'Información de inicio de sesión inválida' });
+        }
+
+        res.json({success: true});
+    } catch (error) {
+        res.status(500).json({ error: 'Información de inicio de sesión inválida' });
+    }
+});
+
+app.get('/stats/user', async (req, res) => {
+    try{
+    const username = req.query.username;
+    const [stats] = await pool.query('CALL jugador_stats(?)', [username]);
+
+    res.json(stats);
+    }catch(error){
+        console.error('Error fetching user stats:', error);
+        res.status(500).json({ error: 'Error fetching user stats' });
+    }
+});
+
+app.get('/stats/admin/general', async (req, res) => {
+    try {
+        const consults = [
+            { table: 'partidas_jugador', col: 'puntaje_total' },
+            { table: 'partidas_jugador', col: 'enemigos_total' },
+            { table: 'jugadores_estadisticas', col: 'cartas_usadas' },
+            { table: 'jugadores_estadisticas', col: 'cartas_mejoradas' },
+            { table: 'jugadores_estadisticas', col: 'victorias' },
+            { table: 'jugadores_estadisticas', col: 'derrotas' }
+        ];
+
+        const general_stats = [];
+
+        for (const consult of consults) {
+            const [rows] = await pool.query('CALL count_stats(?, ?)', [consult.table, consult.col]);
+
+            console.log(rows[0][0]);
+            general_stats.push(rows[0][0]);
+        }
+
+        res.json(general_stats);
+
+    } catch (error) {
+        console.error('Error fetching general stats:', error);
+        res.status(500).json({ error: 'Error fetching general stats' });
+    }
+});
+
+app.get('/stats/admin/graphics', async (req, res) => {
+    try {
+
+        const graphics_stats = [];
+
+        const run_day = await pool.query('SELECT COUNT(A.id_partida) AS runs, DATE_FORMAT(fecha_inicio, "%M") AS month, DATE_FORMAT(fecha_inicio, "%d") AS day FROM partidas_jugador AS A GROUP BY DATE_FORMAT(fecha_inicio, "%M"), DATE_FORMAT(fecha_inicio, "%d")');
+        graphics_stats.push({run_day: run_day[0]});
+
+        const start_end = await pool.query('SELECT COUNT(A.fecha_inicio) AS iniciadas, COUNT(A.fecha_fin <> NULL) AS terminadas FROM partidas_jugador AS A');
+        graphics_stats.push({start_end: start_end[0]});
+
+        const avg_runs_user = await pool.query('SELECT AVG(partidas) AS promedio_partidas FROM (SELECT COUNT(A.id_partida) AS partidas FROM partidas_jugador AS A GROUP BY A.id_jugador) AS t');
+        graphics_stats.push({avg_runs: avg_runs_user[0]});
+
+        const avg_time_end = await pool.query('SELECT AVG(tiempo) AS promedio_tiempo FROM (SELECT COUNT(A.id_partida) AS tiempo FROM partidas_jugador AS A WHERE A.fecha_fin <> NULL) AS t');
+        graphics_stats.push({avg_time: avg_time_end[0]});
+
+        const card_dealt_used = await pool.query('SELECT A.id_carta AS id, A.descripcion AS nombre, COUNT(A.id_carta) AS repartida, SUM(A.fue_usada) AS usada FROM cartas_partida AS A GROUP BY A.id_carta');
+        graphics_stats.push({card_dealt_used: card_dealt_used[0]});
+
+        res.json(graphics_stats);
+
+    } catch (error) {
+        console.error('Error fetching general stats:', error);
+        res.status(500).json({ error: 'Error fetching general stats' });
+    }
+});
+

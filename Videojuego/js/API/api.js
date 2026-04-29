@@ -124,8 +124,10 @@ async function login(username, contraseña) {
     });
     const data = await response.json();
     if (data.success) {
-        gameConfig.id_jugador = data.id_jugador;
-        startGame(); // your existing function
+        localStorage.setItem("id_jugador", JSON.stringify(data.id_jugador));
+        localStorage.setItem("usuario", JSON.stringify(data.username));
+        // gameConfig.id_jugador = data.id_jugador;
+        alert('¡Inicio de sesión exitoso, ya puedes jugar!');
     } else {
         alert(data.error);
     }

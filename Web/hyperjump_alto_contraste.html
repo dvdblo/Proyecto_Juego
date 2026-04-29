@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Hyperjump</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="web_styles_alto_contraste.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+<body onload="get_top_players()">
+    <div class="fondo"></div>
+    <main id="general">
+        <h1 id="Main_title">HyperJump</h1>
+<!----------------------------------------------------------------------------------------------------------->
+        <nav class="navbar">
+            <ul>
+                <li><a href="#inicio">Jugar</a></li>
+                <li><a href="#tutorial">Tutorial</a></li>
+                <li><a href="#historia">Historia</a></li>
+                <li><a href="#estadisticas">Estadísticas</a></li>
+            </ul>
+        </nav>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+        <section id="inicio">
+            
+            <h2 class="backText">Sumérgete en un innexplorado mundo y ayuda a Astro a recuperar la comunicación con la Tierra.</h2>
+            <br>
+
+            <h1 class="backText">Accede a tu cuenta para jugar</h1>
+            <a href="user_login.html" target="_blank">
+            <button class="bt">Acceder</button>
+            </a>
+            
+            <ul>
+                <li class = "displays"><button class="bt" onclick="startGame()">Jugar Ahora</button></li>
+            </ul>
+
+        </section>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+        <section id="tutorial">
+            <h3 class="backText2">HyperJump es un juego interactivo de plataformas, en dónde deberás construir tu camino por un 
+                inexplorado planeta. <br>
+                Podrás usar cartas para colocar plataformas y ser capaz de sebrevivir. <br>
+                De igual forma, podrás activar habilidades adicionales para completar tu objetivo... <br>
+                <u>Reestablecer la comunicación con tu querido planeta, La Tierra.</u>
+            </h3>
+            <br>
+
+            <h1 class="backText">¿Cómo Jugar?</h1>
+            <br>
+
+            <h2 class="backText">Movimiento</h2>
+            <div class="tutorialTexto backText2">
+                <p>¡Viaja por los niveles con controles sencillos!</p>
+                <p><strong>Movimiento a la Izquierda: </strong>Con la tecla <b>"A"</b> o la <b>Flecha izquierda</b>.</p>
+                <p><strong>Movimiento a la Derecha: </strong>Con la tecla <b>"D"</b> o la <b>Flecha derecha</b>.</p>
+                <p><strong>Salto: </strong>Con la tecla <b>"W"</b>, la <b>Flecha superior</b> o <b>"Espacio"</b>.</p>
+            </div>
+            <br>
+
+            <h2 class="backText">Uso de cartas</h2>
+            <div class="tutorialTexto backText2">
+                <p>¡Utiliza tus cartas para avanzar por los niveles!</p>
+                <p><strong>Cartas de plataforma: </strong>Selecciónala con <b>"Click izquierdo"</b> y colócala 
+                    donde quieras con el mismo botón.</p>
+                <p><strong>Cartas de power-up: </strong>Seleccionala y úsala con <b>"Click izquierdo"</b> o  
+                    presiona <b>"Enter"</b> para usar la que esté en la posición más a la derecha.</p>
+            </div>
+            <br>
+
+            <h2 class="backText">Mejora de cartas</h2>
+            <div class="tutorialTexto backText2">
+                <p>¡Si no usas alguna de tus cartas, puedes mejorarla de foma permanente! <br>
+                    ¡Úsala en tus siguientes partidas!</p>
+                <p><strong>Mejora de cartas: </strong>Arrastra la carta a la <b>Casilla de mejora</b>.</p>
+            </div>
+        </section>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+        <div id="historia">
+            <h1 class="backText">Historia del Juego</h1>
+            <br>
+
+            <p class="backText3">Con el avance de la humanidad, la calidad de vida de los humanos alcanzó un límite sin precedentes.
+                Todos vivian dignamente en la reminiscencia de lo que algua vez fue un planeta de desigualdad.
+                <br><br>
+                Pero, un nublado y tormentoso día...
+                <br><br>
+                <i>"¡Presidente, lo que le digo es algo serio! ¡Le advertí que esto sucedería! ¡Y ahora... ya no 
+                hay mucho que hacer..."</i>
+                <br><br>
+                Un equipo de cientificos había descubierto una enorme falla sobre el Trópico de Cáncer, la cual se 
+                extendía desde México hasta China. Esta falla habría sido provocada por la minería sin control a lo
+                largo del Océano Atlántico.
+                <br><br>
+                Despúes de innumerables reuniones entre los líderes mundiales y personal especializado en el tema, 
+                se llegó a una conlcusión, una que nadie quería aceptar...
+                <br><br>
+                "Atención ciudadanos del mundo, como seguro sabrán, enfrentamos un problema global, uno que podría 
+                terminar con todo lo que conocemos. Es por eso que el día de hoy nos reunimos, para dar comienzo a 
+                la misión "Elpis", cuyo objetivo, explorar el espacio en búsqueda de un nuevo hogar."
+                <br><br>
+                Todos estaban entusiasmados por los avances que se lograron para esta misión. Se construyó una nave 
+                capaz de resistir al hostil universo, diseñada para durar años y años, pues el planeta al que se
+                apuntaba, "El Paztizal", se encontraba... un poquito lejos.     
+            </p>
+            <br>
+
+            <h3 class="backText3">Un astronauta, la misión más importante que alguna vez hubiera existido, y una humanidad esperanzada...<br></h3>
+            <h2 class="backText3">¡Juega ahora para conocer más!</h2>
+        </div>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+        <section id="personajes">
+            <h1 class="backText">El héroe</h1>
+            <br>
+
+            <div class="personaje row">
+                <img src = "../Videojuego/assets/sprites/Astro2.png" class="col imgLimit backText">
+                
+                <div class="col backText">
+                    <h2>Astro</h2>
+                    <p>Frédéric Spes, más conocido por todos como "Astro", es el hombre encargado de 
+                        instalar la primera base extra planetaria, sentando las bases para salvar a la humanidad.
+                    </p>
+                </div>
+            </div>
+        </section>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+        <section id="estadisticas">
+            <h1 class="backText">Ranking Global</h1>
+            <table class="tab" id="top_players"></table>
+            <br>
+
+            <h1 class="backText">¡Consulta tus estadísticas!</h1>
+
+            <ul>
+                <li class = "displays"><button class="bt" onclick="get_user_stats(JSON.parse(localStorage.getItem('usuario')))">Consultar</button></li>
+            </ul>
+
+            <table class="tab" id="user_stats"></table>
+            <br>
+
+            <h1 class="backText">¿Eres administrador? Accede a la visión completa desde aquí</h1>
+            <a href="admin_stadistics.html" target="_blank">
+            <button class="bt">Vista de Administrador</button>
+            </a>
+
+        </section>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+    </main>
+<!----------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------->
+    <div id="game-container" style="display: none;"></div>
+
+            <script src="../Videojuego/js/config/gameConfig.js"></script>
+            <script src="../Videojuego/js/Librerias/Regions.js"></script>
+            <script src="../Videojuego/js/Librerias/Vector.js"></script>
+            <script src="../Videojuego/js/Librerias/GameObject.js"></script>
+            <script src="../Videojuego/js/Librerias/AnimatedObject.js"></script>
+            <script src="../Videojuego/js/Librerias/game_functions.js"></script>
+            <script src="../Videojuego/js/Librerias/AnimatedPlayer.js"></script>
+            <script src="../Videojuego/js/API/api.js"></script>
+            <script src="stats_api.js"></script>
+            <script src="../Videojuego/js/hyperjump.js"></script>
+            <script src="../Videojuego/js/scenes/menus.js"></script>
+            <script src="../Videojuego/js/scenes/history.js"></script>
+            <script src="../Videojuego/js/scenes/levels.js"></script>
+            <script src="../Videojuego/js/scenes/states.js"></script>
+            <script src="../Videojuego/js/main.js"></script>
+
+            <script>
+                localStorage.setItem("id_jugador", null);
+                localStorage.setItem("usuario", null);
+
+                function startGame() {
+                    const id_user = JSON.parse(localStorage.getItem("id_jugador"));
+                    if (!id_user) {
+                        alert('Debes iniciar sesión primero');
+                        return;
+                    }
+                    window.open("game.html", "_blank");
+                }
+            </script>
+</body>
+</html>
