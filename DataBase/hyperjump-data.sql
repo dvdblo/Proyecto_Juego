@@ -250,3 +250,33 @@ VALUES
 (13, 3, 3, 1, null),
 (14, 3, 4, 2, '{"bloquea_proyectiles": true}')
 ;
+
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE Enemigo
+SET vida_base = 5, daño_base = 1, rango_ataque = 1, rango_deteccion = 350
+WHERE tipo = 'jefe' AND descripcion = 'facil';
+
+UPDATE Enemigo
+SET vida_base = 8, daño_base = 1, rango_ataque = 1, rango_deteccion = 450
+WHERE tipo = 'jefe' AND descripcion = 'medio';
+
+UPDATE Enemigo
+SET vida_base = 12, daño_base = 1, rango_ataque = 1, rango_deteccion = 600
+WHERE tipo = 'jefe' AND descripcion = 'dificil';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 1, rango_ataque = 0, rango_deteccion = 80
+WHERE tipo = 'simple';
+
+UPDATE Enemigo
+SET vida_base = 3, daño_base = 1, rango_ataque = 1, rango_deteccion = 600
+WHERE tipo = 'torreta';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 0, rango_ataque = 0, rango_deteccion = 250
+WHERE tipo = 'alerta';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 1, rango_ataque = 0, rango_deteccion = 80
+WHERE tipo = 'divide';
