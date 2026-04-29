@@ -33,14 +33,9 @@ async function get_top_players() {
     }
 }
 
-async function get_user_stats(username, contraseña) {
-    const val = await fetch('http://localhost:3000/stats/user/validation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, contraseña })
-    });
-    const comp = await val.json();
-    if (comp.success) {
+async function get_user_stats(username) {
+
+    if (username) {
         const res = await fetch(`http://localhost:3000/stats/user?username=${encodeURIComponent(username)}`);
         const data = await res.json();
 
@@ -65,7 +60,7 @@ async function get_user_stats(username, contraseña) {
         });
         
     } else {
-        alert(comp.error);
+        alert("Necesitas iniciar sesión primero");
     }
 }
 

@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Hyperjump</title>
-    <link rel="stylesheet" href="Web_styles.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="web_styles_alto_contraste.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap JS -->
@@ -35,18 +36,10 @@
             <h2 class="backText">Sumérgete en un innexplorado mundo y ayuda a Astro a recuperar la comunicación con la Tierra.</h2>
             <br>
 
-            <section class="backText" id="login">
-                <h2>Iniciar Sesión</h2>
-                <ul>
-                    <input type="text" id="username" class = "displays" placeholder="Usuario">
-                    <input type="password" id="password" class = "displays" placeholder="Contraseña">
-                    <input type="number" id="edad" class = "displays" placeholder="Edad">
-                    <li><button class = "displays" onclick="login(document.getElementById('username').value, 
-                            document.getElementById('password').value)">Iniciar Sesion</button></li>
-                    <li><button class = "displays" onclick="register(document.getElementById('username').value, 
-                                document.getElementById('password').value, document.getElementById('edad').value)">Crear Cuenta</button></li>
-                </ul>
-            </section>
+            <h1 class="backText">Accede a tu cuenta para jugar</h1>
+            <a href="user_login.html" target="_blank">
+            <button class="bt">Acceder</button>
+            </a>
             
             <ul>
                 <li class = "displays"><button class="bt" onclick="startGame()">Jugar Ahora</button></li>
@@ -64,10 +57,10 @@
             </h3>
             <br>
 
-            <h1>¿Cómo Jugar?</h1>
+            <h1 class="backText">¿Cómo Jugar?</h1>
             <br>
 
-            <h2>Movimiento</h2>
+            <h2 class="backText">Movimiento</h2>
             <div class="tutorialTexto backText2">
                 <p>¡Viaja por los niveles con controles sencillos!</p>
                 <p><strong>Movimiento a la Izquierda: </strong>Con la tecla <b>"A"</b> o la <b>Flecha izquierda</b>.</p>
@@ -76,7 +69,7 @@
             </div>
             <br>
 
-            <h2>Uso de cartas</h2>
+            <h2 class="backText">Uso de cartas</h2>
             <div class="tutorialTexto backText2">
                 <p>¡Utiliza tus cartas para avanzar por los niveles!</p>
                 <p><strong>Cartas de plataforma: </strong>Selecciónala con <b>"Click izquierdo"</b> y colócala 
@@ -86,7 +79,7 @@
             </div>
             <br>
 
-            <h2>Mejora de cartas</h2>
+            <h2 class="backText">Mejora de cartas</h2>
             <div class="tutorialTexto backText2">
                 <p>¡Si no usas alguna de tus cartas, puedes mejorarla de foma permanente! <br>
                     ¡Úsala en tus siguientes partidas!</p>
@@ -96,7 +89,7 @@
 <!----------------------------------------------------------------------------------------------------------->
 <!----------------------------------------------------------------------------------------------------------->
         <div id="historia">
-            <h1>Historia del Juego</h1>
+            <h1 class="backText">Historia del Juego</h1>
             <br>
 
             <p class="backText3">Con el avance de la humanidad, la calidad de vida de los humanos alcanzó un límite sin precedentes.
@@ -130,7 +123,7 @@
 <!----------------------------------------------------------------------------------------------------------->
 <!----------------------------------------------------------------------------------------------------------->
         <section id="personajes">
-            <h1>El héroe</h1>
+            <h1 class="backText">El héroe</h1>
             <br>
 
             <div class="personaje row">
@@ -147,24 +140,20 @@
 <!----------------------------------------------------------------------------------------------------------->
 <!----------------------------------------------------------------------------------------------------------->
         <section id="estadisticas">
-            <h1>Ranking Global</h1>
+            <h1 class="backText">Ranking Global</h1>
             <table class="tab" id="top_players"></table>
             <br>
 
-            <h1>¡Consulta tus estadísticas!</h1>
+            <h1 class="backText">¡Consulta tus estadísticas!</h1>
+
             <ul>
-                <input type="text" id="usernameS" class = "displays" placeholder="Usuario">
-                <input type="password" id="passwordS" class = "displays" placeholder="Contraseña">
-            </ul>
-            <ul>
-                <li class = "displays"><button class="bt" onclick="get_user_stats(document.getElementById('usernameS').value, 
-                        document.getElementById('passwordS').value)">Consultar</button></li>
+                <li class = "displays"><button class="bt" onclick="get_user_stats(JSON.parse(localStorage.getItem('usuario')))">Consultar</button></li>
             </ul>
 
             <table class="tab" id="user_stats"></table>
             <br>
 
-            <h1>¿Eres administrador? Accede a la visión completa desde aquí</h1>
+            <h1 class="backText">¿Eres administrador? Accede a la visión completa desde aquí</h1>
             <a href="admin_stadistics.html" target="_blank">
             <button class="bt">Vista de Administrador</button>
             </a>
@@ -194,19 +183,16 @@
             <script src="../Videojuego/js/main.js"></script>
 
             <script>
+                localStorage.setItem("id_jugador", null);
+                localStorage.setItem("usuario", null);
+
                 function startGame() {
-                    if (!gameConfig.id_jugador) {
+                    const id_user = JSON.parse(localStorage.getItem("id_jugador"));
+                    if (!id_user) {
                         alert('Debes iniciar sesión primero');
                         return;
-                }
-            // 1. Hide the website
-                    document.getElementById('general').style.display = 'none';
-            
-            // 2. Show the game container
-                    document.getElementById('game-container').style.display = 'block';
-            
-            // 3. Initialize Phaser (If your main.js doesn't auto-start)
-            // If main.js has 'new Phaser.Game(config)', it will start now.
+                    }
+                    window.open("game.html", "_blank");
                 }
             </script>
 </body>

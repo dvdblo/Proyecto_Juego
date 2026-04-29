@@ -36,17 +36,11 @@ class MainMenu extends Phaser.Scene {
         //Elements: buttons and texts
         const scale = 1/5 //To resize the button using the canvas size
         //To adjust the position in Y automatically
-        function hei(i) {
-            const n = 4;
-            const posInicial = gameConfig.canvasHeight/2;
-            const posFinal = gameConfig.canvasHeight/1.1;
-            const paso = (posFinal - posInicial) / (n - 1);
-            return posInicial + paso * i;
-        }
-        const buttonNew = this.add.image(gameConfig.canvasWidth/2, hei(0), 'buttonPlay').setInteractive(); //To allow detection of cursor
-        const buttonContinue = this.add.image(gameConfig.canvasWidth/2, hei(1), 'buttonPlay').setInteractive();
-        const buttonSettings = this.add.image(gameConfig.canvasWidth/2, hei(2), 'buttonPlay').setInteractive();
-        const buttonTutorial = this.add.image(gameConfig.canvasWidth/2, hei(3), 'buttonPlay').setInteractive();
+        
+        const buttonNew = this.add.image(gameConfig.canvasWidth/2, hei(0,4,2,1.1), 'buttonPlay').setInteractive(); //To allow detection of cursor
+        const buttonContinue = this.add.image(gameConfig.canvasWidth/2, hei(1,4,2,1.1), 'buttonPlay').setInteractive();
+        const buttonSettings = this.add.image(gameConfig.canvasWidth/2, hei(2,4,2,1.1), 'buttonPlay').setInteractive();
+        const buttonTutorial = this.add.image(gameConfig.canvasWidth/2, hei(3,4,2,1.1), 'buttonPlay').setInteractive();
         
         //Adjusts the size
         buttonNew.setScale(scale);
@@ -65,10 +59,10 @@ class MainMenu extends Phaser.Scene {
         };
 
         //Text for the button
-        const textNew = this.add.text(gameConfig.canvasWidth/2, hei(0)-scale*gameConfig.canvasHeight/20, 'Empezar juego', textButton).setOrigin(0.5);
-        const textContinue = this.add.text(gameConfig.canvasWidth/2, hei(1)-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
-        const textSettings = this.add.text(gameConfig.canvasWidth/2, hei(2)-scale*gameConfig.canvasHeight/20, 'Configuración', textButton).setOrigin(0.5);
-        const textTutorial = this.add.text(gameConfig.canvasWidth/2, hei(3)-scale*gameConfig.canvasHeight/20, 'Tutorial', textButton).setOrigin(0.5);
+        const textNew = this.add.text(gameConfig.canvasWidth/2, hei(0,4,2,1.1)-scale*gameConfig.canvasHeight/20, 'Empezar juego', textButton).setOrigin(0.5);
+        const textContinue = this.add.text(gameConfig.canvasWidth/2, hei(1,4,2,1.1)-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
+        const textSettings = this.add.text(gameConfig.canvasWidth/2, hei(2,4,2,1.1)-scale*gameConfig.canvasHeight/20, 'Configuración', textButton).setOrigin(0.5);
+        const textTutorial = this.add.text(gameConfig.canvasWidth/2, hei(3,4,2,1.1)-scale*gameConfig.canvasHeight/20, 'Tutorial', textButton).setOrigin(0.5);
 
         //Detects the selection of the button
         buttonNew.on('pointerover', () => {
@@ -324,6 +318,7 @@ class PauseMenu extends Phaser.Scene {
         this.load.image('buttonResume', '../Videojuego/assets/sprites/botones/botonLargoPause.png');
         this.load.image('knobVolume', '../Videojuego/assets/sprites/botones/knobVolume2.png');
         this.load.image('barVolume', '../Videojuego/assets/sprites/botones/barVolume2.png');
+        this.load.image('buttonExit', '../Videojuego/assets/sprites/botones/botonLargoOver.png');
         this.load.font('myTextFont', '../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf');
     }
 
@@ -375,12 +370,14 @@ class PauseMenu extends Phaser.Scene {
             this.sound.volume = gameConfig.musicVolume;
         });
 
+        //Buttons
         const button = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2, 'buttonResume').setInteractive();
         const buttonFull = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.5, 'buttonResume').setInteractive();
-        buttonFull.setScale(scale);
-
-        //Adjusts the size
+        const buttonExit = this.add.image(gameConfig.canvasWidth/5, gameConfig.canvasHeight/1.2, 'buttonResume').setInteractive().setOrigin(0.5);
         button.setScale(scale);
+        buttonFull.setScale(scale);
+        buttonExit.setScale(scale/1.5);
+        
 
         //Like CSS but for Phaser
         const textButton = {
@@ -404,6 +401,7 @@ class PauseMenu extends Phaser.Scene {
         //Text for the button
         const textReturn = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2-scale*gameConfig.canvasHeight/20, 'Reanudar', textButton).setOrigin(0.5);
         const textFull = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.5-scale*gameConfig.canvasHeight/20, 'Pantalla Completa', textButton).setOrigin(0.5);
+        const textExit = this.add.text(gameConfig.canvasWidth/5, gameConfig.canvasHeight/1.2-(scale/1.5)*gameConfig.canvasHeight/20, 'Salir', textButton).setOrigin(0.5);
         const textTitle = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/6, 'HyperJump', styteTitle).setOrigin(0.5);
 
         const backMusic = this.add.image(barX, barY-barHeight*3, 'buttonResume').setInteractive();
@@ -446,6 +444,37 @@ class PauseMenu extends Phaser.Scene {
             } else {
                 document.exitFullscreen();
             }
+        });
+
+        buttonExit.on('pointerover', () => {
+            buttonExit.setScale((scale/1.5)*1.1);
+            textExit.setScale(1.1);
+        });
+
+        //Detects the deselection of the button
+        buttonExit.on('pointerout', () => {
+            buttonExit.setScale(scale/1.5);
+            textExit.setScale(1);
+        });
+
+        //Button pressed
+        buttonExit.on('pointerdown', () => {
+            let key = `levelMusic${gameConfig.actualDiff}`;
+            let sounds = this.sound.getAll(key);
+
+            this.cameras.main.fadeOut(2000);
+            sounds.forEach(sound => {
+                this.tweens.add({
+                    targets: sound,
+                    volume: 0,
+                    duration: 2000,
+                    onComplete: () => {
+                        sound.stop();
+                        this.scene.stop('Level');
+                        this.scene.start("MainMenu");
+                    }
+                });
+            });
         });
 
     }

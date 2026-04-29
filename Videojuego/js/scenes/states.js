@@ -112,7 +112,7 @@ class WinLevelScreen1 extends Phaser.Scene {
         back.displayHeight = gameConfig.canvasHeight;
 
         const scale = 1/5
-        const button = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2, 'buttonContinue1').setInteractive();
+        const button = this.add.image(gameConfig.canvasWidth/2, hei(5,6,3.5,1.1), 'buttonContinue1').setInteractive();
         button.setScale(scale);
 
         const textButton = {
@@ -124,10 +124,13 @@ class WinLevelScreen1 extends Phaser.Scene {
             align: 'center'
         };
 
-        const textContinue = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
+        const textContinue = this.add.text(gameConfig.canvasWidth/2, hei(5,6,3.5,1.1)-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
 
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, `Puntaje: ${gameConfig.score}`, textButton).setOrigin(0.5);
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.6, `Tiempo: ${gameConfig.elapsedTime}s`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(0,6,3.5,1.1), `Puntaje: ${gameConfig.score/gameConfig.lastScreenBonus.timeBonus -gameConfig.lastScreenBonus.totalBonus}  Bonus de héroe: ${gameConfig.lastScreenBonus.baseBonus}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(1,6,3.5,1.1), `Bonus por cartas sobrantes: ${gameConfig.lastScreenBonus.powerUpBonus+gameConfig.lastScreenBonus.platformBonus}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(2,6,3.5,1.1), `Multiplicador por tiempo: x${gameConfig.lastScreenBonus.timeBonus}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(3,6,3.5,1.1), `Puntaje total: ${gameConfig.score}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(4,6,3.5,1.1), `Tiempo: ${gameConfig.elapsedTime}s`, textButton).setOrigin(0.5);
         
         button.on('pointerover', () => {
             button.setScale(scale*1.1);
@@ -160,7 +163,7 @@ class WinLevelScreen1 extends Phaser.Scene {
             strokeThickness: 12,
             align: 'center'
         };
-        const textWinLevel = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/4, 'NIVEL COMPLETADO', styteWinLevel).setOrigin(0.5);
+        const textWinLevel = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/8, 'NIVEL COMPLETADO', styteWinLevel).setOrigin(0.5);
 
     } 
 }
@@ -192,7 +195,7 @@ class WinLevelScreen2 extends Phaser.Scene {
         back.displayHeight = gameConfig.canvasHeight;
 
         const scale = 1/5
-        const button = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2, 'buttonContinue2').setInteractive();
+        const button = this.add.image(gameConfig.canvasWidth/2, hei(5,6,3.5,1.1), 'buttonContinue2').setInteractive();
         button.setScale(scale);
 
         const textButton = {
@@ -204,10 +207,13 @@ class WinLevelScreen2 extends Phaser.Scene {
             align: 'center'
         };
 
-        const textContinue = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
+        const textContinue = this.add.text(gameConfig.canvasWidth/2, hei(5,6,3.5,1.1)-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
 
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, `Puntaje: ${gameConfig.score}`, textButton).setOrigin(0.5);
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.6, `Tiempo: ${gameConfig.elapsedTime}s`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(0,6,3.5,1.1), `Puntaje: ${gameConfig.score/gameConfig.lastScreenBonus.timeBonus -gameConfig.lastScreenBonus.totalBonus}  Bonus de héroe: ${gameConfig.lastScreenBonus.baseBonus}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(1,6,3.5,1.1), `Bonus por cartas sobrantes: ${gameConfig.lastScreenBonus.powerUpBonus+gameConfig.lastScreenBonus.platformBonus}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(2,6,3.5,1.1), `Multiplicador por tiempo: x${gameConfig.lastScreenBonus.timeBonus}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(3,6,3.5,1.1), `Puntaje total: ${gameConfig.score}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(4,6,3.5,1.1), `Tiempo: ${gameConfig.elapsedTime}s`, textButton).setOrigin(0.5);
         
         button.on('pointerover', () => {
             button.setScale(scale*1.1);
@@ -239,7 +245,7 @@ class WinLevelScreen2 extends Phaser.Scene {
             strokeThickness: 12,
             align: 'center'
         };
-        const textWinLevel = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/4, 'NIVEL COMPLETADO', styteWinLevel).setOrigin(0.5);
+        const textWinLevel = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/8, 'NIVEL COMPLETADO', styteWinLevel).setOrigin(0.5);
 
     } 
 }
@@ -271,7 +277,7 @@ class WinLevelScreen3 extends Phaser.Scene {
         back.displayHeight = gameConfig.canvasHeight;
 
         const scale = 1/5
-        const button = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2, 'buttonContinue3').setInteractive();
+        const button = this.add.image(gameConfig.canvasWidth/2, hei(5,6,3.5,1.1), 'buttonContinue3').setInteractive();
         button.setScale(scale);
 
         const textButton = {
@@ -283,10 +289,13 @@ class WinLevelScreen3 extends Phaser.Scene {
             align: 'center'
         };
 
-        const textContinue = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
+        const textContinue = this.add.text(gameConfig.canvasWidth/2, hei(5,6,3.5,1.1)-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
 
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, `Puntaje: ${gameConfig.score}`, textButton).setOrigin(0.5);
-        this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.6, `Tiempo: ${gameConfig.elapsedTime}s`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(0,6,3.5,1.1), `Puntaje: ${gameConfig.score/gameConfig.lastScreenBonus.timeBonus -gameConfig.lastScreenBonus.totalBonus}  Bonus de héroe: ${gameConfig.lastScreenBonus.baseBonus}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(1,6,3.5,1.1), `Bonus por cartas sobrantes: ${gameConfig.lastScreenBonus.powerUpBonus+gameConfig.lastScreenBonus.platformBonus}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(2,6,3.5,1.1), `Multiplicador por tiempo: x${gameConfig.lastScreenBonus.timeBonus}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(3,6,3.5,1.1), `Puntaje total: ${gameConfig.score}`, textButton).setOrigin(0.5);
+        this.add.text(gameConfig.canvasWidth/2, hei(4,6,3.5,1.1), `Tiempo: ${gameConfig.elapsedTime}s`, textButton).setOrigin(0.5);
         
         button.on('pointerover', () => {
             button.setScale(scale*1.1);
@@ -318,7 +327,7 @@ class WinLevelScreen3 extends Phaser.Scene {
             strokeThickness: 12,
             align: 'center'
         };
-        const textWinLevel = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/4, 'NIVEL COMPLETADO', styteWinLevel).setOrigin(0.5);
+        const textWinLevel = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/8, 'NIVEL COMPLETADO', styteWinLevel).setOrigin(0.5);
 
     } 
 }
