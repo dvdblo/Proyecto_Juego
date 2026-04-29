@@ -41,15 +41,25 @@ class Level extends Phaser.Scene {
         this.canvasImage = this.add.image(0, 0, 'gameCanvas').setOrigin(0);
 
         //Game Interface
-        const textButton = {
+        const textScore = {
             fontFamily: 'myTextFont',
-            fontSize: '20px',
+            fontSize: '25px',
             color: '#ffffff',
-            stroke: '#0087fe',
+            stroke: '#faca0b',
             strokeThickness: 1,
             align: 'center'
         };
+        const texts = {
+            fontFamily: 'myTextFont',
+            fontSize: '20px',
+            color: '#ffffff',
+            stroke: '#faca0b',
+            strokeThickness: 1,
+            align: 'center'
+        };
+
         const margin = 10;
+
         const contScore = this.add.image(gameConfig.canvasWidth/2, margin, 'contScore').setOrigin(0.5, 0);
         contScore.displayWidth = gameConfig.canvasWidth/4;
         contScore.displayHeight = gameConfig.canvasHeight/10;
@@ -62,8 +72,9 @@ class Level extends Phaser.Scene {
         contTime.displayWidth = gameConfig.canvasWidth/8;
         contTime.displayHeight = gameConfig.canvasHeight/12;
 
-        this.score = this.add.text(gameConfig.canvasWidth/2, margin+25, `Score: ${gameConfig.score}`, textButton).setOrigin(0.5);
-        this.time = this.add.text(0, margin+25, `Time: ${gameConfig.elapsedTime}`, textButton).setOrigin(0.5);
+        this.score = this.add.text(gameConfig.canvasWidth/2, margin+gameConfig.canvasHeight/10/2, `Score: ${gameConfig.score}`, textScore).setOrigin(0.5);
+        this.actLevel = this.add.text(gameConfig.canvasWidth/8/2-margin, margin+gameConfig.canvasHeight/12/2, `Level ${gameConfig.actualDiff}-${(gameConfig.actualLevel-1)%3 +1}`, texts).setOrigin(0.5);
+        this.time = this.add.text(gameConfig.canvasWidth/8/2-margin, margin*2+gameConfig.canvasHeight/12+gameConfig.canvasHeight/12/2, `Time: ${gameConfig.elapsedTime}s`, texts).setOrigin(0.5);
         
 
         
@@ -88,6 +99,7 @@ class Level extends Phaser.Scene {
         this.game.decoration_floor.draw(this.ctx);
 
         this.score.setText(`Score: ${gameConfig.score}`);
+        this.time.setText(`Time: ${gameConfig.elapsedTime}s`);
 
         //Calculates the position of the camera (implemented like a dephase of the drawing)
         const cameraX = gameConfig.canvasWidth / 2 - this.game.player.position.x;

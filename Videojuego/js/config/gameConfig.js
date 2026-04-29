@@ -1,5 +1,5 @@
 let cWidth = 1400;
-let cHeight = 600;
+let cHeight = 800;
 
 const gameConfig = {
   canvasWidth: cWidth,
