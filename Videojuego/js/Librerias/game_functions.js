@@ -104,6 +104,7 @@ function addPlatform(x, y, width, height, lst, unit, hostil, sprite, widthSprite
     box.destroy = false;
     box.hostil = hostil;
     lst.push(box);
+    return box;
 }
 
 
@@ -138,10 +139,26 @@ function addCard(x, y, width, height, lst, type, duration) {
         else if (type == "Jetpack") {
             card.sprite.src = "../sprites/PowerUps/Nivel1/Jetpack N1.png";
         }
-        else {
-            card.sprite.src = "../sprites/PowerUps/Nivel3/Escudo N3.png";
+        else if(type == "normal_carta") {
+            card.sprite.src = "../sprites/Plataformas/N1/Plataforma Básica N1.png";
+        }
+        else if(type == "one-time") {
+            card.sprite.src = "../sprites/Plataformas/N1/Plataforma Bouncy N1.png";
+        }
+        else if(type == "hielo") {
+            card.sprite.src = "../sprites/Plataformas/N1/Plataforma Hielo N1.png";
+        }
+        else if(type == "bloquea_proyectiles") {
+            card.sprite.src = "../sprites/Plataformas/N1/Plataforma Escudo N1.png";
+        }
+        else if(type == "teletransportador") {
+            card.sprite.src = "../sprites/Plataformas/N1/Plataforma Teleporte N1.png";
+        }
+        else if(type == "turbina") {
+            card.sprite.src = "../sprites/Plataformas/N1/Plataforma Turbina N1.png";
         }
     lst.push(card);
+    return card;
 }
 
 //OLD FUNCTION, MAINTAINING THIS FOR POSIBLE REFERENCE IN FUTURE

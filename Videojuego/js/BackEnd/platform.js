@@ -63,6 +63,19 @@ app.get('/powerups', async (req, res) => {
     }
 });
 
+app.get('/cartas-plataforma/:id_jugador', async (req, res) => {
+    try {
+        const { id_jugador } = req.params;
+        const [results] = await pool.query(
+            'CALL GetPlayerPlatforms(?)', [id_jugador]
+        );
+        // MySQL returns stored procedure results as results[0]
+        res.json(results[0]);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching platform cards' });
+    }
+});
+
 app.post('/register', async (req, res) => {
     try {
         const { username, contraseña, edad } = req.body;
@@ -98,11 +111,23 @@ app.post('/login', async (req, res) => {
 app.post('/partida/nueva', async (req, res) => {
     try {
         const { id_jugador } = req.body;
-        const [result] = await pool.query(
-            'INSERT INTO Partida (id_jugador) VALUES (?)',
+        
+        // We call the stored procedure instead of doing a direct INSERT.
+        // This avoids the trigger conflict by handling the logic sequentially.
+        await pool.query('CALL iniciar_nueva_partida(?)', [id_jugador]);
+
+        // After the procedure runs, we need to get the ID of the session just created.
+        // The procedure uses LAST_INSERT_ID() internally, but we fetch it here for the response.
+        const [rows] = await pool.query(
+            'SELECT id_partida FROM Partida WHERE id_jugador = ? AND fecha_fin IS NULL ORDER BY fecha_inicio DESC LIMIT 1', 
             [id_jugador]
         );
-        res.json({ success: true, id_partida: result.insertId });
+
+        res.json({ 
+            success: true, 
+            id_partida: rows[0].id_partida 
+        });
+        
     } catch (error) {
         res.status(500).json({ error: 'Error creating game session' });
     }
@@ -190,6 +215,22 @@ app.get('/jefe/:level', async (req, res) => {
     } catch (error) {
         console.error("ERROR COMPLETO:", error);
         res.status(500).json({ error: error.message });
+    }
+});
+
+app.put('/carta/mejorar', async (req, res) => {
+    try {
+        const { id_jugador, id_carta } = req.body;
+        await pool.query(
+            `UPDATE CartaJugador 
+             SET nivel_actual = nivel_actual + 1
+             WHERE id_jugador = ? AND id_carta = ? 
+             AND nivel_actual < 4`,
+            [id_jugador, id_carta]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Error upgrading card' });
     }
 });
 

@@ -133,6 +133,7 @@ CREATE TABLE Plataforma(id_plataforma INT AUTO_INCREMENT,
     nombre VARCHAR(60) NOT NULL,
     composicion JSON,
     es_autogenerada BOOLEAN DEFAULT FALSE,
+    tipo ENUM('normal','normal_carta', 'one-time', 'hielo','bloquea_proyectiles','turbina','teletransportador') NOT NULL,
     CONSTRAINT pk_Plataforma PRIMARY KEY(id_plataforma),
     CONSTRAINT fk_Plataforma_carta FOREIGN KEY (id_carta) REFERENCES Carta(id_carta) ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -142,9 +143,7 @@ CREATE TABLE PlataformaNivel(id_plataforma_nivel INT AUTO_INCREMENT,
     nivel_plataforma TINYINT UNSIGNED NOT NULL,
     ancho_base DECIMAL(10,2),
     alto_base DECIMAL(10,2),
-    duracion SMALLINT UNSIGNED,
-    es_destruible BOOLEAN DEFAULT FALSE,
-    enemigo_encima BOOLEAN DEFAULT FALSE,
+    efecto JSON,
     CONSTRAINT pk_PlataformaNivel PRIMARY KEY(id_plataforma_nivel),
     CONSTRAINT fk_PlataformaNivel_plataforma FOREIGN KEY (id_plataforma) REFERENCES Plataforma(id_plataforma) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT uq_plataforma_nivel UNIQUE (id_plataforma, nivel_plataforma)
@@ -161,10 +160,7 @@ CREATE TABLE PowerUpNivel(id_powerup_nivel INT AUTO_INCREMENT,
     id_powerUp INT NOT NULL,
     nivel_powerUp TINYINT UNSIGNED NOT NULL,
     duracion_base SMALLINT UNSIGNED,
-    modificador_velocidad DECIMAL(10,2),
-    modificador_salto DECIMAL(10,2),
-    da_vida TINYINT,
-    rango_actuacion SMALLINT UNSIGNED,
+    efecto JSON,
     CONSTRAINT pk_PowerUpNivel PRIMARY KEY(id_powerup_nivel),
     CONSTRAINT fk_PowerUpNivel_powerUp FOREIGN KEY (id_powerUp) REFERENCES PowerUp(id_powerUp) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT uq_powerup_nivel UNIQUE (id_powerUp, nivel_powerUp)
@@ -213,11 +209,11 @@ SELECT A.id_plataforma, A.nombre, A.es_autogenerada, B.id_carta, B.descripcion
 FROM Plataforma AS A INNER JOIN Carta AS B ON A.id_carta = B.id_carta;
 
 CREATE VIEW plataformas_nivel AS
-SELECT A.id_plataforma_nivel, B.id_plataforma, B.nombre, A.nivel_plataforma, A.ancho_base, A.alto_base, A.duracion, A.es_destruible, A.enemigo_encima
+SELECT A.id_plataforma_nivel, B.id_plataforma, B.nombre, A.nivel_plataforma, A.ancho_base, A.alto_base
 FROM PlataformaNivel AS A INNER JOIN Plataforma AS B ON A.id_plataforma = B.id_plataforma;
 
 CREATE VIEW powerups AS
-SELECT A.id_powerUp, A.nombre, B.id_carta, B.descripcion, C.id_powerup_nivel, C.nivel_powerUp, C.duracion_base, C.modificador_velocidad, C.modificador_salto, C.da_vida, C.rango_actuacion
+SELECT A.id_powerUp, A.nombre, B.id_carta, B.descripcion, C.id_powerup_nivel, C.nivel_powerUp, C.duracion_base, C.efecto
 FROM PowerUp AS A INNER JOIN Carta AS B ON A.id_carta = B.id_carta INNER JOIN PowerUpNivel AS C ON A.id_powerUp = C.id_powerUp;
 
 CREATE VIEW zonas_generacion AS
@@ -310,3 +306,71 @@ BEGIN
     UPDATE EnemigoNivel SET cantidad_maxima = cantidad_maxima + p_incremento WHERE id_nivel = p_id_nivel AND id_enemigo = p_id_enemigo;
 END $$
 DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER crear_nivel_partida_inicial
+AFTER INSERT ON Partida
+FOR EACH ROW
+BEGIN
+    INSERT INTO NivelPartida (id_partida, id_nivel)
+    SELECT NEW.id_partida, id_nivel
+    FROM Nivel
+    WHERE numero_nivel = 1
+    LIMIT 1;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER asignar_cartas_jugador
+AFTER INSERT ON Jugador
+FOR EACH ROW
+BEGIN
+    INSERT INTO CartaJugador (id_jugador, id_carta, nivel_actual)
+    SELECT NEW.id_jugador, id_carta, 1
+    FROM Carta;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE iniciar_nueva_partida(IN p_id_jugador INT)
+BEGIN
+    
+    UPDATE Partida 
+    SET fecha_fin = NOW() 
+    WHERE id_jugador = p_id_jugador AND fecha_fin IS NULL;
+    INSERT INTO Partida (id_jugador, fecha_inicio) 
+    VALUES (p_id_jugador, NOW());
+    SET @ultima_partida = LAST_INSERT_ID();
+    INSERT INTO NivelPartida (id_partida, id_nivel)
+    SELECT @ultima_partida, id_nivel 
+    FROM Nivel 
+    WHERE numero_nivel = 1 
+    LIMIT 1;
+END $$
+
+DELIMITER ;
+             
+DELIMITER $$
+
+CREATE PROCEDURE GetPlayerPlatforms(IN player_id INT)
+BEGIN
+    SELECT 
+		p.id_carta,
+        p.nombre, 
+        p.composicion, 
+        p.tipo, 
+        cj.nivel_actual
+    FROM Plataforma p
+    INNER JOIN Carta c ON p.id_carta = c.id_carta
+    INNER JOIN CartaJugador cj ON c.id_carta = cj.id_carta
+    WHERE cj.id_jugador = player_id AND p.es_autogenerada = false;
+END $$
+
+DELIMITER ;
+             
+CALL GetPlayerPlatforms (1);
+SELECT * FROM Partida;
+SELECT * FROM Jugador;
+SELECT * FROM NivelPartida;
+SELECT * FROM CartaJugador;
