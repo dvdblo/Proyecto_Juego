@@ -24,6 +24,7 @@ class Enemies extends AnimatedObject {
         this.damage = 0;
         this.isImmortal = false;
         this.damageCooldown = 0;
+        this.barkCooldown = 0;
     }
 
     setupByType(){
@@ -67,6 +68,7 @@ class Enemies extends AnimatedObject {
     
     update(deltaTime, game) {
         this.damageCooldown -= deltaTime;
+        this.barkCooldown -= deltaTime;
         if(this.type != "torreta"){
             this.position.x += this.speed * this.direction * deltaTime;
             const leftBoundary = this.platform.position.x - this.platform.halfSize.x;
@@ -101,6 +103,12 @@ class Enemies extends AnimatedObject {
             const dx = game.player.position.x - this.position.x;
 
             if(Math.abs(dx)<this.alertRadius){
+                if(this.barkCooldown <= 0){
+                    if(gameConfig.sounds){
+                        gameConfig.sounds.bark.play();
+                    }
+                    this.barkCooldown = 300;
+                }
                 this.alertEnemies(game);
             }
         }
@@ -141,6 +149,9 @@ class Enemies extends AnimatedObject {
             }
             let bullet = new Bullet(new Vector(this.position.x +offsetX*2, this.position.y),bulletWidth,bulletHeight,"yellow",bulletSpeed,direction);
             game.bullets.push(bullet);
+            if(gameConfig.sounds){
+                gameConfig.sounds.shoot.play();
+            }
             console.log("BALA CREADA:", bullet);
             console.log("TOTAL BALAS:", game.bullets.length);
         }
@@ -162,6 +173,9 @@ class Enemies extends AnimatedObject {
         if(this.hasDivided) return;
 
         console.log("Enemigo se divide");
+        if(gameConfig.sounds){
+            gameConfig.sounds.slimeSplit.play();
+        }
         this.hasDivided = true;
 
         for (let i = 0; i<2; i++){
@@ -207,6 +221,7 @@ class Enemies extends AnimatedObject {
         this.lives -=quantity;
         if(this.lives <= 0){
             return "dead";
+
         }
 
         return false;
@@ -301,6 +316,9 @@ class Game {
         this.mouseY = 0;
         this.bullets = [];
         this.newEnemies = [];
+        this.finalBossRequired = false;
+        this.finalBossDefeated = false;
+        this.screenCompleteBonusApplied = false;
         this.createEventListeners();  //Initializes the event lsiteners
     }
 
@@ -375,12 +393,14 @@ class Game {
         );
         this.platformInventory.push(this.platform);  //Adds the platform to the inventory, so the player can use it when he wants
         }
+        this.screenCompleteBonusApplied = false;
         //Funcion to connect front whit API
         //The objects that depends on DB to load, are here.
         const loadMap = async () => {
             this.generation_zones = await initGenerationZones(this.level, gameConfig.unit);
             this.powerUpInventory = await initCards();
-            
+            this.initialPowerUps = this.powerUpInventory.length;
+            this.initialPlatforms = this.platformInventory.length;
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
             let finalPlatform = this.actualPlatforms.at(-1);
             finalPlatform.isFinalPlatform = true;
@@ -512,6 +532,10 @@ class Game {
                 boss.detectionRange = data.rango_deteccion;
                 boss.points = 1000;
                 boss.isFinalBoss = this.level == 9;
+                if(boss.isFinalBoss){
+                    this.finalBossRequired = true;
+                    this.finalBossDefeated = false;
+                }
                 boss.setupByType();
                 boss.setSprite(getEnemySprite("jefe"));
                 this.enemies.push(boss);
@@ -520,15 +544,42 @@ class Game {
         await loadMap();
     }
     canFinishLevel(){
-        if(this.level !=9){
-            return true;
-        }
-        for(let enemy of this.enemies){
-            if(enemy.type == "jefe" && enemy.isFinalBoss){
-                return false;
-            }
+        if(this.finalBossRequired && !this.finalBossDefeated){
+            return false;
         }
         return true;
+    }
+    applyScreenCompleteBonus(){
+        if(this.screenCompleteBonusApplied){
+            return;
+        }
+        let baseBonus = 500;
+        let unusedPowerUps = this.powerUpInventory.length;
+        let unusedPlatforms = this.platformInventory.length;
+        let powerUpBonus = unusedPowerUps * 150;
+        let platformBonus = unusedPlatforms * 100;
+        let timeBonus = 0;
+        if(gameConfig.elapsedTime <= 30){
+        timeBonus = 300;
+        }
+        else if(gameConfig.elapsedTime <= 60){
+        timeBonus = 150;
+        }
+        let totalBonus = baseBonus + powerUpBonus + platformBonus + timeBonus;
+        gameConfig.score += totalBonus;
+        console.log("Bonus ganado:", totalBonus);
+        console.log("PowerUps sin usar:", unusedPowerUps);
+        console.log("Plataformas sin usar:", unusedPlatforms);
+        this.screenCompleteBonusApplied = true;
+        gameConfig.lastScreenBonus = {
+            baseBonus: baseBonus,
+            unusedPowerUps: unusedPowerUps,
+            powerUpBonus: powerUpBonus,
+            unusedPlatforms: unusedPlatforms,
+            platformBonus: platformBonus,
+            timeBonus: timeBonus,
+            totalBonus: totalBonus
+        };
     }
     gameOver(){
             this.isGameOver=true;
@@ -658,9 +709,20 @@ class Game {
                         this.enemies.splice(this.enemies.indexOf(enemy), 1);
                     }
                     else if(damageResult == "dead"){
+                        if(enemy.isFinalBoss){
+                            this.finalBossDefeated = true;
+                        }
+                        if(enemy.type == "alerta"){
+                            if(gameConfig.sounds && gameConfig.sounds.bark){
+                                gameConfig.sounds.bark.stop();
+                            }
+                        }
                         gameConfig.score += enemy.points;
                         gameConfig.enemiesKilled += 1;
                         this.enemies.splice(this.enemies.indexOf(enemy), 1);
+                        if(gameConfig.sounds){
+                            gameConfig.sounds.enemyDead.play();
+                        }
                     }
                 }
             }
@@ -669,6 +731,9 @@ class Game {
                 gameConfig.levelOver2 = true;
             }
             else if (overlap != false && this.player.damageCooldown <= 0){
+                if(gameConfig.sounds){
+                    gameConfig.sounds.hit.play();
+                }
                 if(enemy.type != "torreta"){
                     gameConfig.lives -= 1;
                     this.player.damageCooldown = 1000;
@@ -683,6 +748,9 @@ class Game {
             bullet.update(deltaTime);
             let overlap = boxOverlap(this.player, bullet, deltaTime, 1);
             if(overlap != false && this.player.damageCooldown <= 0){
+                if(gameConfig.sounds){
+                    gameConfig.sounds.hit.play();
+                }
                 gameConfig.lives -= bullet.damage;
                 this.player.damageCooldown = 1000;
                 this.bullets.splice(this.bullets.indexOf(bullet), 1);
@@ -710,11 +778,12 @@ class Game {
                 let overlap = boxOverlap(this.player, platform, deltaTime, dephase); //Checks the direction of the collision
 
                 if (overlap == "top") {
-                    this.player.position.y = platform.position.y - platform.halfSize.y/dephase - this.player.halfSize.y;
+                    this.player.position.y = platform.position.y - platform.halfSize.y / dephase - this.player.halfSize.y;
                     this.player.fallSpeed = 0;
-                    this.player.onGround = true;  //Activates the jump
+                    this.player.onGround = true;
                     if(platform.isFinalPlatform == true){
                         if(this.canFinishLevel()){
+                            this.applyScreenCompleteBonus();
                             gameConfig.levelComplete = true;
                         }
                         else{
