@@ -1,13 +1,14 @@
 USE hyperjump;
 
-INSERT INTO Plataforma(id_carta, nombre, composicion, es_autogenerada) 
-VALUES (null, "cuadrada", '{"formas": [{"base": 1, "altura": 1, "x": 0, "y": 0}]}', true),
-(null, "rect_3:1", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', true),
-(null, "rect_9:2", '{"formas": [{"base": 9, "altura": 2, "x": 0, "y": 0}]}', true),
-(null, "rect_12:2", '{"formas": [{"base": 12, "altura": 2, "x": 0, "y": 0}]}', true),
-(null, "rect_3:12", '{"formas": [{"base": 3, "altura": 12, "x": 0, "y": 2}]}', true),
-(null, "circulo", '{"formas": [{"base": 2, "altura": 2, "x": 0, "y": 0}]}', true),
-(null, "ele", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', true);
+INSERT INTO Plataforma(id_carta, nombre, composicion, es_autogenerada, tipo) 
+VALUES 
+(null, "cuadrada", '{"formas": [{"base": 1, "altura": 1, "x": 0, "y": 0}]}', true, "normal"),
+(null, "rect_3:1", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', true, "normal"),
+(null, "rect_9:2", '{"formas": [{"base": 9, "altura": 2, "x": 0, "y": 0}]}', true, "normal"),
+(null, "rect_12:2", '{"formas": [{"base": 12, "altura": 2, "x": 0, "y": 0}]}', true, "normal"),
+(null, "rect_3:12", '{"formas": [{"base": 3, "altura": 12, "x": 0, "y": 2}]}', true, "normal"),
+(null, "circulo", '{"formas": [{"base": 2, "altura": 2, "x": 0, "y": 0}]}', true, "normal"),
+(null, "ele", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', true, "normal");
 COMMIT;
 
 #TRUNCATE TABLE Plataforma;
@@ -109,13 +110,22 @@ VALUES  (1, 1, 10, false),
 COMMIT;
 
 INSERT INTO Carta(descripcion, nivel_maximo, dificultad_requerida) 
-VALUES ("Una bomba que explota y daña a los enemigos cercanos", 3, "facil"),
+VALUES 
+("Una bomba que explota y daña a los enemigos cercanos", 3, "facil"),
 ("Aumenta la altura del salto del jugador", 3, "facil"),
 ("Crea un escudo temporal que protege al jugador de un golpe", 3, "medio"),
 ("Aumenta la velocidad de movimiento del jugador", 3, "facil"),
 ("Otorga al jugador un jetpack, el cual permite que desactive la gravedad 5 segundos", 3, "dificil"),
 ("Permite al jugador generar una plataforma aleatoria", 3, "facil"),
-("Otorga al jugador una vida extra", 3, "facil");
+("Otorga al jugador una vida extra", 3, "facil"),
+("Crea una plataforma basica", 3, "facil"),
+("Crea una plataforma que se desmorona despues de brincar en ella", 3, "facil"),
+("Crea una plataforma de hielo que hace que el jugador resbale", 3, "facil"),
+("Crea una plataforma que bloquea los proyectiles enemigos", 3, "medio"),
+("Crea una plataforma en forma de L", 3, "facil"),
+("Crea una plataforma que teletransporta al jugador a otra ubicación al pisarla", 3, "dificil"),
+("Crea una plataforma que esta en constante movimiento de manera vertical", 3, "dificil")
+;
 COMMIT;
 
 INSERT INTO PowerUp(id_carta, nombre) VALUES
@@ -202,6 +212,46 @@ VALUES
 
 
 #SELECT * FROM JefeNivel;
+
+INSERT INTO Plataforma(id_carta, nombre, composicion, es_autogenerada, tipo) 
+VALUES 
+(8, "plataforma_carta", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', false, "normal_carta"),
+(9, "desmoronable", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', false, "one-time"),
+(10, "hielo", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', false, "hielo"),
+(11, "bloquea_proyectiles", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', false, "bloquea_proyectiles"),
+(12, "turbina", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}], "velocidad": 0.08, "amplitud": 0.5}', false, "turbina"),
+(13, "teletransportador", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}], "destino_x": 100, "destino_y": 50}', false, "teletransportador"),
+(14, "ele_carta", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', false, "normal_carta")
+;
+
+INSERT INTO PlataformaNivel(id_plataforma, nivel_plataforma, ancho_base, alto_base, efecto)
+VALUES
+(8,  1, 3, 1, null),
+(9,  1, 3, 1, '{"se_desintegra": true}'),
+(10, 1, 3, 1, '{"modificador_velocidad": 2.5}'),
+(11, 1, 3, 1, '{"bloquea_proyectiles": true}'),
+(12, 1, 3, 1, '{"velocidad": 0.08, "amplitud": 0.5}'),
+(13, 1, 3, 1, null),
+(14, 1, 3, 1, null),
+
+(8,  2, 4, 1, null),
+(9,  2, 3, 1, '{"se_desintegra": true, "doble_salto": true}'),
+(10, 2, 3, 1, '{"modificador_velocidad": 1.5}'),
+(11, 2, 3, 1, '{"bloquea_proyectiles": true, "escudo_jugador": 2}'),
+(12, 2, 3, 1, '{"velocidad": 0.08, "amplitud": 1.0}'),
+(13, 2, 3, 1, null),
+(14, 2, 4, 2, null),
+
+(8,  3, 5, 1, null),
+(9,  3, 3, 1, '{"se_desintegra": true, "doble_salto": true, "modificador_salto": 2.0}'),
+(10, 3, 3, 1, '{"modificador_velocidad": 1.5, "modificador_salto": 1.5}'),
+(11, 3, 3, 1, '{"bloquea_proyectiles": true,"escudo_jugador": true}'),
+(12, 3, 3, 1, '{"velocidad": 0.08, "amplitud": 1.5}'),
+(13, 3, 3, 1, null),
+(14, 3, 4, 2, '{"bloquea_proyectiles": true}')
+;
+
+SET SQL_SAFE_UPDATES = 0;
 
 UPDATE Enemigo
 SET vida_base = 5, daño_base = 1, rango_ataque = 1, rango_deteccion = 350

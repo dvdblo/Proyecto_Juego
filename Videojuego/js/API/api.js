@@ -35,6 +35,21 @@ async function initCards() {
     return powerUpInventory;
 }
 
+async function initPlatformCards() {
+    const res = await fetch(`http://localhost:3000/cartas-plataforma/${gameConfig.id_jugador}`);
+    const data = await res.json();
+
+    let platformInventory = [];
+    for (let i = 0; i < 4; i++) {
+        let type = data[randomRange(data.length, 0)];
+        let card = addCard(0, 0, 8, 8, platformInventory, type.tipo, 5000);
+        card.composicion = type.composicion; // the formas JSON
+        card.id_carta = type.id_carta; // store the card ID for later use
+        card.nivel_actual = type.nivel_actual; // store the required level for this card
+    }
+    return platformInventory;
+}
+
 //Function to read and translate platforms from DB to game
 async function initPlatforms(auto, zones, unit) {  //auto = is auto_generated?
     const res = await fetch(`http://localhost:3000/plats/${auto}`);
@@ -152,5 +167,13 @@ async function finishPartida(id_partida) {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_partida })
+    });
+}
+
+async function upgradeCard(id_jugador, id_carta) {
+    await fetch('http://localhost:3000/carta/mejorar', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_jugador, id_carta })
     });
 }

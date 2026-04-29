@@ -38,7 +38,13 @@ class AnimatedPlayer extends AnimatedObject {
     update(deltaTime, canvas) {
 
         // Restart the velocity on x
-        this.velocity.x = 0;
+        if (this.onIce) {
+            this.velocity.x *= 0.98; // slow decay instead of instant stop
+        } 
+        else {
+            this.velocity.x = 0;
+        }
+        
 
         // Modify the velocity according to the directions pressed
         for (const direction of this.keys) {
