@@ -25,6 +25,8 @@ class AnimatedPlayer extends AnimatedObject {
         this.gravity = 0.0009;
         this.jumpForce = -0.6;
         this.onGround = false;
+        this.maxJumps = 1;
+        this.jumpsRemaining = 1;
 
         //Keys pressed to move the player
         this.keys = [];
@@ -45,14 +47,20 @@ class AnimatedPlayer extends AnimatedObject {
             this.velocity.x = 0;
         }
         
+        if (this.onGround) {
+            this.jumpsRemaining = this.maxJumps;
+        }
 
         // Modify the velocity according to the directions pressed
         for (const direction of this.keys) {
 
             //Jump movement, only if the player is on the ground
-            if (direction === "up" && this.onGround) {
-                this.fallSpeed = this.jumpForce;  //The fall speed controls if player goes up or down, and the velocity
+            if (direction === "up" && this.jumpsRemaining > 0) {
+                this.fallSpeed = this.jumpForce;
                 this.onGround = false;
+                this.jumpsRemaining--;
+                this.keys = this.keys.filter(k => k !== "up"); // consume the jump (Se uso Ia para esto)
+                //Se consumian inmediatamente los saltos porque update se actualiza demasiado rapido. La Ia me ayudo a arreglar ese problema con esta linea de codigo
             }
             if (this.fallSpeed > 1.5) {  //Max velocity
                 this.fallSpeed = 1.5;

@@ -235,6 +235,10 @@ class Cards extends AnimatedObject {
         this.type = type; // Type of power-up (e.g., "Esprint N1", "Doble Salto N1")
         this.composicion = null; // For platform cards, this will hold the platform composition data
         this.id_carta = null; // To store the card ID from the database, useful for upgrades
+        this.nivel_actual = null; // To store the current level of the card, useful for upgrades
+        this.ancho_base = null; // To store the base width of the card, useful for upgrades
+        this.alto_base = null; // To store the base height of the card, useful for upgrades
+        this.efecto = null;
     }
 
 
@@ -254,7 +258,9 @@ class Cards extends AnimatedObject {
             }, this.duration);
         }
         else if (this.type == "Bomba") {
-            game.enemies.splice(0, game.enemies.length); //Removes all the enemies in the game, simulating a bomb explosion that kills all the enemies on the screen
+            const maxEnemigos = this.efecto.max_enemigos ?? game.enemies.length; // fallback kills all
+            console.log(maxEnemigos);
+            game.enemies.splice(0, maxEnemigos);
         }
         else if (this.type == "Vida Extra") {
             gameConfig.lives += 1;
@@ -263,9 +269,11 @@ class Cards extends AnimatedObject {
             player.damageCooldown = this.duration; //The player will be invulnerable for the duration of the power-up, simulating a shield
         }
         else if (this.type == "Jetpack") {
-            player.setJumpForce(player.jumpForce * 1.5);
-        setTimeout(() => {
-                player.setJumpForce(player.jumpForce / 1.5);
+            player.maxJumps = 2;
+            player.jumpsRemaining = 2;
+            setTimeout(() => {
+                player.maxJumps = 1;
+                player.jumpsRemaining = Math.min(player.jumpsRemaining, 1);
             }, this.duration);
         }
         else if(this.type == "Plataforma Random") {
@@ -281,8 +289,8 @@ class Cards extends AnimatedObject {
                 true,
                 1,
                 IMG[`p1`].xIMG, 
-                IMG[`p1`].yIMG
-
+                IMG[`p1`].yIMG,
+                this.type
             );
 
         } 
@@ -294,14 +302,15 @@ class Cards extends AnimatedObject {
                 let plat = addPlatform(
                 player.position.x + game.mouseX - game.canvasWidth / 2,
                 game.mouseY + forma.y,
-                forma.base,
-                forma.altura,
+                this.ancho_base,
+                this.alto_base,
                 game.actualPlatforms,
                 gameConfig.unit,
                 false,
                 1,
                 IMG[`p1`].xIMG,
-                IMG[`p1`].yIMG
+                IMG[`p1`].yIMG,
+                this.type
             );
                 plat.tipo = this.type; // so the update loop can apply special behavior
                 plat.composicion = this.composicion; // to access the special properties of the platform, like the destination of the teletransportador
@@ -310,7 +319,27 @@ class Cards extends AnimatedObject {
                     plat.timer = 0;
                 }
             }
-    }
+        }
+        else if(this.type == "ele_carta"){
+            for (let forma of this.composicion.formas) {
+                let plat = addPlatform(
+                // ADD forma.x HERE to handle horizontal offset
+                player.position.x + game.mouseX - game.canvasWidth / 2 + (forma.x || 0), 
+                game.mouseY + (forma.y || 0),
+                forma.base,
+                forma.altura,
+                game.actualPlatforms,
+                gameConfig.unit,
+                false,
+                1,
+                IMG[`p1`].xIMG,
+                IMG[`p1`].yIMG,
+                this.type
+                );
+            plat.tipo = this.type; 
+            }
+        }
+
 
     }
 }
@@ -466,7 +495,7 @@ class Game {
         const loadMap = async () => {
             this.generation_zones = await initGenerationZones(this.level, gameConfig.unit);
             console.log("ZONAS DE GENERACION:", this.generation_zones);
-            this.powerUpInventory = await initCards();
+            this.powerUpInventory = await initPowerUps();
             console.log("POWER-UPS:", this.powerUpInventory);
             this.platformInventory = await initPlatformCards();
             console.log("plat:", this.platformInventory);
@@ -973,39 +1002,61 @@ class Game {
             const num = parseInt(event.key);
             if (isNaN(num)) return; // Ignore non-number keys immediately
 
-            // Handle Platforms (1-4)
-            if (num >= 1 && num <= 4) {
-                if (num <= this.platformInventory.length) {
-                    this.selectedPlatformIndex = num - 1;
+            // Handle Platforms (0-4)
+            if (num >= 0 && num <= 6) {
+                if (num < this.platformInventory.length) {
+                    this.selectedPlatformIndex = num;
                 }
             } 
     
-            // Handle Power-ups (5-7)
-            else if (num >= 5 && num <= 7) {
-                const powerIndex = num - 5;
-                if (this.powerUpInventory[powerIndex]) { // Check if the power-up actually exists
-                    const powerUpToUse = this.powerUpInventory.splice(powerIndex, 1)[0];
-                    powerUpToUse.applyEffect(this.player, this);
-                    gameConfig.cardsUsed++;
+            // Handle Power-ups (7-9)
+            else if (num >= 7 && num <= 9) {
+                this.selectedPowerUpIndex = num - 7;
+            }
+        });
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key == "p" && this.powerUpInventory.length > 0) {
+                if (this.selectedPowerUpIndex >= this.powerUpInventory.length) {
+                this.selectedPowerUpIndex = 0;
                 }
+            const powerUpToUse = this.powerUpInventory.splice(this.selectedPowerUpIndex, 1)[0];
+            powerUpToUse.applyEffect(this.player, this);
+            this.selectedPowerUpIndex = 0;
+            gameConfig.cardsUsed++;
             }
         });
 
         window.addEventListener('keydown', async (event) => {
             if (event.key == "u" && this.platformInventory.length > 0 && this.upgradeCards.length < 1) {
-            if (this.selectedPlatformIndex >= this.platformInventory.length) {
+                if (this.selectedPlatformIndex >= this.platformInventory.length) {
+                    this.selectedPlatformIndex = 0;
+                }
+                const card = this.platformInventory.splice(this.selectedPlatformIndex, 1)[0];
+                this.upgradeCards.push(card.id_carta); // mark for upgrade at level end
+
+                await upgradeCard(gameConfig.id_jugador, card.id_carta);
+                console.log("Card with ID " + card.id_carta + " marked for upgrade");
+                console.log("Jugador: " + gameConfig.id_jugador);
+                console.log("Database updated successfully");
+
                 this.selectedPlatformIndex = 0;
             }
-            const card = this.platformInventory.splice(this.selectedPlatformIndex, 1)[0];
-            this.upgradeCards.push(card.id_carta); // mark for upgrade at level end
+        });
 
-            await upgradeCard(gameConfig.id_jugador, card.id_carta);
-            gameConfig.cardsUpgraded++;
-            console.log("Card with ID " + card.id_carta + " marked for upgrade");
-            console.log("Jugador: " + gameConfig.id_jugador);
-            console.log("Database updated successfully");
+        window.addEventListener('keydown', async (event) => {
+            if (event.key == "i" && this.powerUpInventory.length > 0 && this.upgradeCards.length < 1) {
+                if (this.selectedPowerUpIndex >= this.powerUpInventory.length) {
+                    this.selectedPowerUpIndex = 0;
+                }
+                const card = this.powerUpInventory.splice(this.selectedPowerUpIndex, 1)[0];
+                this.upgradeCards.push(card.id_carta);
+                await upgradeCard(gameConfig.id_jugador, card.id_carta);
+                console.log("Card with ID " + card.id_carta + " marked for upgrade");
+                console.log("Jugador: " + gameConfig.id_jugador);
+                console.log("Database updated successfully");
 
-            this.selectedPlatformIndex = 0;
+                this.selectedPowerUpIndex = 0;
             }
         });
 
@@ -1029,6 +1080,7 @@ class Game {
 
             const powerUpToUse = this.platformInventory.splice(this.selectedPlatformIndex, 1)[0]; // Remove the selected platform from the inventory
             powerUpToUse.applyEffect(this.player, this);
+            gameConfig.cardsUsed++;
             this.selectedPlatformIndex = 0; // reset to first after placing
             }
             });

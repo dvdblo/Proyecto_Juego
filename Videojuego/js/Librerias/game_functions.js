@@ -85,7 +85,7 @@ function randomRange(size, start) {
 }
 
 //To add a platform in the game (thus was a method in class Game, now it is here)
-function addPlatform(x, y, width, height, lst, unit, hostil, sprite, widthSprite, heightSprite) {
+function addPlatform(x, y, width, height, lst, unit, hostil, sprite, widthSprite, heightSprite, type) {
 
     const box = new AnimatedObject(
         new Vector(x, y),
@@ -97,10 +97,16 @@ function addPlatform(x, y, width, height, lst, unit, hostil, sprite, widthSprite
     );
     
     console.log(sprite);
-    
+    if (type == "one-time" || type == "hielo" || type == "bloquea_proyectiles" || 
+        type == "turbina" || type == "teletransportador"){
+            box.setSprite(`../Videojuego/assets/sprites/plataformas_auto/${type}.png`,
+                            new Rect(0, 0, 1566, 688));  // If we want to draw the whole sprite, no need to add a rect
+        }
+    else{
+
     box.setSprite(`../Videojuego/assets/sprites/plataformas_auto/${sprite}_${gameConfig.actualDiff}.png`,
                             new Rect(widthSprite, 0, widthSprite, heightSprite));  // If we want to draw the whole sprite, no need to add a rect
-    //box.setAnimation(1, 1, true, 200);
+    }
     box.destroy = false;
     box.hostil = hostil;
     lst.push(box);
@@ -108,7 +114,7 @@ function addPlatform(x, y, width, height, lst, unit, hostil, sprite, widthSprite
 }
 
 
-function addCard(x, y, width, height, lst, type, duration) {
+function addCard(x, y, width, height, lst, type, duration, nivel_actual) {
 
     const card = new Cards(
         new Vector(x, y),
@@ -118,44 +124,143 @@ function addCard(x, y, width, height, lst, type, duration) {
         duration
     );
     card.sprite = new Image();
-        if(type == "Esprint") {
+
+    //PowerUps Nivel 1
+        if(type == "Esprint" && nivel_actual == 1) {
             card.sprite.src = "../sprites/PowerUps/Nivel1/Esprint N1.png";
         }
-        else if (type == "Doble Salto") {
+        else if (type == "Doble Salto" && nivel_actual == 1) {
             card.sprite.src = "../sprites/PowerUps/Nivel1/Doble Salto N1.png";
         }
-        else if (type == "Vida Extra") {
+        else if (type == "Vida Extra" && nivel_actual == 1) {
             card.sprite.src = "../sprites/PowerUps/Nivel1/Vida Extra N1.png";
         }
-        else if (type == "Bomba") {
+        else if (type == "Bomba" && nivel_actual == 1) {
             card.sprite.src = "../sprites/PowerUps/Nivel1/Bomba N1.png";
         }
-        else if (type == "Plataforma Random") {
+        else if (type == "Plataforma Random" && nivel_actual == 1) {
             card.sprite.src = "../sprites/PowerUps/Nivel1/Plataforma Random N1.png";
         }
-        else if (type == "Escudo") {
+        else if (type == "Escudo" && nivel_actual == 1) {
             card.sprite.src = "../sprites/PowerUps/Nivel1/Escudo N1.png";
         }
-        else if (type == "Jetpack") {
+        else if (type == "Jetpack" && nivel_actual == 1) {
             card.sprite.src = "../sprites/PowerUps/Nivel1/Jetpack N1.png";
         }
-        else if(type == "normal_carta") {
+
+        //PowerUps Nivel 2
+        else if(type == "Esprint" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/PowerUps/Nivel2/Sprint N2.png";
+        }
+        else if (type == "Doble Salto" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/PowerUps/Nivel2/Doble Salto N2.png";
+        }
+        else if (type == "Vida Extra" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/PowerUps/Nivel2/Vida Extra N2.png";
+        }
+        else if (type == "Bomba" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/PowerUps/Nivel2/Bomba N2.png";
+        }
+        else if (type == "Plataforma Random" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/PowerUps/Nivel2/Plataforma Random N2.png";
+        }
+        else if (type == "Escudo" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/PowerUps/Nivel2/Escudo N2.png";
+        }
+        else if (type == "Jetpack" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/PowerUps/Nivel2/Jetpack N2.png";
+        }
+
+        //PowerUps Nivel 3
+        else if(type == "Esprint" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/PowerUps/Nivel3/Sprint N3.png";
+        }
+        else if (type == "Doble Salto" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/PowerUps/Nivel3/Doble Salto N3.png";
+        }
+        else if (type == "Vida Extra" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/PowerUps/Nivel3/Vida Extra N3.png";
+        }
+        else if (type == "Bomba" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/PowerUps/Nivel3/Bomba N3.png";
+        }
+        else if (type == "Plataforma Random" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/PowerUps/Nivel3/Plataforma Random N3.png";
+        }
+        else if (type == "Escudo" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/PowerUps/Nivel3/Escudo N3.png";
+        }
+        else if (type == "Jetpack" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/PowerUps/Nivel3/Jetpack N3.png";
+        }
+
+        //Plataformas Nivel 1
+        else if(type == "normal_carta" && nivel_actual == 1) {
             card.sprite.src = "../sprites/Plataformas/N1/Plataforma Básica N1.png";
         }
-        else if(type == "one-time") {
+        else if(type == "one-time" && nivel_actual == 1) {
             card.sprite.src = "../sprites/Plataformas/N1/Plataforma Bouncy N1.png";
         }
-        else if(type == "hielo") {
+        else if(type == "hielo" && nivel_actual == 1) {
             card.sprite.src = "../sprites/Plataformas/N1/Plataforma Hielo N1.png";
         }
-        else if(type == "bloquea_proyectiles") {
+        else if(type == "bloquea_proyectiles" && nivel_actual == 1) {
             card.sprite.src = "../sprites/Plataformas/N1/Plataforma Escudo N1.png";
         }
-        else if(type == "teletransportador") {
+        else if(type == "teletransportador" && nivel_actual == 1) {
             card.sprite.src = "../sprites/Plataformas/N1/Plataforma Teleporte N1.png";
         }
-        else if(type == "turbina") {
+        else if(type == "turbina" && nivel_actual == 1) {
             card.sprite.src = "../sprites/Plataformas/N1/Plataforma Turbina N1.png";
+        }
+        else if(type == "ele_carta" && nivel_actual == 1) {
+            card.sprite.src = "../sprites/Plataformas/N1/Plataforma L N1.png";
+        }
+
+        //Plataformas Nivel 2
+        else if(type == "normal_carta" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/Plataformas/N2/Plataforma Media N2.png";
+        }
+        else if(type == "one-time" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/Plataformas/N2/Plataforma Bouncy N2.png";
+        }
+        else if(type == "hielo" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/Plataformas/N2/Plataforma Hielo N2.png";
+        }
+        else if(type == "bloquea_proyectiles" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/Plataformas/N2/Plataforma Escudo N2.png";
+        }
+        else if(type == "teletransportador" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/Plataformas/N2/Plataforma Teleporte N2.png";
+        }
+        else if(type == "turbina" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/Plataformas/N2/Plataforma Turbina N2.png";
+        }
+        else if(type == "ele_carta" && nivel_actual == 2) {
+            card.sprite.src = "../sprites/Plataformas/N2/Plataforma L N2.png";
+        }
+
+        //Plataformas Nivel 3
+        else if(type == "normal_carta" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/Plataformas/N3/Plataforma Avanzada N3.png";
+        }
+        else if(type == "one-time" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/Plataformas/N3/Plataforma Bouncy N3.png";
+        }
+        else if(type == "hielo" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/Plataformas/N3/Plataforma Hielo N3.png";
+        }
+        else if(type == "bloquea_proyectiles" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/Plataformas/N3/Plataforma Escudo N3.png";
+        }
+        else if(type == "teletransportador" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/Plataformas/N3/Plataforma Teleporte N3.png";
+        }
+        else if(type == "turbina" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/Plataformas/N3/Plataforma Turbina N3.png";
+        }
+        else if(type == "ele_carta" && nivel_actual == 3) {
+            card.sprite.src = "../sprites/Plataformas/N3/Plataforma L N3.png";
         }
     lst.push(card);
     return card;
