@@ -20,7 +20,7 @@ app.use(express.json());
 const pool = mysql.createPool({
     host: '127.0.0.1',
     user: 'root',
-    password: 'Armasazar1',
+    password: 'Febrero_312',
     database: 'hyperjump'
 }).promise();
 
@@ -295,26 +295,6 @@ app.put('/stats/actualizar/nivelpartida', async (req, res) => {
     }
 });
 
-// app.post('/cartapartida/repartida', async (req, res) => {
-//     const { cartas } = req.body;
-//     try {
-//         for(let carta of cartas) {
-            
-//             let id_carta = carta.id_carta;
-//             await pool.query('CALL init_cartapartida(?, ?)', [id_nivel_partida, id_carta]);
-//         }
-        
-//         res.json({ mensaje: 'Nivel insertado' });
-//     } catch (error) {
-//         res.status(500).json({ error: 'Error al insertar' });
-//     }
-// });
-
-
-app.listen(port, () => {
-    console.log(`Servidor en http://localhost:${port}`);
-});
-
 //---------------------------------------------------------------------------------------------------------------------
 //STATS----------------------------------------------------------------------------------------------------------------
 app.get('/stats/top', async (req, res) => {
@@ -415,3 +395,7 @@ app.get('/stats/admin/graphics', async (req, res) => {
     }
 });
 
+
+app.listen(port, () => {
+    console.log(`Servidor en http://localhost:${port}`);
+});
