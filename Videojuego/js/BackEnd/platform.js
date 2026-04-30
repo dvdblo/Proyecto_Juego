@@ -237,6 +237,29 @@ app.put('/carta/mejorar', async (req, res) => {
     }
 });
 
+app.put('/stats/actualizar', async (req, res) => {
+    try {
+        const { id_jugador, enemigos, cartas_usadas, cartas_mejoradas, 
+                victoria, tiempo_seg, nivel_alcanzado, puntuacion } = req.body;
+        await pool.query(`
+            UPDATE Estadisticas SET
+                enemigos_eliminados = enemigos_eliminados + ?,
+                cartas_usadas = cartas_usadas + ?,
+                cartas_mejoradas = cartas_mejoradas + ?,
+                victorias = victorias + ?,
+                derrotas = derrotas + ?,
+                tiempo_jugado = tiempo_jugado + ?,
+                nivel_maximo_alcanzado = GREATEST(nivel_maximo_alcanzado, ?),
+                puntuacion_maxima = GREATEST(puntuacion_maxima, ?)
+                WHERE id_jugador = ?`, 
+                [enemigos, cartas_usadas, cartas_mejoradas,victoria ? 1 : 0, victoria ? 0 : 1,tiempo_seg, nivel_alcanzado, puntuacion, id_jugador]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Error actualizando estadísticas' });
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Servidor en http://localhost:${port}`);
 });

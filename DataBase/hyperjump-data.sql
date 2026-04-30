@@ -1,12 +1,13 @@
 USE hyperjump;
 
+INSERT INTO Jugador (username, contraseña, edad) VALUES ("admin", "admin123", 19);
 INSERT INTO Plataforma(id_carta, nombre, composicion, es_autogenerada, tipo) 
 VALUES 
 (null, "cuadrada", '{"formas": [{"base": 1, "altura": 1, "x": 0, "y": 0}]}', true, "normal"),
 (null, "rect_3:1", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', true, "normal"),
 (null, "rect_9:2", '{"formas": [{"base": 9, "altura": 2, "x": 0, "y": 0}]}', true, "normal"),
 (null, "rect_12:2", '{"formas": [{"base": 12, "altura": 2, "x": 0, "y": 0}]}', true, "normal"),
-(null, "rect_3:12", '{"formas": [{"base": 3, "altura": 12, "x": 0, "y": 2}]}', true, "normal"),
+(null, "rect_3:12", '{"formas": [{"base": 3, "altura": 12, "x": 0, "y": 4}]}', true, "normal"),
 (null, "circulo", '{"formas": [{"base": 2, "altura": 2, "x": 0, "y": 0}]}', true, "normal"),
 (null, "ele", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', true, "normal");
 COMMIT;
@@ -220,7 +221,7 @@ VALUES
 (10, "hielo", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', false, "hielo"),
 (11, "bloquea_proyectiles", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', false, "bloquea_proyectiles"),
 (12, "turbina", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}], "velocidad": 0.08, "amplitud": 0.5}', false, "turbina"),
-(13, "teletransportador", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}], "destino_x": 100, "destino_y": 50}', false, "teletransportador"),
+(13, "teletransportador", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}], "destino_x": 2, "destino_y": 1}', false, "teletransportador"),
 (14, "ele_carta", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', false, "ele_carta")
 ;
 
@@ -307,3 +308,53 @@ WHERE tipo = 'alerta';
 UPDATE Enemigo
 SET vida_base = 1, daño_base = 1, rango_ataque = 0, rango_deteccion = 80
 WHERE tipo = 'divide';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 1, rango_ataque = 0, rango_deteccion = 80
+WHERE tipo = 'simple' AND nombre NOT LIKE '%N2%' AND nombre NOT LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 2, daño_base = 1, rango_ataque = 0, rango_deteccion = 110
+WHERE tipo = 'simple' AND nombre LIKE '%N2%';
+
+UPDATE Enemigo
+SET vida_base = 3, daño_base = 1, rango_ataque = 0, rango_deteccion = 140
+WHERE tipo = 'simple' AND nombre LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 3, daño_base = 1, rango_ataque = 1, rango_deteccion = 200
+WHERE tipo = 'torreta' AND nombre NOT LIKE '%N2%' AND nombre NOT LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 4, daño_base = 1, rango_ataque = 1, rango_deteccion = 300
+WHERE tipo = 'torreta' AND nombre LIKE '%N2%';
+
+UPDATE Enemigo
+SET vida_base = 5, daño_base = 1, rango_ataque = 1, rango_deteccion = 400
+WHERE tipo = 'torreta' AND nombre LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 0, rango_ataque = 0, rango_deteccion = 250
+WHERE tipo = 'alerta' AND nombre NOT LIKE '%N2%' AND nombre NOT LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 0, rango_ataque = 0, rango_deteccion = 350
+WHERE tipo = 'alerta' AND nombre LIKE '%N2%';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 0, rango_ataque = 0, rango_deteccion = 450
+WHERE tipo = 'alerta' AND nombre LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 1, rango_ataque = 0, rango_deteccion = 80
+WHERE tipo = 'divide' AND nombre NOT LIKE '%N2%' AND nombre NOT LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 2, daño_base = 1, rango_ataque = 0, rango_deteccion = 100
+WHERE tipo = 'divide' AND nombre LIKE '%N2%';
+
+UPDATE Enemigo
+SET vida_base = 3, daño_base = 1, rango_ataque = 0, rango_deteccion = 130
+WHERE tipo = 'divide' AND nombre LIKE '%N3%';
+
+#SELECT * FROM ENEMIGO;
