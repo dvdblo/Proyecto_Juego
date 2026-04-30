@@ -110,7 +110,7 @@ async function register(username, contraseña, edad) {
     });
     const data = await response.json();
     if (data.success) {
-        alert('Registered! You can now log in.');
+        alert('Te has registrado exitosamente. ¡Ya puedes iniciar sesión!');
     } else {
         alert(data.error);
     }

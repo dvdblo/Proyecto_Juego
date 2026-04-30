@@ -18,9 +18,9 @@ app.use(cors());
 app.use(express.json());
 
 const pool = mysql.createPool({
-    host: '127.0.0.1',
+    host: '192.168.1.10',
     user: 'root',
-    password: 'Armasazar1',
+    password: 'bl200611',
     database: 'hyperjump'
 }).promise();
 
@@ -83,7 +83,11 @@ app.post('/register', async (req, res) => {
             [username, contraseña, edad]);
         res.json({ success: true });
     } catch (error) {
-        res.status(500).json({ error: 'Este Username ya existe' });
+        const err;
+        if(!username || !contraseña || !edad){
+             err = 'Datos incompletos'; 
+        } else {err = 'Este Username ya existe';}
+        res.status(500).json({ error: err });
     }
 });
 
@@ -279,7 +283,6 @@ app.get('/stats/user', async (req, res) => {
 
     res.json(stats);
     }catch(error){
-        console.error('Error fetching user stats:', error);
         res.status(500).json({ error: 'Error fetching user stats' });
     }
 });
