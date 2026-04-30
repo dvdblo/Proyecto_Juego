@@ -314,6 +314,7 @@ class WinLevelScreen3 extends Phaser.Scene {
             console.log(gameConfig.actualLevel);
             this.winMusic.stop();
             if (gameConfig.actualLevel > 9) {
+                await actualizarEstadisticas(true);
                 this.scene.start('GoodEnding');
             } else {this.scene.start('LoadingGame3');}
         });
@@ -391,6 +392,11 @@ class GameOver1Screen extends Phaser.Scene {
         });
 
         button.on('pointerdown', async() => {
+            gameConfig.totalEnemiesKilled += gameConfig.enemiesKilled;
+            gameConfig.totalCardsUsed += gameConfig.cardsUsed;
+            gameConfig.totalCardsUpgraded += gameConfig.cardsUpgraded;
+            gameConfig.totalTime += gameConfig.elapsedTime
+            await actualizarEstadisticas(false);
             await finishPartida(gameConfig.id_partida);
             this.scene.start('BadEnding1');
         });
@@ -469,6 +475,11 @@ class GameOver2Screen extends Phaser.Scene {
         });
 
         button.on('pointerdown', async() => {
+            gameConfig.totalEnemiesKilled += gameConfig.enemiesKilled;
+            gameConfig.totalCardsUsed += gameConfig.cardsUsed;
+            gameConfig.totalCardsUpgraded += gameConfig.cardsUpgraded;
+            gameConfig.totalTime += gameConfig.elapsedTime
+            await actualizarEstadisticas(false);
             await finishPartida(gameConfig.id_partida);
             this.scene.start('BadEnding2');
         });
