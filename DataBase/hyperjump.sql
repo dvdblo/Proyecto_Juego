@@ -410,5 +410,6 @@ DELIMITER ;
 
 #SELECT * FROM cartas_partida;
 
+#Select * from estadisticas;
 
 

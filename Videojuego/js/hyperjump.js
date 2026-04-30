@@ -391,6 +391,31 @@ class Game {
         this.decoration_floor.setSprite(`../Videojuego/assets/Decoracion/decoracion_suelo_${gameConfig.actualDiff}.png`,
                                     new Rect(2027, 0, 2027, 242));
 
+        let decorationS = 0;
+        let decorationE = 0;
+        if(gameConfig.actualLevel == 1) {
+            decorationS = 0;
+            decorationE = 1;
+        } else if(gameConfig.actualDiff == 1) {
+            decorationS = 1;
+            decorationE = 1;
+        } else if(gameConfig.actualDiff == 2) {
+            decorationS = 2;
+            decorationE = 2;
+        } else if(gameConfig.actualLevel == 9) {
+            decorationS = 3;
+            decorationE = 4;
+        } else {
+            decorationS = 3;
+            decorationE = 3;
+        }
+
+        this.decoration_start =  new Image();
+        this.decoration_start.src = `../Videojuego/assets/Decoracion/decoracion_${decorationS}.png`;
+
+        this.decoration_end =  new Image();
+        this.decoration_end.src = `../Videojuego/assets/Decoracion/decoracion_${decorationE}.png`;
+        
         //Player
         this.player = new AnimatedPlayer(
             new Vector(30, 0),
@@ -644,6 +669,24 @@ class Game {
 
         //Background now is loaded from the Phaser scene
 
+
+        //Level decoration
+        ctx.drawImage(
+            this.decoration_start,
+            -gameConfig.canvasWidth/1.3,
+            0,
+            1355,
+            739
+        );
+
+        ctx.drawImage(
+            this.decoration_end,
+            gameConfig.levelLenght-1355/8,
+            0,
+            1355,
+            739
+        );
+
         //Actual Platforms
         for(let platform of this.actualPlatforms) {
             platform.draw(ctx);
@@ -706,7 +749,6 @@ class Game {
                 cardHeight
             );
         }
-
         ctx.restore();
     }
 
@@ -836,9 +878,17 @@ class Game {
                         this.player.damageCooldown = 2000; //The player will be invulnerable for the duration of the power-up, simulating a shield
                     }
                     else if (platform.tipo == "teletransportador" && !platform.teleportCooldown) {
-                        this.player.position.x = platform.composicion.destino_x * gameConfig.unit;
-                        this.player.position.y = platform.composicion.destino_y * gameConfig.unit;
-                        platform.teleportCooldown = 2000;
+                        for(let destination of this.actualPlatforms) {
+                            if(destination.position.x > this.player.position.x) {
+                                this.player.position.x = destination.position.x;
+                                this.player.position.y = 0;
+                                platform.teleportCooldown = 2000;
+                                break;
+                            }
+                        }
+                        // this.player.position.x += platform.composicion.destino_x * gameConfig.unit;
+                        // this.player.position.y += platform.composicion.destino_y * gameConfig.unit;
+                        // platform.teleportCooldown = 2000;
                     }
 
                     if(platform.isFinalPlatform == true){
