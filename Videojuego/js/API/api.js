@@ -154,9 +154,9 @@ async function savePartida(id_partida) {
         body: JSON.stringify({
             id_partida,
             puntaje_total: gameConfig.score,
-            niveles_completados: gameConfig.actualLevel, // assuming actualLevel starts at 1
-            enemigos_total: gameConfig.enemiesKilled, // add this to gameConfig
-            vidas_restantes: gameConfig.lives,  // add this to gameConfig
+            niveles_completados: 1,          // ← always increment by 1
+            enemigos_total: gameConfig.enemiesKilled,
+            vidas_restantes: gameConfig.lives,
             tiempo_total_seg: gameConfig.elapsedTime
         })
     });
