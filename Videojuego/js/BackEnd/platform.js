@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 const pool = mysql.createPool({
-    host: '192.168.1.10',
+    host: '10.49.108.217',
     user: 'root',
     password: 'bl200611',
     database: 'hyperjump'
@@ -294,6 +294,21 @@ app.put('/stats/actualizar/nivelpartida', async (req, res) => {
         res.status(500).json({ error: 'Error actualizando estadísticas' });
     }
 });
+
+// app.post('/cartapartida/repartida', async (req, res) => {
+//     const { cartas } = req.body;
+//     try {
+//         for(let carta of cartas) {
+            
+//             let id_carta = carta.id_carta;
+//             await pool.query('CALL init_cartapartida(?, ?)', [id_nivel_partida, id_carta]);
+//         }
+        
+//         res.json({ mensaje: 'Nivel insertado' });
+//     } catch (error) {
+//         res.status(500).json({ error: 'Error al insertar' });
+//     }
+// });
 
 
 app.listen(port, () => {

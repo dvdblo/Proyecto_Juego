@@ -23,7 +23,7 @@ const gameConfig = {
   letPause: false,
   pause: false,
   totalScore: 0,
-  musicVolume: 0,
+  musicVolume: 0.5,
   id_jugador: null,
   id_partida: null
 };

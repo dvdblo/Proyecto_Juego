@@ -476,7 +476,7 @@ class Game {
         gameConfig.elapsedTime = 0;
         this.player.damageCooldown = 0;
         this.scoreApplied = false;
-        this.player.setSprite('../Videojuego/assets/sprites/blordrough_quartermaster-NESW.png',
+        this.player.setSprite('../Videojuego/assets/sprites/astro_sprites.png',
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(gameConfig.playerSpeed);
 
