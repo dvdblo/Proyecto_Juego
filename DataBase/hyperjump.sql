@@ -133,7 +133,7 @@ CREATE TABLE Plataforma(id_plataforma INT AUTO_INCREMENT,
     nombre VARCHAR(60) NOT NULL,
     composicion JSON,
     es_autogenerada BOOLEAN DEFAULT FALSE,
-    tipo ENUM('normal','normal_carta', 'one-time', 'hielo','bloquea_proyectiles','turbina','teletransportador') NOT NULL,
+    tipo ENUM('normal','normal_carta', 'one-time', 'hielo','bloquea_proyectiles','turbina','teletransportador','ele_carta') NOT NULL,
     CONSTRAINT pk_Plataforma PRIMARY KEY(id_plataforma),
     CONSTRAINT fk_Plataforma_carta FOREIGN KEY (id_carta) REFERENCES Carta(id_carta) ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -358,18 +358,26 @@ DELIMITER ;
              
 DELIMITER $$
 
+DELIMITER $$
+
 CREATE PROCEDURE GetPlayerPlatforms(IN player_id INT)
 BEGIN
     SELECT 
-		p.id_carta,
+        p.id_carta,
         p.nombre, 
         p.composicion, 
         p.tipo, 
-        cj.nivel_actual
+        cj.nivel_actual,
+        pn.ancho_base,
+        pn.alto_base,
+        pn.efecto
     FROM Plataforma p
     INNER JOIN Carta c ON p.id_carta = c.id_carta
     INNER JOIN CartaJugador cj ON c.id_carta = cj.id_carta
-    WHERE cj.id_jugador = player_id AND p.es_autogenerada = false;
+    INNER JOIN PlataformaNivel pn ON p.id_plataforma = pn.id_plataforma 
+                                 AND cj.nivel_actual = pn.nivel_plataforma
+    WHERE cj.id_jugador = player_id 
+      AND p.es_autogenerada = false;
 END $$
 
 DELIMITER ;
@@ -398,6 +406,26 @@ BEGIN
 END $$
 DELIMITER ;
 
+DELIMITER $$
+
+CREATE PROCEDURE GetPlayerPowerUps(IN player_id INT)
+BEGIN
+    SELECT 
+        p.id_carta,
+        p.nombre, 
+        cj.nivel_actual,
+        pn.duracion_base,
+        pn.efecto
+    FROM PowerUp p
+    INNER JOIN Carta c ON p.id_carta = c.id_carta
+    INNER JOIN CartaJugador cj ON c.id_carta = cj.id_carta
+    INNER JOIN PowerUpNivel pn ON p.id_powerUp = pn.id_powerUp 
+                               AND cj.nivel_actual = pn.nivel_powerUp
+    WHERE cj.id_jugador = player_id;
+END $$
+
+DELIMITER ;
+
 #SELECT COUNT(A.id_partida) AS runs, DATE_FORMAT(fecha_inicio, "%M") AS month, DATE_FORMAT(fecha_inicio, "%d") AS day FROM partidas_jugador AS A GROUP BY DATE_FORMAT(fecha_inicio, "%M"), DATE_FORMAT(fecha_inicio, "%d");
 
 #SELECT COUNT(A.fecha_inicio) AS iniciadas, COUNT(A.fecha_fin <> NULL) AS terminadas FROM partidas_jugador AS A;
@@ -409,6 +437,5 @@ DELIMITER ;
 #SELECT A.id_carta AS id, A.descripcion AS nombre, COUNT(A.id_carta) AS repartida, SUM(A.fue_usada) AS usada FROM cartas_partida AS A GROUP BY A.id_carta;
 
 #SELECT * FROM cartas_partida;
-
-
+#SELECT * FROM PowerUp;
 

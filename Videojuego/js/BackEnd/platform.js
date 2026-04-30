@@ -18,9 +18,9 @@ app.use(cors());
 app.use(express.json());
 
 const pool = mysql.createPool({
-    host: '10.49.108.217',
+    host: '127.0.0.1',
     user: 'root',
-    password: 'bl200611',
+    password: 'Febrero_312',
     database: 'hyperjump'
 }).promise();
 
@@ -52,11 +52,13 @@ app.get('/plats/:auto', async(req, res) => {
     }
 });
 
-app.get('/powerups', async (req, res) => {
+app.get('/cartas-powerup/:id_jugador', async (req, res) => {
     try{
-    const [powerUps] = await pool.query('SELECT * FROM PowerUp');
+        const {id_jugador} = req.params
+        const [powerUps] = await pool.query('CALL GetPlayerPowerUps(?)', [id_jugador]
+        );
 
-    res.json(powerUps);
+        res.json(powerUps[0]);
     }catch(error){
         console.error('Error fetching power-ups:', error);
         res.status(500).json({ error: 'Error fetching power-ups' });
