@@ -22,15 +22,17 @@ async function initGenerationZones(level, unit) {
     return generation_zones;
 }
 
-async function initCards() {
-    const res = await fetch(`http://localhost:3000/powerups`);
+async function initPowerUps() {
+    const res = await fetch(`http://localhost:3000/cartas-powerup/${gameConfig.id_jugador}`);
     const data = await res.json();
 
     let powerUpInventory = [];
     for (let i = 0; i < 3; i++) {
         let type = data[randomRange(data.length, 0)];
-
-        addCard(0,0,10,10,powerUpInventory,type.nombre,2000);
+        let card = addCard(0,0,10,10,powerUpInventory,type.nombre,type.duracion_base,type.nivel_actual);
+        card.id_carta = type.id_carta;
+        card.nivel_actual = type.nivel_actual;
+        card.efecto = type.efecto;
     }
     return powerUpInventory;
 }
@@ -40,12 +42,14 @@ async function initPlatformCards() {
     const data = await res.json();
 
     let platformInventory = [];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 7; i++) {
         let type = data[randomRange(data.length, 0)];
-        let card = addCard(0, 0, 8, 8, platformInventory, type.tipo, 5000);
+        let card = addCard(0, 0, 8, 8, platformInventory, type.tipo, 5000, type.nivel_actual);
         card.composicion = type.composicion; // the formas JSON
         card.id_carta = type.id_carta; // store the card ID for later use
         card.nivel_actual = type.nivel_actual; // store the required level for this card
+        card.ancho_base = type.ancho_base; // store the base width for this card
+        card.alto_base = type.alto_base; // store the base height for this card
     }
     return platformInventory;
 }

@@ -222,7 +222,7 @@ VALUES
 (11, "bloquea_proyectiles", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', false, "bloquea_proyectiles"),
 (12, "turbina", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}], "velocidad": 0.08, "amplitud": 0.5}', false, "turbina"),
 (13, "teletransportador", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}], "destino_x": 2, "destino_y": 1}', false, "teletransportador"),
-(14, "ele_carta", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', false, "normal_carta")
+(14, "ele_carta", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', false, "ele_carta")
 ;
 
 INSERT INTO PlataformaNivel(id_plataforma, nivel_plataforma, ancho_base, alto_base, efecto)
@@ -236,20 +236,47 @@ VALUES
 (14, 1, 3, 1, null),
 
 (8,  2, 4, 1, null),
-(9,  2, 3, 1, '{"se_desintegra": true, "doble_salto": true}'),
-(10, 2, 3, 1, '{"modificador_velocidad": 1.5}'),
-(11, 2, 3, 1, '{"bloquea_proyectiles": true, "escudo_jugador": 2}'),
-(12, 2, 3, 1, '{"velocidad": 0.08, "amplitud": 1.0}'),
-(13, 2, 3, 1, null),
-(14, 2, 4, 2, null),
+(9,  2, 4, 1, '{"se_desintegra": true, "doble_salto": true}'),
+(10, 2, 4, 1, '{"modificador_velocidad": 1.5}'),
+(11, 2, 4, 1, '{"bloquea_proyectiles": true, "escudo_jugador": 2}'),
+(12, 2, 4, 1, '{"velocidad": 0.08, "amplitud": 1.0}'),
+(13, 2, 4, 1, null),
+(14, 2, 4, 1, null),
 
 (8,  3, 5, 1, null),
-(9,  3, 3, 1, '{"se_desintegra": true, "doble_salto": true, "modificador_salto": 2.0}'),
-(10, 3, 3, 1, '{"modificador_velocidad": 1.5, "modificador_salto": 1.5}'),
-(11, 3, 3, 1, '{"bloquea_proyectiles": true,"escudo_jugador": true}'),
-(12, 3, 3, 1, '{"velocidad": 0.08, "amplitud": 1.5}'),
-(13, 3, 3, 1, null),
-(14, 3, 4, 2, '{"bloquea_proyectiles": true}')
+(9,  3, 5, 1, '{"se_desintegra": true, "doble_salto": true, "modificador_salto": 2.0}'),
+(10, 3, 5, 1, '{"modificador_velocidad": 1.5, "modificador_salto": 1.5}'),
+(11, 3, 5, 1, '{"bloquea_proyectiles": true,"escudo_jugador": true}'),
+(12, 3, 5, 1, '{"velocidad": 0.08, "amplitud": 1.5}'),
+(13, 3, 5, 1, null),
+(14, 3, 5, 1, '{"bloquea_proyectiles": true}')
+;
+
+INSERT INTO PowerUpNivel(id_powerup, nivel_powerup, duracion_base, efecto)
+Values
+(1,1,null,'{"max_enemigos": 1}'),
+(2,1,5000,'{"modificador_salto": 1.5}'),
+(3,1,2000,'{"escudo": true}'),
+(4,1,5000,'{"modificador_velocidad": 1.5}'),
+(5,1,2000,'{"doble_salto": true}'),
+(6,1,null,null),
+(7,1,null,'{"vida_extra": true}'),
+
+(1,2,null,'{"max_enemigos": 2}'),
+(2,2,10000,'{"modificador_salto": 1.5}'),
+(3,2,4000,'{"escudo": true}'),
+(4,2,10000,'{"modificador_velocidad": 1.5}'),
+(5,2,4000,'{"doble_salto": true}'),
+(6,2,null,null),
+(7,2,null,'{"vidas_extra": 2}'),
+
+(1,3,null,'{"max_enemigos": 3}'),
+(2,3,12000,'{"modificador_salto": 1.5}'),
+(3,3,6000,'{"escudo": true}'),
+(4,3,12000,'{"modificador_velocidad": 1.5}'),
+(5,3,6000,'{"doble_salto": true}'),
+(6,3,null,null),
+(7,3,null,'{"vidas_extra": 3}')
 ;
 
 SET SQL_SAFE_UPDATES = 0;

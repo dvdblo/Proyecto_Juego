@@ -52,11 +52,13 @@ app.get('/plats/:auto', async(req, res) => {
     }
 });
 
-app.get('/powerups', async (req, res) => {
+app.get('/cartas-powerup/:id_jugador', async (req, res) => {
     try{
-    const [powerUps] = await pool.query('SELECT * FROM PowerUp');
+        const {id_jugador} = req.params
+        const [powerUps] = await pool.query('CALL GetPlayerPowerUps(?)', [id_jugador]
+        );
 
-    res.json(powerUps);
+        res.json(powerUps[0]);
     }catch(error){
         console.error('Error fetching power-ups:', error);
         res.status(500).json({ error: 'Error fetching power-ups' });
@@ -258,6 +260,16 @@ app.put('/stats/actualizar', async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: 'Error actualizando estadísticas' });
+    }
+});
+
+app.post('/partida/nivelpartida', async (req, res) => {
+    const { id_partida, id_nivel } = req.body;
+    try {
+        await pool.query('CALL crear_nivel_partida(?, ?)', [id_partida, id_nivel]);
+        res.json({ mensaje: 'Nivel insertado' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al insertar' });
     }
 });
 
