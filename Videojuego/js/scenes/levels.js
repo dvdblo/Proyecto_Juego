@@ -20,6 +20,7 @@ class Level extends Phaser.Scene {
         this.load.audio('enemyDeadSound', '../Videojuego/assets/sprites/enemy_dead.mp3');
         this.load.audio('slimeSplitSound', '../Videojuego/assets/sprites/slime_split.mp3');
         this.load.audio('dogBarkSound', '../Videojuego/assets/sprites/dog_bark.mp3');
+        this.load.audio('bulletFlySound', '../Videojuego/assets/sprites/bullet_fly.mp3');
     }
 
     create(data) {
@@ -38,7 +39,8 @@ class Level extends Phaser.Scene {
             hit: this.sound.add('hitSound', { volume: 1}),
             enemyDead: this.sound.add('enemyDeadSound', { volume: 1}),
             slimeSplit: this.sound.add('slimeSplitSound', { volume: 1}),
-            bark: this.sound.add('dogBarkSound', { volume: 1})
+            bark: this.sound.add('dogBarkSound', { volume: 1}),
+            bulletFly: this.sound.add('bulletFlySound', { volume: 1})
         };
 
         //Create canvas if it didn´t exists already
@@ -132,6 +134,7 @@ class Level extends Phaser.Scene {
             gameConfig.levelComplete = false;
             gameConfig.gameLoad = false;
             gameConfig.letPause = false;
+            this.sound.stopAll();
             if(gameConfig.sounds && gameConfig.sounds.bark){
                 gameConfig.sounds.bark.stop();
             }
@@ -143,6 +146,7 @@ class Level extends Phaser.Scene {
             gameConfig.levelOver1 = false;
             gameConfig.gameLoad = false;
             gameConfig.letPause = false;
+            this.sound.stopAll();
             gameConfig.totalScore += gameConfig.score;
             this.scene.start('GameOver1Screen');
             this.levelMusic.stop();
@@ -151,6 +155,7 @@ class Level extends Phaser.Scene {
             gameConfig.levelOver2 = false;
             gameConfig.gameLoad = false;
             gameConfig.letPause = false;
+            this.sound.stopAll();
             gameConfig.totalScore += gameConfig.score;
             this.scene.start('GameOver2Screen');
             this.levelMusic.stop();
