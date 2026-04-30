@@ -18,9 +18,9 @@ app.use(cors());
 app.use(express.json());
 
 const pool = mysql.createPool({
-    host: '192.168.1.10',
+    host: '127.0.0.1',
     user: 'root',
-    password: 'bl200611',
+    password: 'Febrero_312',
     database: 'hyperjump'
 }).promise();
 
@@ -295,11 +295,6 @@ app.put('/stats/actualizar/nivelpartida', async (req, res) => {
     }
 });
 
-
-app.listen(port, () => {
-    console.log(`Servidor en http://localhost:${port}`);
-});
-
 //---------------------------------------------------------------------------------------------------------------------
 //STATS----------------------------------------------------------------------------------------------------------------
 app.get('/stats/top', async (req, res) => {
@@ -400,3 +395,7 @@ app.get('/stats/admin/graphics', async (req, res) => {
     }
 });
 
+
+app.listen(port, () => {
+    console.log(`Servidor en http://localhost:${port}`);
+});

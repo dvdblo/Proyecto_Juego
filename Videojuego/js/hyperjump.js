@@ -263,7 +263,7 @@ class Cards extends AnimatedObject {
             game.enemies.splice(0, maxEnemigos);
         }
         else if (this.type == "Vida Extra") {
-            gameConfig.lives += 1;
+            gameConfig.lives += this.efecto.vidas_extra;
         }
         else if (this.type == "Escudo") {
             player.damageCooldown = this.duration; //The player will be invulnerable for the duration of the power-up, simulating a shield

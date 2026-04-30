@@ -454,4 +454,3 @@ select * from partida;
 #SELECT * FROM PowerUp;
 
 select * from NivelPartida;
-
