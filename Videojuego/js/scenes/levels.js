@@ -134,6 +134,7 @@ class Level extends Phaser.Scene {
             gameConfig.levelComplete = false;
             gameConfig.gameLoad = false;
             gameConfig.letPause = false;
+            actualizarNivelPartida(true);
             this.sound.stopAll();
             if(gameConfig.sounds && gameConfig.sounds.bark){
                 gameConfig.sounds.bark.stop();
@@ -146,8 +147,14 @@ class Level extends Phaser.Scene {
             gameConfig.levelOver1 = false;
             gameConfig.gameLoad = false;
             gameConfig.letPause = false;
-            this.sound.stopAll();
+            gameConfig.totalEnemiesKilled += gameConfig.enemiesKilled;
+            gameConfig.totalCardsUsed += gameConfig.cardsUsed;
+            gameConfig.totalCardsUpgraded += gameConfig.cardsUpgraded;
+            gameConfig.totalTime += gameConfig.elapsedTime;
             gameConfig.totalScore += gameConfig.score;
+            actualizarEstadisticas(false);
+            actualizarNivelPartida(false);
+            this.sound.stopAll();
             this.scene.start('GameOver1Screen');
             this.levelMusic.stop();
         }
@@ -155,8 +162,14 @@ class Level extends Phaser.Scene {
             gameConfig.levelOver2 = false;
             gameConfig.gameLoad = false;
             gameConfig.letPause = false;
-            this.sound.stopAll();
+            gameConfig.totalEnemiesKilled += gameConfig.enemiesKilled;
+            gameConfig.totalCardsUsed += gameConfig.cardsUsed;
+            gameConfig.totalCardsUpgraded += gameConfig.cardsUpgraded;
+            gameConfig.totalTime += gameConfig.elapsedTime;
             gameConfig.totalScore += gameConfig.score;
+            actualizarEstadisticas(false);
+            actualizarNivelPartida(false);
+            this.sound.stopAll();
             this.scene.start('GameOver2Screen');
             this.levelMusic.stop();
         }

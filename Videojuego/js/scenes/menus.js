@@ -19,6 +19,10 @@ class MainMenu extends Phaser.Scene {
         gameConfig.actualDiff = 1;
         gameConfig.gameLoad = false;
         gameConfig.totalScore = 0;
+        gameConfig.totalEnemiesKilled = undefined;
+        gameConfig.totalCardsUsed = undefined;
+        gameConfig.totalCardsUpgraded = undefined;
+        gameConfig.totalTime = undefined;
         this.sound.volume = gameConfig.musicVolume;
 
         if (!this.menuMusic || !this.menuMusic.isPlaying) {

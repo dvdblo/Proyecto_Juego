@@ -400,7 +400,7 @@ DELIMITER ;
 
 #SELECT COUNT(A.id_partida) AS runs, DATE_FORMAT(fecha_inicio, "%M") AS month, DATE_FORMAT(fecha_inicio, "%d") AS day FROM partidas_jugador AS A GROUP BY DATE_FORMAT(fecha_inicio, "%M"), DATE_FORMAT(fecha_inicio, "%d");
 
-#SELECT COUNT(A.fecha_inicio) AS iniciadas, COUNT(A.fecha_fin <> NULL) AS terminadas FROM partidas_jugador AS A;
+#SELECT COUNT(A.fecha_inicio) AS iniciadas, COUNT(A.fecha_fin) AS terminadas FROM partidas_jugador AS A;
 
 #SELECT AVG(partidas) AS promedio_partidas FROM (SELECT COUNT(A.id_partida) AS partidas FROM partidas_jugador AS A GROUP BY A.id_jugador) AS t;
 
@@ -410,6 +410,8 @@ DELIMITER ;
 
 #SELECT * FROM cartas_partida;
 
-#Select * from estadisticas;
+Select * from estadisticas;
+
+select * from partida;
 
 

@@ -1029,6 +1029,7 @@ class Game {
 
             const powerUpToUse = this.platformInventory.splice(this.selectedPlatformIndex, 1)[0]; // Remove the selected platform from the inventory
             powerUpToUse.applyEffect(this.player, this);
+            gameConfig.cardsUsed++;
             this.selectedPlatformIndex = 0; // reset to first after placing
             }
             });

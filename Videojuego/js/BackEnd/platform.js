@@ -83,7 +83,7 @@ app.post('/register', async (req, res) => {
             [username, contraseña, edad]);
         res.json({ success: true });
     } catch (error) {
-        const err;
+        let err;
         if(!username || !contraseña || !edad){
              err = 'Datos incompletos'; 
         } else {err = 'Este Username ya existe';}
@@ -261,6 +261,28 @@ app.put('/stats/actualizar', async (req, res) => {
     }
 });
 
+app.put('/stats/actualizar/nivelpartida', async (req, res) => {
+    try {
+        const { puntaje, tiempo, enemigos, cartas_usadas, 
+                multiplicador, completado, id_partida, id_nivel} = req.body;
+        await pool.query(`
+            UPDATE NivelPartida SET
+                puntaje_nivel = ?,
+                tiempo_segundos = ?,
+                enemigos_eliminados = ?,
+                cartas_usadas = ?,
+                cartas_no_usadas = ?,
+                multiplicador_tiempo = ?,
+                completado = ?
+                WHERE id_partida = ? AND id_nivel = ?`, 
+                [puntaje, tiempo, enemigos, cartas_usadas, 7-cartas_usadas, multiplicador, completado ? 1 : 0, id_partida, id_nivel]);
+
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Error actualizando estadísticas' });
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Servidor en http://localhost:${port}`);
@@ -346,7 +368,7 @@ app.get('/stats/admin/graphics', async (req, res) => {
         const run_day = await pool.query('SELECT COUNT(A.id_partida) AS runs, DATE_FORMAT(fecha_inicio, "%M") AS month, DATE_FORMAT(fecha_inicio, "%d") AS day FROM partidas_jugador AS A GROUP BY DATE_FORMAT(fecha_inicio, "%M"), DATE_FORMAT(fecha_inicio, "%d")');
         graphics_stats.push({run_day: run_day[0]});
 
-        const start_end = await pool.query('SELECT COUNT(A.fecha_inicio) AS iniciadas, COUNT(A.fecha_fin <> NULL) AS terminadas FROM partidas_jugador AS A');
+        const start_end = await pool.query('SELECT COUNT(A.fecha_inicio) AS iniciadas, COUNT(A.fecha_fin) AS terminadas FROM partidas_jugador AS A');
         graphics_stats.push({start_end: start_end[0]});
 
         const avg_runs_user = await pool.query('SELECT AVG(partidas) AS promedio_partidas FROM (SELECT COUNT(A.id_partida) AS partidas FROM partidas_jugador AS A GROUP BY A.id_jugador) AS t');

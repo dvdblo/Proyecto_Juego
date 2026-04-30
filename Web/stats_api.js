@@ -392,3 +392,21 @@ async function actualizarEstadisticas(victoria) {
         })
     });
 }
+
+async function actualizarNivelPartida(completado) {
+    console.log("id partida desde nivel partida: ", gameConfig.id_partida);
+    await fetch('http://localhost:3000/stats/actualizar/nivelpartida', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            puntaje: gameConfig.score,
+            tiempo: gameConfig.elapsedTime,
+            enemigos: gameConfig.enemiesKilled,
+            cartas_usadas: gameConfig.cardsUsed,
+            multiplicador: gameConfig.elapsedTime <= 30 ? 2 : gameConfig.elapsedTime <= 60 ? 1.5 : 1,
+            completado: completado,
+            id_partida: gameConfig.id_partida,
+            id_nivel: gameConfig.actualLevel
+        })
+    });
+}

@@ -392,11 +392,6 @@ class GameOver1Screen extends Phaser.Scene {
         });
 
         button.on('pointerdown', async() => {
-            gameConfig.totalEnemiesKilled += gameConfig.enemiesKilled;
-            gameConfig.totalCardsUsed += gameConfig.cardsUsed;
-            gameConfig.totalCardsUpgraded += gameConfig.cardsUpgraded;
-            gameConfig.totalTime += gameConfig.elapsedTime
-            await actualizarEstadisticas(false);
             await finishPartida(gameConfig.id_partida);
             this.scene.start('BadEnding1');
         });
@@ -475,11 +470,6 @@ class GameOver2Screen extends Phaser.Scene {
         });
 
         button.on('pointerdown', async() => {
-            gameConfig.totalEnemiesKilled += gameConfig.enemiesKilled;
-            gameConfig.totalCardsUsed += gameConfig.cardsUsed;
-            gameConfig.totalCardsUpgraded += gameConfig.cardsUpgraded;
-            gameConfig.totalTime += gameConfig.elapsedTime
-            await actualizarEstadisticas(false);
             await finishPartida(gameConfig.id_partida);
             this.scene.start('BadEnding2');
         });
