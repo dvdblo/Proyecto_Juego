@@ -39,25 +39,30 @@ async function get_user_stats(username) {
         const res = await fetch(`http://localhost:3000/stats/user?username=${encodeURIComponent(username)}`);
         const data = await res.json();
 
-        $("#user_stats").empty();
+        console.log(data);
+        if(data[0].length > 0) {
+            $("#user_stats").empty();
 
-        $("#user_stats").append(`
-            <tr>
-                <th>Estadística</th>
-                <th>Valor</th>
-            </tr>
-        `);
-
-        const stats = data[0][0];
-
-        Object.entries(stats).forEach(([key, stat]) => {
             $("#user_stats").append(`
                 <tr>
-                    <td>${key}</td>
-                    <td>${stat}</td>
+                    <th>Estadística</th>
+                    <th>Valor</th>
                 </tr>
             `);
-        });
+
+            const stats = data[0][0];
+
+            Object.entries(stats).forEach(([key, stat]) => {
+                $("#user_stats").append(`
+                    <tr>
+                        <td>${key}</td>
+                        <td>${stat}</td>
+                    </tr>
+                `);
+            });
+        } else {
+            alert("Información de usuario inválida");
+        }
         
     } else {
         alert("Necesitas iniciar sesión primero");
@@ -89,7 +94,7 @@ async function validate_admin(username, contraseña) {
     });
     const comp = await val.json();
     if (comp.success && username === "admin") {
-        alert("You are admin");
+        alert("Sesión de administrador iniciada con éxito");
         
         const general = await fetch(`http://localhost:3000/stats/admin/general`);
         const data = await general.json();
@@ -97,7 +102,7 @@ async function validate_admin(username, contraseña) {
         $("#admin_stats").empty();
 
         $("#admin_stats").append(`
-            <h1>Estadísticas Globales</h1>
+            <h1  class="backText">Estadísticas Globales</h1>
             <br>
             <table class="tab" id="general_stats"></table>
         `);
@@ -127,38 +132,57 @@ async function validate_admin(username, contraseña) {
         console.log(data_graph);
 
         $("#admin_graphics").append(`
-            <h1>Gráficas Globales</h1>
+            <h1 class="backText">Gráficas Globales</h1>
             <br>
 
             <div class="container">
-            <div class="row g-3">
+                <div class="row g-3">
 
-                <div class="col-md-6">
-                    <div class="graph-container">
-                        <canvas id="graph_runs_days"></canvas>
+                    <div class="col-md-6">
+                        <div class="graph-container">
+                            <canvas id="graph_runs_days"></canvas>
+                        </div>
+                        <h2 class="backText">Partidas por Día</h2>
                     </div>
-                </div>
 
-                <div class="col-md-6">
-                    <div class="graph-container">
-                        <canvas id="graph_victory_fail"></canvas>
+                    <div class="col-md-6">
+                        <div class="graph-container">
+                            <canvas id="graph_victory_fail"></canvas>
+                        </div>
+                        <h2 class="backText">Victorias vs Derrotas</h2>
                     </div>
-                </div>
 
-                <div class="col-md-6">
-                    <div class="graph-container">
-                        <canvas id="graph_started_ended"></canvas>
+                    <div class="col-md-6">
+                        <div class="graph-container">
+                            <canvas id="graph_started_ended"></canvas>
+                        </div>
+                        <h2 class="backText">Partidas Terminadas</h2>
                     </div>
-                </div>
 
-                <div class="col-md-6">
-                    <div class="graph-container">
-                        <canvas id="graph_cards_dealt_used"></canvas>
+                    <div class="col-md-6">
+                        <div class="graph-container">
+                            <canvas id="graph_cards_dealt_used"></canvas>
+                        </div>
+                        <h2 class="backText">Repartición de Cartas vs Uso</h2>
                     </div>
-                </div>
 
+                </div>
             </div>
-        </div>
+            <br>
+
+            <h1 class="backText">Consulta estadísticas de un usuario</h1>
+            <br>
+            <ul class="displays">
+                <input type="text" id="usernameS" class="displays" placeholder="Usuario">
+            </ul>
+            <ul>
+                <li class = "displays"><button class="bt" onclick="get_user_stats(document.getElementById('usernameS').value)">Consultar</button></li>
+            </ul>
+
+            <div class="displays">
+                <table class="tab" id="user_stats"></table>
+            </div>
+            <br>
         `);
 
         let labs = [];
@@ -268,7 +292,8 @@ async function validate_admin(username, contraseña) {
             plugins: [glowPlugin]
         });
 
-        $("#admin_graphics").append(`
+        $("#admin_stats").append(`
+            <br>
             <div class="displays">
                 <table class="tab">
                     <tr>
@@ -281,7 +306,8 @@ async function validate_admin(username, contraseña) {
             </div>
         `);
 
-        $("#admin_graphics").append(`
+        $("#admin_stats").append(`
+            <br>
             <div class="displays">
                 <table class="tab">
                     <tr>
@@ -363,6 +389,24 @@ async function actualizarEstadisticas(victoria) {
             tiempo_seg: gameConfig.totalTime ?? 0,
             nivel_alcanzado:  gameConfig.actualLevel ?? 1,
             puntuacion: gameConfig.totalScore ?? 0
+        })
+    });
+}
+
+async function actualizarNivelPartida(completado) {
+    console.log("id partida desde nivel partida: ", gameConfig.id_partida);
+    await fetch('http://localhost:3000/stats/actualizar/nivelpartida', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            puntaje: gameConfig.score,
+            tiempo: gameConfig.elapsedTime,
+            enemigos: gameConfig.enemiesKilled,
+            cartas_usadas: gameConfig.cardsUsed,
+            multiplicador: gameConfig.elapsedTime <= 30 ? 2 : gameConfig.elapsedTime <= 60 ? 1.5 : 1,
+            completado: completado,
+            id_partida: gameConfig.id_partida,
+            id_nivel: gameConfig.actualLevel
         })
     });
 }

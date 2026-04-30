@@ -320,10 +320,12 @@ BEGIN
     INSERT INTO NivelPartida (id_partida, id_nivel)
     SELECT NEW.id_partida, id_nivel
     FROM Nivel
-    WHERE numero_nivel = 1
+    WHERE numero_nivel = id_nivel
     LIMIT 1;
 END $$
 DELIMITER ;
+
+drop trigger crear_nivel_partida_inicial;
 
 DELIMITER $$
 CREATE TRIGGER asignar_cartas_jugador
@@ -340,7 +342,6 @@ DELIMITER $$
 
 CREATE PROCEDURE iniciar_nueva_partida(IN p_id_jugador INT)
 BEGIN
-    
     UPDATE Partida 
     SET fecha_fin = NOW() 
     WHERE id_jugador = p_id_jugador AND fecha_fin IS NULL;
@@ -350,7 +351,7 @@ BEGIN
     INSERT INTO NivelPartida (id_partida, id_nivel)
     SELECT @ultima_partida, id_nivel 
     FROM Nivel 
-    WHERE numero_nivel = 1 
+    WHERE numero_nivel = id_nivel 
     LIMIT 1;
 END $$
 
@@ -426,9 +427,17 @@ END $$
 
 DELIMITER ;
 
+DELIMITER $$
+CREATE PROCEDURE crear_nivel_partida(IN p_id_partida INT, IN p_id_nivel INT)
+BEGIN
+    INSERT INTO NivelPartida (id_partida, id_nivel)
+    VALUES (p_id_partida, p_id_nivel);
+END $$
+DELIMITER ;
+
 #SELECT COUNT(A.id_partida) AS runs, DATE_FORMAT(fecha_inicio, "%M") AS month, DATE_FORMAT(fecha_inicio, "%d") AS day FROM partidas_jugador AS A GROUP BY DATE_FORMAT(fecha_inicio, "%M"), DATE_FORMAT(fecha_inicio, "%d");
 
-#SELECT COUNT(A.fecha_inicio) AS iniciadas, COUNT(A.fecha_fin <> NULL) AS terminadas FROM partidas_jugador AS A;
+#SELECT COUNT(A.fecha_inicio) AS iniciadas, COUNT(A.fecha_fin) AS terminadas FROM partidas_jugador AS A;
 
 #SELECT AVG(partidas) AS promedio_partidas FROM (SELECT COUNT(A.id_partida) AS partidas FROM partidas_jugador AS A GROUP BY A.id_jugador) AS t;
 
@@ -437,5 +446,12 @@ DELIMITER ;
 #SELECT A.id_carta AS id, A.descripcion AS nombre, COUNT(A.id_carta) AS repartida, SUM(A.fue_usada) AS usada FROM cartas_partida AS A GROUP BY A.id_carta;
 
 #SELECT * FROM cartas_partida;
+
+Select * from estadisticas;
+
+select * from partida;
+
 #SELECT * FROM PowerUp;
+
+select * from NivelPartida;
 
