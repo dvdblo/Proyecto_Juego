@@ -393,6 +393,21 @@ async function actualizarEstadisticas(victoria) {
     });
 }
 
+async function crearNivelPartida() {
+    try {
+        const response = await fetch('http://localhost:3000/partida/nivelpartida', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                id_partida: gameConfig.id_partida,
+                id_nivel: gameConfig.actualLevel
+            })
+        });
+    } catch (error) {
+        console.error('Error al crear partida:', error);
+    }
+}
+
 async function actualizarNivelPartida(completado) {
     console.log("id partida desde nivel partida: ", gameConfig.id_partida);
     await fetch('http://localhost:3000/stats/actualizar/nivelpartida', {
