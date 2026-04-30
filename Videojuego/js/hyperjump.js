@@ -435,6 +435,13 @@ class Game {
         this.contLevel.src = "../Videojuego/assets/sprites/botones/contLevel.png";
         gameConfig.maxlives = 6;
         gameConfig.score = 0;
+        if (gameConfig.totalEnemiesKilled == undefined) gameConfig.totalEnemiesKilled = 0;
+        if (gameConfig.totalCardsUsed == undefined) gameConfig.totalCardsUsed = 0;
+        if (gameConfig.totalCardsUpgraded == undefined) gameConfig.totalCardsUpgraded = 0;
+        if (gameConfig.totalTime == undefined) gameConfig.totalTime = 0;
+        gameConfig.enemiesKilled  = 0;
+        gameConfig.cardsUsed      = 0;
+        gameConfig.cardsUpgraded  = 0;
         this.isGameOver = false;
         this.startTime= Date.now();
         gameConfig.elapsedTime = 0;
@@ -635,6 +642,10 @@ class Game {
         console.log("Bonus ganado:", totalBonus);
         console.log("PowerUps sin usar:", unusedPowerUps);
         console.log("Plataformas sin usar:", unusedPlatforms);
+        gameConfig.totalEnemiesKilled += gameConfig.enemiesKilled;
+        gameConfig.totalCardsUsed += gameConfig.cardsUsed;
+        gameConfig.totalCardsUpgraded += gameConfig.cardsUpgraded;
+        gameConfig.totalTime += gameConfig.elapsedTime;
         this.screenCompleteBonusApplied = true;
         gameConfig.lastScreenBonus = {
             baseBonus: baseBonus,
@@ -975,6 +986,7 @@ class Game {
                 if (this.powerUpInventory[powerIndex]) { // Check if the power-up actually exists
                     const powerUpToUse = this.powerUpInventory.splice(powerIndex, 1)[0];
                     powerUpToUse.applyEffect(this.player, this);
+                    gameConfig.cardsUsed++;
                 }
             }
         });
@@ -988,6 +1000,7 @@ class Game {
             this.upgradeCards.push(card.id_carta); // mark for upgrade at level end
 
             await upgradeCard(gameConfig.id_jugador, card.id_carta);
+            gameConfig.cardsUpgraded++;
             console.log("Card with ID " + card.id_carta + " marked for upgrade");
             console.log("Jugador: " + gameConfig.id_jugador);
             console.log("Database updated successfully");

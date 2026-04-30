@@ -349,3 +349,20 @@ async function validate_admin(username, contraseña) {
         alert("Credenciales de administrador incorrectas");
     }
 }
+
+async function actualizarEstadisticas(victoria) {
+    await fetch('http://localhost:3000/stats/actualizar', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id_jugador: gameConfig.id_jugador,
+            enemigos: gameConfig.totalEnemiesKilled ?? 0,
+            cartas_usadas: gameConfig.totalCardsUsed ?? 0,
+            cartas_mejoradas: gameConfig.totalCardsUpgraded ?? 0,
+            victoria: victoria,
+            tiempo_seg: gameConfig.totalTime ?? 0,
+            nivel_alcanzado:  gameConfig.actualLevel ?? 1,
+            puntuacion: gameConfig.totalScore ?? 0
+        })
+    });
+}
