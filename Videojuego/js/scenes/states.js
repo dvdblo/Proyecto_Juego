@@ -24,6 +24,10 @@ class LoadingGame1 extends Phaser.Scene {
         //Game function to init the game
         await game.init();
 
+        if(gameConfig.actualLevel > 1) {
+            crearNivelPartida();
+        }
+
         //Next scene
         this.scene.start('Level', { game });
     }
@@ -52,6 +56,8 @@ class LoadingGame2 extends Phaser.Scene {
         //Game function to init the game
         await game.init();
 
+        crearNivelPartida();
+
         //Next scene
         this.scene.start('Level', { game });
     }
@@ -79,6 +85,8 @@ class LoadingGame3 extends Phaser.Scene {
 
         //Game function to init the game
         await game.init();
+
+        crearNivelPartida();
 
         //Next scene
         this.scene.start('Level', { game });

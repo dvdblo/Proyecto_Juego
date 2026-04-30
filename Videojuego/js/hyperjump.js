@@ -476,7 +476,7 @@ class Game {
         gameConfig.elapsedTime = 0;
         this.player.damageCooldown = 0;
         this.scoreApplied = false;
-        this.player.setSprite('../Videojuego/assets/sprites/blordrough_quartermaster-NESW.png',
+        this.player.setSprite('../Videojuego/assets/sprites/astro_sprites.png',
                               new Rect(48, 128, 48, 64));
         this.player.setSpeed(gameConfig.playerSpeed);
 
@@ -1036,6 +1036,7 @@ class Game {
                 this.upgradeCards.push(card.id_carta); // mark for upgrade at level end
 
                 await upgradeCard(gameConfig.id_jugador, card.id_carta);
+                gameConfig.totalCardsUpgraded++;
                 console.log("Card with ID " + card.id_carta + " marked for upgrade");
                 console.log("Jugador: " + gameConfig.id_jugador);
                 console.log("Database updated successfully");
@@ -1052,6 +1053,7 @@ class Game {
                 const card = this.powerUpInventory.splice(this.selectedPowerUpIndex, 1)[0];
                 this.upgradeCards.push(card.id_carta);
                 await upgradeCard(gameConfig.id_jugador, card.id_carta);
+                gameConfig.totalCardsUpgraded++;
                 console.log("Card with ID " + card.id_carta + " marked for upgrade");
                 console.log("Jugador: " + gameConfig.id_jugador);
                 console.log("Database updated successfully");

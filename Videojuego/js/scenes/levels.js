@@ -152,6 +152,7 @@ class Level extends Phaser.Scene {
             gameConfig.totalCardsUpgraded += gameConfig.cardsUpgraded;
             gameConfig.totalTime += gameConfig.elapsedTime;
             gameConfig.totalScore += gameConfig.score;
+            savePartida(gameConfig.id_partida);
             actualizarEstadisticas(false);
             actualizarNivelPartida(false);
             this.sound.stopAll();
@@ -167,6 +168,7 @@ class Level extends Phaser.Scene {
             gameConfig.totalCardsUpgraded += gameConfig.cardsUpgraded;
             gameConfig.totalTime += gameConfig.elapsedTime;
             gameConfig.totalScore += gameConfig.score;
+            savePartida(gameConfig.id_partida);
             actualizarEstadisticas(false);
             actualizarNivelPartida(false);
             this.sound.stopAll();

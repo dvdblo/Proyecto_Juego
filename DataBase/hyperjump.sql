@@ -382,12 +382,6 @@ BEGIN
 END $$
 
 DELIMITER ;
-             
-#CALL GetPlayerPlatforms (1);
-#SELECT * FROM Partida;
-#SELECT * FROM Jugador;
-#SELECT * FROM NivelPartida;
-#SELECT * FROM CartaJugador;
 
 DELIMITER $$
 CREATE PROCEDURE jugador_stats(IN jugador VARCHAR(50))
@@ -454,3 +448,36 @@ select * from partida;
 #SELECT * FROM PowerUp;
 
 select * from NivelPartida;
+
+DELIMITER $$
+CREATE PROCEDURE init_cartapartida(
+    IN p_id_nivel_partida INT,
+    IN p_id_carta INT
+)
+BEGIN
+    IF EXISTS (
+        SELECT 1 
+        FROM CartaPartida 
+        WHERE id_nivel_partida = p_id_nivel_partida
+          AND id_carta = p_id_carta
+    ) THEN
+        UPDATE CartaPartida
+        SET nivel_carta_repartir = nivel_carta_repartir + 1
+        WHERE id_nivel_partida = p_id_nivel_partida
+          AND id_carta = p_id_carta;
+    ELSE
+        INSERT INTO CartaPartida (
+            id_nivel_partida,
+            id_carta,
+            nivel_carta_repartir
+        )
+        VALUES (
+            p_id_nivel_partida,
+            p_id_carta,
+            1
+        );
+    END IF;
+END$$
+
+DELIMITER ;
+
