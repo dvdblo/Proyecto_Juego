@@ -40,13 +40,13 @@ const keyDirections = {
 };
 
 const IMG = {
-    p1: {xIMG: 1024, yIMG: 450},
+    p1: {xIMG: 1399, yIMG: 893},
     p2: {xIMG: 1024, yIMG: 450},
-    p3: {xIMG: 1024, yIMG: 450},
+    p3: {xIMG: 1229, yIMG: 245},
     p4: {xIMG: 2048, yIMG: 230},
     p5: {xIMG: 659, yIMG: 1799},
-    p6: {xIMG: 1024, yIMG: 450},
-    p7: {xIMG: 1024, yIMG: 450}
+    p6: {xIMG: 445, yIMG: 442},
+    p7: {xIMG: 1229, yIMG: 245}
 };
 
 // Data structure with the directions a character can move, the
