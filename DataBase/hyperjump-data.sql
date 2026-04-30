@@ -280,3 +280,53 @@ WHERE tipo = 'alerta';
 UPDATE Enemigo
 SET vida_base = 1, daño_base = 1, rango_ataque = 0, rango_deteccion = 80
 WHERE tipo = 'divide';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 1, rango_ataque = 0, rango_deteccion = 80
+WHERE tipo = 'simple' AND nombre NOT LIKE '%N2%' AND nombre NOT LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 2, daño_base = 1, rango_ataque = 0, rango_deteccion = 110
+WHERE tipo = 'simple' AND nombre LIKE '%N2%';
+
+UPDATE Enemigo
+SET vida_base = 3, daño_base = 1, rango_ataque = 0, rango_deteccion = 140
+WHERE tipo = 'simple' AND nombre LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 3, daño_base = 1, rango_ataque = 1, rango_deteccion = 200
+WHERE tipo = 'torreta' AND nombre NOT LIKE '%N2%' AND nombre NOT LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 4, daño_base = 1, rango_ataque = 1, rango_deteccion = 300
+WHERE tipo = 'torreta' AND nombre LIKE '%N2%';
+
+UPDATE Enemigo
+SET vida_base = 5, daño_base = 1, rango_ataque = 1, rango_deteccion = 400
+WHERE tipo = 'torreta' AND nombre LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 0, rango_ataque = 0, rango_deteccion = 250
+WHERE tipo = 'alerta' AND nombre NOT LIKE '%N2%' AND nombre NOT LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 0, rango_ataque = 0, rango_deteccion = 350
+WHERE tipo = 'alerta' AND nombre LIKE '%N2%';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 0, rango_ataque = 0, rango_deteccion = 450
+WHERE tipo = 'alerta' AND nombre LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 1, daño_base = 1, rango_ataque = 0, rango_deteccion = 80
+WHERE tipo = 'divide' AND nombre NOT LIKE '%N2%' AND nombre NOT LIKE '%N3%';
+
+UPDATE Enemigo
+SET vida_base = 2, daño_base = 1, rango_ataque = 0, rango_deteccion = 100
+WHERE tipo = 'divide' AND nombre LIKE '%N2%';
+
+UPDATE Enemigo
+SET vida_base = 3, daño_base = 1, rango_ataque = 0, rango_deteccion = 130
+WHERE tipo = 'divide' AND nombre LIKE '%N3%';
+
+#SELECT * FROM ENEMIGO;
