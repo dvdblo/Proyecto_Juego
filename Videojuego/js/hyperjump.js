@@ -328,10 +328,22 @@ class Bullet extends AnimatedObject {
         else{
             this.setSprite("../Videojuego/assets/sprites/bullet.png");
         }
+        if(gameConfig.sounds && gameConfig.sounds.bulletFly){
+            this.flySound = gameConfig.sounds.bulletFly;
+            this.flySound.loop = true;
+            this.flySound.play();
+        }
     }
 
     update(deltaTime) {
         this.position.x += this.speed * this.direction * deltaTime;
+    }
+    destroy(game){
+        if(this.flySound && this.flySound.isPlaying){
+            this.flySound.stop();
+        }
+        this.flySound = null;
+        game.bullets.splice(game.bullets.indexOf(this), 1);
     }
 }
 
@@ -814,13 +826,12 @@ class Game {
                 }
                 gameConfig.lives -= bullet.damage;
                 this.player.damageCooldown = 1000;
-                this.bullets.splice(this.bullets.indexOf(bullet), 1);
+                bullet.destroy(this);
                 if(gameConfig.lives<=0){
                     gameConfig.levelOver2=true;
                 }
             }
         }
-
         gameConfig.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000); //Time en seconds
 
         if (gameConfig.levelComplete && !this.scoreApplied) {
