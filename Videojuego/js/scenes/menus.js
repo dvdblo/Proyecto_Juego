@@ -158,8 +158,7 @@ class MainMenu extends Phaser.Scene {
             this.scene.start('Settings');
         });
         buttonTutorial.on('pointerdown', () => {
-            //this.scene.start('Introduction')
-            //this.menuMusic.stop();
+            window.open('https://youtu.be/s21WhEizFu0?si=cKYGhFmVjT7loMDV', '_blank');
         });
 
         //Text
@@ -378,6 +377,8 @@ class PauseMenu extends Phaser.Scene {
         const button = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2, 'buttonResume').setInteractive();
         const buttonFull = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.5, 'buttonResume').setInteractive();
         const buttonExit = this.add.image(gameConfig.canvasWidth/5, gameConfig.canvasHeight/1.2, 'buttonResume').setInteractive().setOrigin(0.5);
+        const buttonTutorial = this.add.image(gameConfig.canvasWidth/1.25, gameConfig.canvasHeight/1.2, 'buttonResume').setInteractive().setOrigin(0.5);
+        buttonTutorial.setScale(scale/1.5);
         button.setScale(scale);
         buttonFull.setScale(scale);
         buttonExit.setScale(scale/1.5);
@@ -406,6 +407,7 @@ class PauseMenu extends Phaser.Scene {
         const textReturn = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.2-scale*gameConfig.canvasHeight/20, 'Reanudar', textButton).setOrigin(0.5);
         const textFull = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/1.5-scale*gameConfig.canvasHeight/20, 'Pantalla Completa', textButton).setOrigin(0.5);
         const textExit = this.add.text(gameConfig.canvasWidth/5, gameConfig.canvasHeight/1.2-(scale/1.5)*gameConfig.canvasHeight/20, 'Salir', textButton).setOrigin(0.5);
+        const textTutorial = this.add.text(gameConfig.canvasWidth/1.25, gameConfig.canvasHeight/1.2-(scale/1.5)*gameConfig.canvasHeight/20, 'Tutorial', textButton).setOrigin(0.5);
         const textTitle = this.add.text(gameConfig.canvasWidth/2, gameConfig.canvasHeight/6, 'HyperJump', styteTitle).setOrigin(0.5);
 
         const backMusic = this.add.image(barX, barY-barHeight*3, 'buttonResume').setInteractive();
@@ -479,6 +481,20 @@ class PauseMenu extends Phaser.Scene {
                     }
                 });
             });
+        });
+
+        buttonTutorial.on('pointerover', () => {
+            buttonTutorial.setScale((scale/1.5)*1.1);
+            textTutorial.setScale(1.1);
+        });
+
+        buttonTutorial.on('pointerout', () => {
+            buttonTutorial.setScale(scale/1.5);
+            textTutorial.setScale(1);
+        });
+
+        buttonTutorial.on('pointerdown', () => {
+            window.open('https://youtu.be/s21WhEizFu0?si=cKYGhFmVjT7loMDV', '_blank');
         });
 
     }
