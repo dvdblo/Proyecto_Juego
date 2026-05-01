@@ -38,7 +38,7 @@ Ejemplo en macOS/Linux: `/Users/daniel/hyperjump/DataBase/hyperjump.sql`
 Ejemplo en Windows: `C:\Users\daniel\hyperjump\DataBase\hyperjump.sql`
 )
 3. Configurar las credenciales del backend
-Abre el archivo `Videojuego/js/BackEnd/platform.js` con cualquier editor de texto y localiza el bloque de conexión a la base de datos (está cerca del inicio del archivo):
+Abre el archivo `BackEnd/platform.js` con cualquier editor de texto y localiza el bloque de conexión a la base de datos (está cerca del inicio del archivo):
 (const pool = mysql.createPool({
     host:     '127.0.0.1',    // Usa 127.0.0.1 para instalación local
     user:     'root',          // Tu usuario de MySQL
@@ -46,7 +46,7 @@ Abre el archivo `Videojuego/js/BackEnd/platform.js` con cualquier editor de text
     database: 'hyperjump'
 }).promise();
 )
-ATENCIÓN: Reemplaza únicamente los valores de `user` y `password` por los tuyos. No cambies `host` ni `database`.
+ATENCIÓN: Reemplaza únicamente los valores de `user` y `password` por los tuyos. No cambies `host` ni `database` a menos de que `host` sea diferente a 127.0.0.1, en ese caso, coloca 127.0.0.1 en `host`.
 
 Si no tienes un user, deberás crear uno ejecutando lo siguiente con mysql, y cambiando "usuario" y "contraseña" por lo que quieras usar:
 
@@ -63,7 +63,7 @@ npm install
 )
 ATENCIÓN: Esto instalará Express, mysql2, cors y el resto de dependencias. Deberías ver una carpeta `node_modules` creada dentro de `BackEnd`.
 5. Iniciar el servidor backend
-Estando dentro de la carpeta `BackEnd>`, inicia el servidor API:
+Estando dentro de la carpeta `BackEnd`, inicia el servidor API:
 (
 node platform.js  
 )
