@@ -151,10 +151,8 @@ class WinLevelScreen1 extends Phaser.Scene {
         });
 
         button.on('pointerdown', async() => {
-            console.log(gameConfig.actualLevel);
             await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
-            console.log(gameConfig.actualLevel);
             this.winMusic.stop();
             if (gameConfig.actualLevel > 3) {
                 this.scene.start('LoadingGame2');
@@ -234,10 +232,8 @@ class WinLevelScreen2 extends Phaser.Scene {
         });
 
         button.on('pointerdown', async() => {
-            console.log(gameConfig.actualLevel);
             await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
-            console.log(gameConfig.actualLevel);
             this.winMusic.stop();
             if (gameConfig.actualLevel > 6) {
                 this.scene.start('LoadingGame3');
@@ -316,10 +312,8 @@ class WinLevelScreen3 extends Phaser.Scene {
         });
 
         button.on('pointerdown', async() => {
-            console.log(gameConfig.actualLevel);
             await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
-            console.log(gameConfig.actualLevel);
             this.winMusic.stop();
             if (gameConfig.actualLevel > 9) {
                 await actualizarEstadisticas(true);

@@ -96,7 +96,6 @@ function addPlatform(x, y, width, height, lst, unit, hostil, sprite, widthSprite
         6
     );
     
-    console.log(sprite);
     if (type == "one-time" || type == "hielo" || type == "bloquea_proyectiles" || 
         type == "turbina" || type == "teletransportador"){
             box.setSprite(`../Videojuego/assets/sprites/plataformas_auto/${type}.png`,

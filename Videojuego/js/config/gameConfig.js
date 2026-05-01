@@ -1,8 +1,10 @@
+//Canvas base dimensions
 let cWidth = 1400;
 let cHeight = 600;
 
+// Global game configuration object
 const gameConfig = {
-  canvasWidth: cWidth,
+  canvasWidth: cWidth, 
   canvasHeight: cHeight,
   levelSize: 4,
   levelLenght: cWidth*4,
@@ -39,6 +41,7 @@ const keyDirections = {
     Space: 'up',
 };
 
+// Sprite sheet source coordinates for each platform type
 const IMG = {
     p1: {xIMG: 1399, yIMG: 893},
     p2: {xIMG: 1024, yIMG: 450},
@@ -96,19 +99,20 @@ document.addEventListener('keydown', (event) => {
 window.addEventListener('keydown', (e) => {
     if (e.key === 'f' || e.key === 'F') {
         if (!document.fullscreenElement) {
-            container.requestFullscreen();
+            container.requestFullscreen(); //Enter fullscreen
         } else {
-            document.exitFullscreen();
+            document.exitFullscreen(); //Exit fullscreen
         }
     }
 });
 
+//Resizes the canvas and updates Phasers renderer
 window.setResolution = function (width, height) {
   // 1. Actualizas config
   gameConfig.canvasWidth = width;
   gameConfig.canvasHeight = height;
 
-  // 2. Phaser (acceso global al juego)
+//Apply new size to the Phaser game instance
   game.scale.resize(width, height);
 
 };
