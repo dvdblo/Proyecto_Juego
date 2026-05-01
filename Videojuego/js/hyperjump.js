@@ -121,7 +121,6 @@ class Enemies extends AnimatedObject {
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if(distance < this.attackRange){
-            console.log(this.type + " dispara");
             let direction = 1;
             if(game.player.position.x < this.position.x){
                 direction = -1;
@@ -152,13 +151,10 @@ class Enemies extends AnimatedObject {
             if(gameConfig.sounds){
                 gameConfig.sounds.shoot.play();
             }
-            console.log("BALA CREADA:", bullet);
-            console.log("TOTAL BALAS:", game.bullets.length);
         }
     }
 
     alertEnemies(game){
-        console.log("Perro alerta enemigos");
 
         for (let enemy of game.enemies){
             if(enemy.type == "simple" && !enemy.alerted){
@@ -172,7 +168,6 @@ class Enemies extends AnimatedObject {
     divide(game){
         if(this.hasDivided) return;
 
-        console.log("Enemigo se divide");
         if(gameConfig.sounds){
             gameConfig.sounds.slimeSplit.play();
         }
@@ -259,7 +254,6 @@ class Cards extends AnimatedObject {
         }
         else if (this.type == "Bomba") {
             const maxEnemigos = this.efecto.max_enemigos ?? game.enemies.length; // fallback kills all
-            console.log(maxEnemigos);
             game.enemies.splice(0, maxEnemigos);
         }
         else if (this.type == "Vida Extra") {
@@ -471,6 +465,7 @@ class Game {
         gameConfig.enemiesKilled  = 0;
         gameConfig.cardsUsed      = 0;
         gameConfig.cardsUpgraded  = 0;
+        gameConfig.cardsUsed_id = [];
         this.isGameOver = false;
         this.startTime= Date.now();
         gameConfig.elapsedTime = 0;
@@ -494,11 +489,11 @@ class Game {
         //The objects that depends on DB to load, are here.
         const loadMap = async () => {
             this.generation_zones = await initGenerationZones(this.level, gameConfig.unit);
-            console.log("ZONAS DE GENERACION:", this.generation_zones);
             this.powerUpInventory = await initPowerUps();
-            console.log("POWER-UPS:", this.powerUpInventory);
             this.platformInventory = await initPlatformCards();
-            console.log("plat:", this.platformInventory);
+
+            crearCartaPartida(this.platformInventory);
+            crearCartaPartida(this.powerUpInventory);
 
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
             let finalPlatform = this.actualPlatforms.at(-1);
@@ -508,7 +503,6 @@ class Game {
             this.winPlat = this.actualPlatforms.at(-1);
             
             const enemiesData = await initEnemies(this.level);
-            console.log("ENEMIES DATA:", enemiesData);
             function mapEnemyType(tipo){
                 if(!tipo) return "simple";
 
@@ -546,7 +540,6 @@ class Game {
             while(availablePlatforms.length > 0){
                 let createdInRound = false;
                 for(let data of enemiesData) {
-                    console.log("ENEMY INDIVIDUAL:", data);
                     if(data.cantidad_maxima <=0){
                         continue;
                     }
@@ -596,9 +589,7 @@ class Game {
                     enemy.detectionRange = data.rango_deteccion;
                     enemy.setupByType();
                     enemy.setSprite(getEnemySprite(enemyType));
-                    console.log(`Enemigo ${data.tipo} en X:${enemy.position.x} Y:${enemy.position.y}, plataforma en X:${platform.position.x} Y:${platform.position.y}`);
                     this.enemies.push(enemy);
-                    console.log("ENEMY CREADO:", enemy);
                     enemyCounter++;
                     data.cantidad_maxima--;
                     createdInRound = true;
@@ -668,9 +659,6 @@ class Game {
         let totalBonus = baseBonus + powerUpBonus + platformBonus;
         gameConfig.score += totalBonus;
         gameConfig.score *= timeBonus;
-        console.log("Bonus ganado:", totalBonus);
-        console.log("PowerUps sin usar:", unusedPowerUps);
-        console.log("Plataformas sin usar:", unusedPlatforms);
         gameConfig.totalEnemiesKilled += gameConfig.enemiesKilled;
         gameConfig.totalCardsUsed += gameConfig.cardsUsed;
         gameConfig.totalCardsUpgraded += gameConfig.cardsUpgraded;
@@ -736,7 +724,6 @@ class Game {
         this.player.draw(ctx);
 
         //Enemies
-        console.log("ENEMIES EN JUEGO:", this.enemies.length);
         for(let enemy of this.enemies) {
             enemy.draw(ctx);
         }
@@ -1021,6 +1008,7 @@ class Game {
                 this.selectedPowerUpIndex = 0;
                 }
             const powerUpToUse = this.powerUpInventory.splice(this.selectedPowerUpIndex, 1)[0];
+            gameConfig.cardsUsed_id.push(powerUpToUse.id_carta);
             powerUpToUse.applyEffect(this.player, this);
             this.selectedPowerUpIndex = 0;
             gameConfig.cardsUsed++;
@@ -1037,9 +1025,6 @@ class Game {
 
                 await upgradeCard(gameConfig.id_jugador, card.id_carta);
                 gameConfig.totalCardsUpgraded++;
-                console.log("Card with ID " + card.id_carta + " marked for upgrade");
-                console.log("Jugador: " + gameConfig.id_jugador);
-                console.log("Database updated successfully");
 
                 this.selectedPlatformIndex = 0;
             }
@@ -1054,9 +1039,6 @@ class Game {
                 this.upgradeCards.push(card.id_carta);
                 await upgradeCard(gameConfig.id_jugador, card.id_carta);
                 gameConfig.totalCardsUpgraded++;
-                console.log("Card with ID " + card.id_carta + " marked for upgrade");
-                console.log("Jugador: " + gameConfig.id_jugador);
-                console.log("Database updated successfully");
 
                 this.selectedPowerUpIndex = 0;
             }
@@ -1081,6 +1063,7 @@ class Game {
             }
 
             const powerUpToUse = this.platformInventory.splice(this.selectedPlatformIndex, 1)[0]; // Remove the selected platform from the inventory
+            gameConfig.cardsUsed_id.push(powerUpToUse.id_carta);
             powerUpToUse.applyEffect(this.player, this);
             gameConfig.cardsUsed++;
             this.selectedPlatformIndex = 0; // reset to first after placing

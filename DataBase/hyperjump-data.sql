@@ -12,12 +12,6 @@ VALUES
 (null, "ele", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', true, "normal");
 COMMIT;
 
-#TRUNCATE TABLE Plataforma;
-#SET SQL_SAFE_UPDATES = 0;
-#DELETE FROM Plataforma;
-#ALTER TABLE Plataforma AUTO_INCREMENT = 1;
-#select * from hyperjump.Plataforma;
-
 INSERT INTO Nivel(dificultad, numero_nivel, tiempo_limite_seg)
 VALUES (1, 1, null),
 (1, 2, null),
@@ -29,8 +23,6 @@ VALUES (1, 1, null),
 (3, 8, null),
 (3, 9, null);
 COMMIT;
-
-#select * from hyperjump.Nivel;
 
 INSERT INTO ZonaGeneracion (id_nivel, coord_x, coord_y, hostil)
 VALUES  (1, 1, 10, false),
@@ -139,17 +131,6 @@ INSERT INTO PowerUp(id_carta, nombre) VALUES
 (7, "Vida Extra");
 COMMIT;
 
-#select * from hyperjump.ZonaGeneracion;
-#SELECT * FROM Plataforma;
-#SELECT * FROM Carta;
-#SELECT * FROM PowerUp;
-#SELECT * FROM Jugador;
-#SELECT * FROM Partida;
-#TRUNCATE TABLE Plataforma;
-#TRUNCATE TABLE Nivel;
-#TRUNCATE TABLE ZonaGeneracion;
-
-USE hyperjump;
 INSERT INTO Enemigo 
 (nombre, tipo, descripcion, vida_base, daño_base, es_inmortal, rango_ataque, rango_deteccion)
 VALUES
@@ -164,11 +145,7 @@ VALUES
 (1, 2, 2), 
 (1, 3, 3),
 (1, 4, 4);
-
-#SELECT * FROM Enemigo;
-#SELECT * FROM EnemigoNivel;
-
-#SELECT * FROM Partida;
+COMMIT;
 
 INSERT INTO Enemigo 
 (nombre, tipo, descripcion, vida_base, daño_base, es_inmortal, rango_ataque, rango_deteccion)
@@ -182,6 +159,7 @@ VALUES
 ('Torreta Alien N3', 'torreta', 'Torreta más peligrosa', 210, 20, 1, 1, 180),
 ('Alien Perro N3', 'alerta', 'Alerta con mucho mayor rango', 110, 0, 0, 0, 210),
 ('Slime Alien N3', 'divide', 'Slime más peligroso', 85, 14, 1, 0, 70);
+COMMIT;
 
 INSERT INTO EnemigoNivel (id_nivel, id_enemigo, cantidad_maxima)
 VALUES
@@ -194,9 +172,7 @@ VALUES
 (3, 10, 3),
 (3, 11, 5),
 (3, 12, 6);
-
-#SELECT * FROM Enemigo;
-#SELECT * FROM EnemigoNivel;
+COMMIT;
 
 INSERT INTO Enemigo
 (nombre, tipo, descripcion, vida_base, daño_base, es_inmortal, rango_ataque, rango_deteccion)
@@ -204,15 +180,14 @@ VALUES
 ('Jefe_1', 'jefe', 'facil', 300, 1, 0, 1, 250),
 ('Jefe_2', 'jefe', 'medio', 450, 1, 0, 1, 300),
 ('Jefe_3', 'jefe', 'dificil', 650, 1, 0, 1, 350);
+COMMIT;
 
 INSERT INTO JefeNivel(id_nivel, nombre_jefe)
 VALUES
 (3, 'Jefe Facil'),
 (6, 'Jefe Medio'),
 (9, 'Jefe Dificil');
-
-
-#SELECT * FROM JefeNivel;
+COMMIT;
 
 INSERT INTO Plataforma(id_carta, nombre, composicion, es_autogenerada, tipo) 
 VALUES 
@@ -222,8 +197,7 @@ VALUES
 (11, "bloquea_proyectiles", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}]}', false, "bloquea_proyectiles"),
 (12, "turbina", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}], "velocidad": 0.08, "amplitud": 0.5}', false, "turbina"),
 (13, "teletransportador", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}], "destino_x": 2, "destino_y": 1}', false, "teletransportador"),
-(14, "ele_carta", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', false, "ele_carta")
-;
+(14, "ele_carta", '{"formas": [{"base": 3, "altura": 1, "x": 0, "y": 0}, {"base": 1, "altura": 3, "x": 1, "y": -1}]}', false, "ele_carta");
 
 INSERT INTO PlataformaNivel(id_plataforma, nivel_plataforma, ancho_base, alto_base, efecto)
 VALUES
@@ -249,8 +223,8 @@ VALUES
 (11, 3, 5, 1, '{"bloquea_proyectiles": true,"escudo_jugador": true}'),
 (12, 3, 5, 1, '{"velocidad": 0.08, "amplitud": 1.5}'),
 (13, 3, 5, 1, null),
-(14, 3, 5, 1, '{"bloquea_proyectiles": true}')
-;
+(14, 3, 5, 1, '{"bloquea_proyectiles": true}');
+COMMIT;
 
 INSERT INTO PowerUpNivel(id_powerup, nivel_powerup, duracion_base, efecto)
 Values
@@ -276,8 +250,8 @@ Values
 (4,3,12000,'{"modificador_velocidad": 1.5}'),
 (5,3,6000,'{"doble_salto": true}'),
 (6,3,null,null),
-(7,3,null,'{"vidas_extra": 3}')
-;
+(7,3,null,'{"vidas_extra": 3}');
+COMMIT;
 
 SET SQL_SAFE_UPDATES = 0;
 
@@ -357,4 +331,3 @@ UPDATE Enemigo
 SET vida_base = 3, daño_base = 1, rango_ataque = 0, rango_deteccion = 130
 WHERE tipo = 'divide' AND nombre LIKE '%N3%';
 
-#SELECT * FROM ENEMIGO;

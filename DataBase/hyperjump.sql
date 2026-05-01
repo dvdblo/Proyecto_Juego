@@ -429,55 +429,32 @@ BEGIN
 END $$
 DELIMITER ;
 
-#SELECT COUNT(A.id_partida) AS runs, DATE_FORMAT(fecha_inicio, "%M") AS month, DATE_FORMAT(fecha_inicio, "%d") AS day FROM partidas_jugador AS A GROUP BY DATE_FORMAT(fecha_inicio, "%M"), DATE_FORMAT(fecha_inicio, "%d");
-
-#SELECT COUNT(A.fecha_inicio) AS iniciadas, COUNT(A.fecha_fin) AS terminadas FROM partidas_jugador AS A;
-
-#SELECT AVG(partidas) AS promedio_partidas FROM (SELECT COUNT(A.id_partida) AS partidas FROM partidas_jugador AS A GROUP BY A.id_jugador) AS t;
-
-#SELECT AVG(tiempo) AS promedio_tiempo FROM (SELECT COUNT(A.id_partida) AS tiempo FROM partidas_jugador AS A WHERE A.fecha_fin <> NULL) AS t;
-
-#SELECT A.id_carta AS id, A.descripcion AS nombre, COUNT(A.id_carta) AS repartida, SUM(A.fue_usada) AS usada FROM cartas_partida AS A GROUP BY A.id_carta;
-
-#SELECT * FROM cartas_partida;
-
-Select * from estadisticas;
-
-select * from partida;
-
-#SELECT * FROM PowerUp;
-
-select * from NivelPartida;
-
 DELIMITER $$
-CREATE PROCEDURE init_cartapartida(
-    IN p_id_nivel_partida INT,
-    IN p_id_carta INT
-)
+CREATE PROCEDURE init_cartapartida(IN p_id_nivel_partida INT, IN p_id_carta INT)
 BEGIN
     IF EXISTS (
         SELECT 1 
         FROM CartaPartida 
-        WHERE id_nivel_partida = p_id_nivel_partida
-          AND id_carta = p_id_carta
+        WHERE id_nivel_partida = p_id_nivel_partida AND id_carta = p_id_carta
     ) THEN
         UPDATE CartaPartida
         SET nivel_carta_repartir = nivel_carta_repartir + 1
-        WHERE id_nivel_partida = p_id_nivel_partida
-          AND id_carta = p_id_carta;
+        WHERE id_nivel_partida = p_id_nivel_partida AND id_carta = p_id_carta;
     ELSE
-        INSERT INTO CartaPartida (
-            id_nivel_partida,
-            id_carta,
-            nivel_carta_repartir
-        )
-        VALUES (
-            p_id_nivel_partida,
-            p_id_carta,
-            1
-        );
+        INSERT INTO CartaPartida (id_nivel_partida, id_carta, nivel_carta_repartir)
+        VALUES (p_id_nivel_partida, p_id_carta, 1);
     END IF;
 END$$
-
 DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE usar_carta(IN p_id_nivel_partida INT, IN p_id_carta INT)
+BEGIN
+    UPDATE CartaPartida
+    SET veces_usada = veces_usada + 1, fue_usada = TRUE
+    WHERE id_nivel_partida = p_id_nivel_partida AND id_carta = p_id_carta;
+END$$
+DELIMITER ;
+
+
 
