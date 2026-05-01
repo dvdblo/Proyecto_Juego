@@ -6,16 +6,80 @@ HyperJump
 
 ## ¿Cómo iniciarlo?
 
+## 1. Requisitos previos
+
+Antes de intentar correr el proyecto, asegúrate de tener instaladas las siguientes herramientas:
+
+| Herramienta | Versión mínima | Descarga                        |
+|-------------|----------------|---------------------------------|
+| Node.js     | 18 o superior  | https://nodejs.org              |
+| MySQL       | 8.0 o superior | https://dev.mysql.com/downloads |
+| Git         | Cualquiera     | https://git-scm.com             |
+
+El archivo principal del juego es `Web/hyperjump.html`. No abras ningún otro HTML para iniciar el juego.
+
+Sigue los pasos en el orden exacto en que aparecen. Todos los comandos se ejecutan desde una terminal (Command Prompt, PowerShell, bash o zsh).
+
 1. Descarga el repositorio
-2. En caso de tener ya descargado el repositorio se recomienda correr git reset --hard origin/main. Esto lo que hace es asegurarse por la fuerza de que tu version del repositorio es exactamente igual que la version mas reciente de main. A cambio de esto borra todas las modificaciones personales no guardadas, pero como jugador esto da igual
-3. Iniciar una sesion de SQL, ya sea en la terminal o mediante alguna aplicacion externa como MySQL
-4. Crea la base de datos de la carpeta "DataBase" y carga los datos del juego
-5. Desde la terminal estando en la carpeta BackEnd correr el comando 'npm install' para instalar todas las dependencias necesarias para correr el programa
-6. En el archivo "platform.js", ubicado en Videojuego/js/BackEnd, reemplaza el contenido de las variables host, user y pass por los datos correspondientes a tu IP y contraseña de la conexión a la base de datos. En IP se recomienda utilizar '127.0.0.1' que es el IP de LocalHost.
-7. Inicia un servidor con el botón "Go Live", de la extensión "Live server" en VS code.
-8. En caso de que esto no funcione el paso anterior o que se este iniciando el juego desde un IDE o editor de codigo que no sea VS Code. Inicializar un servidor propio e ingresar su IP en la variable host del documento platform.js
-9. Abre el servidor en tu explorador
-10. Dentro de la carpeta Web del repositorio se encuentra un archivo llamado 'Web_tester.html'. Se debe inicializar ese archivo
+git clone <https://github.com/dvdblo/Proyecto_Juego.git>
+cd <Proyecto_Juego>
+(Si ya tienes el repositorio y quieres asegurarte de tener la versión más reciente:
+git reset --hard origin/main
+Elimina todos los cambios locales no guardados.
+)
+2. Crear la base de datos
+Abre una terminal e inicia sesión en MySQL:
+mysql -u root -p
+(Escribe tu contraseña cuando se la pida. Una vez dentro del shell de MySQL, ejecuta los tres archivos SQL en este orden exacto:
+SOURCE /ruta/al/repositorio/DataBase/hyperjump.sql;
+SOURCE /ruta/al/repositorio/DataBase/hyperjump-data.sql;
+ATENCIÓN: Reemplaza `/ruta/al/repositorio` con la ruta absoluta donde clonaste el proyecto.
+Ejemplo en macOS/Linux: `/Users/daniel/hyperjump/DataBase/hyperjump.sql`
+Ejemplo en Windows: `C:\Users\daniel\hyperjump\DataBase\hyperjump.sql`
+)
+3. Configurar las credenciales del backend
+Abre el archivo `Videojuego/js/BackEnd/platform.js` con cualquier editor de texto y localiza el bloque de conexión a la base de datos (está cerca del inicio del archivo):
+(const pool = mysql.createPool({
+    host:     '127.0.0.1',    // Usa 127.0.0.1 para instalación local
+    user:     'root',          // Tu usuario de MySQL
+    password: 'TU_CONTRASEÑA', // Tu contraseña de MySQL
+    database: 'hyperjump'
+}).promise();
+)
+ATENCIÓN: Reemplaza únicamente los valores de `user` y `password` por los tuyos. No cambies `host` ni `database`.
+4. Instalar dependencias del backend
+Desde la raíz del repositorio, navega a `Videojuego/js/BackEnd` e instala los paquetes de Node.js:
+(
+cd Videojuego/js/BackEnd
+npm install
+)
+ATENCIÓN: Esto instalará Express, mysql2, cors y el resto de dependencias. Deberías ver una carpeta `node_modules` creada dentro de `Videojuego/js/BackEnd`.
+5. Iniciar el servidor backend
+Estando dentro de la carpeta `Videojuego\js\BackEnd>`, inicia el servidor API:
+(
+node server.js  
+)
+ATENCIÓN: Si todo está bien configurado verás este mensaje en la terminal: Servidor en http://localhost:3000
+ATENCIÓN: Deja esta terminal abierta mientras juegas. El juego hace peticiones a `http://localhost:3000` constantemente. Si cierras esta terminal el juego dejará de funcionar.
+6. Iniciar el servidor web
+Abre una **segunda terminal** (mantén la del backend abierta) y navega a la carpeta `Videojuego\js\Web` del repositorio:
+(
+cd Videojuego\js\Web
+npx http-server . -p 8080
+)
+ATENCIÓN: Si `npx` no encuentra el paquete, instálalo globalmente primero:
+(
+npm install -g http-server
+cd Web
+http-server . -p 8080
+)
+ATENCIÓN: Verás un mensaje similar a este: Starting up http-server, serving . Available on: http://127.0.0.1:8080 http://192.168.x.x:8080
+7. Abrir el juego
+Con ambos servidores corriendo, abre tu navegador y escribe esta dirección exacta: 
+(
+http://localhost:8080/hyperjump.html
+)
+ATENCIÓN: Si ves la pantalla principal de HyperJump con el título y el menú de navegación, la instalación fue exitosa.
 
 ## ¿Cómo jugar?
 
