@@ -30,13 +30,12 @@ Elimina todos los cambios locales no guardados.
 2. Crear la base de datos
 Abre una terminal e inicia sesión en MySQL:
 mysql -u root -p
-(Escribe tu contraseña cuando se la pida. Una vez dentro del shell de MySQL, ejecuta los tres archivos SQL en este orden exacto:
+(Escribe tu contraseña cuando se la pida. Una vez dentro del shell de MySQL, ejecuta los dos archivos SQL en este orden exacto:
 SOURCE /ruta/al/repositorio/DataBase/hyperjump.sql;
 SOURCE /ruta/al/repositorio/DataBase/hyperjump-data.sql;
 ATENCIÓN: Reemplaza `/ruta/al/repositorio` con la ruta absoluta donde clonaste el proyecto.
 Ejemplo en macOS/Linux: `/Users/daniel/hyperjump/DataBase/hyperjump.sql`
 Ejemplo en Windows: `C:\Users\daniel\hyperjump\DataBase\hyperjump.sql`
-De igual forma tendrás que correr el archivo DataBase/hyperjump-data.sql
 )
 3. Configurar las credenciales del backend
 Abre el archivo `Videojuego/js/BackEnd/platform.js` con cualquier editor de texto y localiza el bloque de conexión a la base de datos (está cerca del inicio del archivo):
@@ -48,12 +47,13 @@ Abre el archivo `Videojuego/js/BackEnd/platform.js` con cualquier editor de text
 }).promise();
 )
 ATENCIÓN: Reemplaza únicamente los valores de `user` y `password` por los tuyos. No cambies `host` ni `database`.
-Si no tienes un user, deberás crear uno ejecutando lo siguiente:
 
-CREATE USER 'mi_usuario'@'localhost' IDENTIFIED BY 'mi_password';
-GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE, CREATE ROUTINE, ALTER ROUTINE
-ON mi_base_de_datos.*
-TO 'mi_usuario'@'localhost';
+Si no tienes un user, deberás crear uno ejecutando lo siguiente con mysql, y cambiando "usuario" y "contraseña" por lo que quieras usar:
+
+CREATE USER 'usuario'@'localhost'
+IDENTIFIED WITH mysql_native_password BY 'contraseña';
+GRANT ALL PRIVILEGES ON hyperjump.* TO 'usuario'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
 
 4. Instalar dependencias del backend
 Desde la raíz del repositorio, navega a `BackEnd` e instala los paquetes de Node.js:
@@ -65,12 +65,12 @@ ATENCIÓN: Esto instalará Express, mysql2, cors y el resto de dependencias. Deb
 5. Iniciar el servidor backend
 Estando dentro de la carpeta `BackEnd>`, inicia el servidor API:
 (
-node server.js  
+node platform.js  
 )
 ATENCIÓN: Si todo está bien configurado verás este mensaje en la terminal: Servidor en http://localhost:3000
 ATENCIÓN: Deja esta terminal abierta mientras juegas. El juego hace peticiones a `http://localhost:3000` constantemente. Si cierras esta terminal el juego dejará de funcionar.
 6. Iniciar el servidor web
-Abre una **segunda terminal** (mantén la del backend abierta) y navega a la carpeta Raiz del repositorio del repositorio:
+Abre una **segunda terminal** (mantén la del backend abierta) y navega a la carpeta Raiz del repositorio:
 (
 npx http-server . -p 8080
 )
