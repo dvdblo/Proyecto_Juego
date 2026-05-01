@@ -18,3 +18,5 @@ La carpeta Tareas contiene las tareas que se reaizaron en equipo.
 La carpeta Videojuego contiene los archivos relacionados al videojuego en sí, y las escenas.
 
 La carpeta Web contiene los archivos de las distintas páginas que conforman la web del videojuego.
+
+Las credenciales de administrador para la sección de estadísticas de la página son: Username: "admin" ; Contraseña: "admin123"
