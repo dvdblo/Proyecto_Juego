@@ -90,19 +90,14 @@ async function initEnemies(level){
     else if(level >= 7 && level <=9){
         enemyLevel = 3;
     }
-    console.log("Pantalla actual: ", level);
-    console.log("Buscando enemigos para nivel:", enemyLevel);
     const res = await fetch(`http://localhost:3000/enemigos/${enemyLevel}`);
     const data = await res.json();
-     console.log("ENEMIES DATA:", data);
     return data;
 }
 
 async function initBoss(level){
     const res = await fetch(`http://localhost:3000/jefe/${level}`);
     const data = await res.json();
-
-    console.log("BOSS DATA:", data);
     return data;
 }
 

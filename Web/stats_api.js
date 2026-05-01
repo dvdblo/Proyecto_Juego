@@ -39,7 +39,6 @@ async function get_user_stats(username) {
         const res = await fetch(`http://localhost:3000/stats/user?username=${encodeURIComponent(username)}`);
         const data = await res.json();
 
-        console.log(data);
         if(data[0].length > 0) {
             $("#user_stats").empty();
 
@@ -114,7 +113,6 @@ async function validate_admin(username, contraseña) {
             </tr>
         `);
 
-        console.log(data);
         data.forEach(stat => {
             const key = Object.keys(stat)[0];
             const value = stat[key];
@@ -129,7 +127,6 @@ async function validate_admin(username, contraseña) {
 
         const graphics_stats = await fetch(`http://localhost:3000/stats/admin/graphics`);
         const data_graph = await graphics_stats.json();
-        console.log(data_graph);
 
         $("#admin_graphics").append(`
             <h1 class="backText">Gráficas Globales</h1>
@@ -323,7 +320,13 @@ async function validate_admin(username, contraseña) {
         labs = [];
         vals = [];
         let vals2 = [];
-        data_graph[4].card_dealt_used.forEach(stat => {
+        data_graph[4].card_dealt_used[0].forEach(stat => {
+            labs.push(stat.nombre);
+            vals.push(stat.repartida);
+            vals2.push(stat.usada)
+        });
+
+        data_graph[4].card_dealt_used[1].forEach(stat => {
             labs.push(stat.nombre);
             vals.push(stat.repartida);
             vals2.push(stat.usada)
@@ -409,7 +412,6 @@ async function crearNivelPartida() {
 }
 
 async function actualizarNivelPartida(completado) {
-    console.log("id partida desde nivel partida: ", gameConfig.id_partida);
     await fetch('http://localhost:3000/stats/actualizar/nivelpartida', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -424,4 +426,36 @@ async function actualizarNivelPartida(completado) {
             id_nivel: gameConfig.actualLevel
         })
     });
+}
+
+async function crearCartaPartida(cartas) {
+    try {
+        const response = await fetch('http://localhost:3000/cartapartida/repartida', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                cartas: cartas,
+                id_partida: gameConfig.id_partida,
+                id_nivel: gameConfig.actualLevel
+            })
+        });
+    } catch (error) {
+        console.error('Error al crear carta partida:', error);
+    }
+}
+
+async function usarCartaPartida(cartas_id) {
+    try {
+        const response = await fetch('http://localhost:3000/cartapartida/usada', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                cartas_id: cartas_id,
+                id_partida: gameConfig.id_partida,
+                id_nivel: gameConfig.actualLevel
+            })
+        });
+    } catch (error) {
+        console.error('Error al usar carta partida:', error);
+    }
 }

@@ -471,6 +471,7 @@ class Game {
         gameConfig.enemiesKilled  = 0;
         gameConfig.cardsUsed      = 0;
         gameConfig.cardsUpgraded  = 0;
+        gameConfig.cardsUsed_id = [];
         this.isGameOver = false;
         this.startTime= Date.now();
         gameConfig.elapsedTime = 0;
@@ -499,6 +500,9 @@ class Game {
             console.log("POWER-UPS:", this.powerUpInventory);
             this.platformInventory = await initPlatformCards();
             console.log("plat:", this.platformInventory);
+
+            crearCartaPartida(this.platformInventory);
+            crearCartaPartida(this.powerUpInventory);
 
             this.actualPlatforms = await initPlatforms("true", this.generation_zones, gameConfig.unit);
             let finalPlatform = this.actualPlatforms.at(-1);
@@ -1021,6 +1025,7 @@ class Game {
                 this.selectedPowerUpIndex = 0;
                 }
             const powerUpToUse = this.powerUpInventory.splice(this.selectedPowerUpIndex, 1)[0];
+            gameConfig.cardsUsed_id.push(powerUpToUse.id_carta);
             powerUpToUse.applyEffect(this.player, this);
             this.selectedPowerUpIndex = 0;
             gameConfig.cardsUsed++;
@@ -1081,6 +1086,7 @@ class Game {
             }
 
             const powerUpToUse = this.platformInventory.splice(this.selectedPlatformIndex, 1)[0]; // Remove the selected platform from the inventory
+            gameConfig.cardsUsed_id.push(powerUpToUse.id_carta);
             powerUpToUse.applyEffect(this.player, this);
             gameConfig.cardsUsed++;
             this.selectedPlatformIndex = 0; // reset to first after placing

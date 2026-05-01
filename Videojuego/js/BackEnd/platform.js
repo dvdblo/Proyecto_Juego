@@ -18,9 +18,9 @@ app.use(cors());
 app.use(express.json());
 
 const pool = mysql.createPool({
-    host: '127.0.0.1',
+    host: '192.168.1.10',
     user: 'root',
-    password: 'Armasazar1',
+    password: 'bl200611',
     database: 'hyperjump'
 }).promise();
 
@@ -196,9 +196,7 @@ app.put('/partida/terminar', async (req, res) => {
 app.get('/enemigos/:level', async (req, res) => {
     try{
         const level = parseInt(req.params.level); 
-        console.log("Nivel como número:", level);
         const [enemies] = await pool.query('SELECT Enemigo.id_enemigo, Enemigo.nombre, Enemigo.tipo, Enemigo.descripcion, Enemigo.vida_base, Enemigo.daño_base, Enemigo.es_inmortal, Enemigo.rango_ataque, Enemigo.rango_deteccion, EnemigoNivel.cantidad_maxima FROM Enemigo JOIN EnemigoNivel ON Enemigo.id_enemigo = EnemigoNivel.id_enemigo JOIN Nivel ON EnemigoNivel.id_nivel = Nivel.id_nivel WHERE Nivel.numero_nivel = ?', [level]);
-        console.log("Enemies encontrados:", enemies.length);
         res.json(enemies);
 
     } catch (error) {
@@ -211,12 +209,7 @@ app.get('/enemigos/:level', async (req, res) => {
 app.get('/jefe/:level', async (req, res) => {
     try{
         const level = parseInt(req.params.level);
-
-        console.log("Nivel como número:", level);
-
         const [boss] = await pool.query(`SELECT Enemigo.id_enemigo, Enemigo.nombre, Enemigo.tipo,Enemigo.descripcion, Enemigo.vida_base, Enemigo.daño_base,Enemigo.es_inmortal, Enemigo.rango_ataque, Enemigo.rango_deteccion, JefeNivel.nombre_jefe FROM JefeNivel JOIN Nivel ON JefeNivel.id_nivel = Nivel.id_nivel JOIN Enemigo ON Enemigo.descripcion = Nivel.dificultad WHERE Nivel.numero_nivel = ? AND Enemigo.tipo = 'jefe'`, [level]);
-        console.log("Jefes encontrados:", boss.length);
-        console.log("Datos del jefe:", boss);
         res.json(boss);
 
     } catch (error) {
@@ -295,20 +288,38 @@ app.put('/stats/actualizar/nivelpartida', async (req, res) => {
     }
 });
 
-// app.post('/cartapartida/repartida', async (req, res) => {
-//     const { cartas } = req.body;
-//     try {
-//         for(let carta of cartas) {
-            
-//             let id_carta = carta.id_carta;
-//             await pool.query('CALL init_cartapartida(?, ?)', [id_nivel_partida, id_carta]);
-//         }
+app.post('/cartapartida/repartida', async (req, res) => {
+    const {cartas, id_partida, id_nivel} = req.body;
+    try {
+        for(let carta of cartas) {
+            let id_carta = carta.id_carta;
+            const [rows] = await pool.query('SELECT id_nivel_partida FROM NivelPartida WHERE id_partida = ? AND id_nivel = ? LIMIT 1;', [id_partida, id_nivel] );
+            const id_nivel_partida = rows[0].id_nivel_partida;
+
+            await pool.query('CALL init_cartapartida(?, ?)', [id_nivel_partida, id_carta]);
+        }
         
-//         res.json({ mensaje: 'Nivel insertado' });
-//     } catch (error) {
-//         res.status(500).json({ error: 'Error al insertar' });
-//     }
-// });
+        res.json({ mensaje: 'carta contada' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al insertar' });
+    }
+});
+
+app.post('/cartapartida/usada', async (req, res) => {
+    const {cartas_id, id_partida, id_nivel} = req.body;
+    try {
+        for(let id_carta of cartas_id) {
+            const [rows] = await pool.query('SELECT id_nivel_partida FROM NivelPartida WHERE id_partida = ? AND id_nivel = ? LIMIT 1;', [id_partida, id_nivel] );
+            const id_nivel_partida = rows[0].id_nivel_partida;
+
+            await pool.query('CALL usar_carta(?, ?)', [id_nivel_partida, id_carta]);
+        }
+        
+        res.json({ mensaje: 'carta usada' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al insertar' });
+    }
+});
 
 
 app.listen(port, () => {
@@ -374,8 +385,6 @@ app.get('/stats/admin/general', async (req, res) => {
 
         for (const consult of consults) {
             const [rows] = await pool.query('CALL count_stats(?, ?)', [consult.table, consult.col]);
-
-            console.log(rows[0][0]);
             general_stats.push(rows[0][0]);
         }
 
@@ -404,8 +413,9 @@ app.get('/stats/admin/graphics', async (req, res) => {
         const avg_time_end = await pool.query('SELECT AVG(tiempo) AS promedio_tiempo FROM (SELECT COUNT(A.id_partida) AS tiempo FROM partidas_jugador AS A WHERE A.fecha_fin <> NULL) AS t');
         graphics_stats.push({avg_time: avg_time_end[0]});
 
-        const card_dealt_used = await pool.query('SELECT A.id_carta AS id, A.descripcion AS nombre, COUNT(A.id_carta) AS repartida, SUM(A.fue_usada) AS usada FROM cartas_partida AS A GROUP BY A.id_carta');
-        graphics_stats.push({card_dealt_used: card_dealt_used[0]});
+        const card_dealt_used_plat = await pool.query('SELECT A.id_carta AS id, C.nombre AS nombre, SUM(A.nivel_carta_repartir) AS repartida, SUM(A.veces_usada) AS usada FROM CartaPartida AS A INNER JOIN Carta AS B  USING(id_carta) INNER JOIN Plataforma AS C USING(id_carta) GROUP BY A.id_carta, C.nombre;');
+        const card_dealt_used_power = await pool.query('SELECT A.id_carta AS id, C.nombre AS nombre, SUM(A.nivel_carta_repartir) AS repartida, SUM(A.veces_usada) AS usada FROM CartaPartida AS A INNER JOIN Carta AS B  USING(id_carta) INNER JOIN PowerUp AS C USING(id_carta) GROUP BY A.id_carta, C.nombre;');
+        graphics_stats.push({card_dealt_used: [card_dealt_used_plat[0], card_dealt_used_power[0]]});
 
         res.json(graphics_stats);
 

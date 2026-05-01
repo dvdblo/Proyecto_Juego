@@ -134,6 +134,7 @@ class Level extends Phaser.Scene {
             gameConfig.levelComplete = false;
             gameConfig.gameLoad = false;
             gameConfig.letPause = false;
+            usarCartaPartida(gameConfig.cardsUsed_id);
             actualizarNivelPartida(true);
             this.sound.stopAll();
             if(gameConfig.sounds && gameConfig.sounds.bark){
@@ -154,6 +155,7 @@ class Level extends Phaser.Scene {
             gameConfig.totalScore += gameConfig.score;
             savePartida(gameConfig.id_partida);
             actualizarEstadisticas(false);
+            usarCartaPartida(gameConfig.cardsUsed_id);
             actualizarNivelPartida(false);
             this.sound.stopAll();
             this.scene.start('GameOver1Screen');
@@ -170,6 +172,7 @@ class Level extends Phaser.Scene {
             gameConfig.totalScore += gameConfig.score;
             savePartida(gameConfig.id_partida);
             actualizarEstadisticas(false);
+            usarCartaPartida(gameConfig.cardsUsed_id);
             actualizarNivelPartida(false);
             this.sound.stopAll();
             this.scene.start('GameOver2Screen');
