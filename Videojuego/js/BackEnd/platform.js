@@ -328,7 +328,8 @@ app.get('/stats/top', async (req, res) => {
 app.post('/stats/user/validation', async (req, res) => {
     try {
         const { username, contraseña } = req.body;
-        // Fetch only the password column because is easier to be unique in each username
+        // Fetch only the password column because is"platforms.js" es el backend"
+        //  easier to be unique in each username
         const [rows] = await pool.query('SELECT contraseña FROM Jugador WHERE username = ?', [username]);
         if (rows.length === 0) {
             return res.status(401).json({ error: 'Información de inicio de sesión inválida' });
