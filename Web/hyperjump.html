@@ -1,5 +1,8 @@
+<!--Here is the HTML for the main page of the game-->
+
 <!DOCTYPE html>
 <html lang="es">
+<!--Here are the imported tools and scripts for the style and implementation of some functions-->
 <head>
     <meta charset="UTF-8">
     <title>Hyperjump</title>
@@ -15,9 +18,11 @@
 </head>
 <!----------------------------------------------------------------------------------------------------------->
 <!----------------------------------------------------------------------------------------------------------->
-<body onload="get_top_players()">
-    <div class="fondo"></div>
+<body onload="get_top_players()">  <!--Loads the global ranking as a table in the statistics section-->
+    <div class="fondo"></div> <!--Loads the general background-->
+    <!--GENERAL contains all the sections of the page-->
     <main id="general">
+        <!--Firts elements-->
         <div class="backText">
             <h1 class="accesible">Accede a la página de alto contraste</h1>
             <a href="hyperjump_alto_contraste.html" target="_blank">
@@ -27,6 +32,7 @@
         <h1 id="Main_title">HyperJump</h1>
         
 <!----------------------------------------------------------------------------------------------------------->
+        <!--Navegation bar for agile navigation through the page-->
         <nav class="navbar">
             <ul>
                 <li><a href="#inicio">Jugar</a></li>
@@ -37,23 +43,25 @@
         </nav>
 <!----------------------------------------------------------------------------------------------------------->
 <!----------------------------------------------------------------------------------------------------------->
+        <!--Main section, contains the login and play buttons-->
         <section id="inicio">
             
             <h2 class="backText">Sumérgete en un innexplorado mundo y ayuda a Astro a recuperar la comunicación con la Tierra.</h2>
             <br>
 
             <h1>Accede a tu cuenta para jugar</h1>
-            <a href="user_login.html" target="_blank">
+            <a href="user_login.html" target="_blank">  <!--Opens the login page-->
             <button class="bt">Acceder</button>
             </a>
             
             <ul>
-                <li class = "displays"><button class="bt" onclick="startGame()">Jugar Ahora</button></li>
+                <li class = "displays"><button class="bt" onclick="startGame()">Jugar Ahora</button></li> <!--Opens the game-->
             </ul>
 
         </section>
 <!----------------------------------------------------------------------------------------------------------->
 <!----------------------------------------------------------------------------------------------------------->
+        <!--Section with a text tutorial-->
         <section id="tutorial">
             <h3 class="backText2">HyperJump es un juego interactivo de plataformas, en dónde deberás construir tu camino por un 
                 inexplorado planeta. <br>
@@ -99,6 +107,7 @@
         </section>
 <!----------------------------------------------------------------------------------------------------------->
 <!----------------------------------------------------------------------------------------------------------->
+        <!--Section with a little of context of the history-->
         <div id="historia">
             <h1>Historia del Juego</h1>
             <br>
@@ -133,6 +142,7 @@
         </div>
 <!----------------------------------------------------------------------------------------------------------->
 <!----------------------------------------------------------------------------------------------------------->
+        <!--Section with the description of the main character-->
         <section id="personajes">
             <h1>El héroe</h1>
             <br>
@@ -150,13 +160,14 @@
         </section>
 <!----------------------------------------------------------------------------------------------------------->
 <!----------------------------------------------------------------------------------------------------------->
+        <!--Section with the statistics for common users-->
         <section id="estadisticas">
             <h1>Ranking Global</h1>
             <table class="tab" id="top_players"></table>
             <br>
 
             <h1>¡Consulta tus estadísticas!</h1>
-
+            <!--Displays your personal statistics-->
             <ul>
                 <li class = "displays"><button class="bt" onclick="get_user_stats(JSON.parse(localStorage.getItem('usuario')))">Consultar</button></li>
             </ul>
@@ -164,6 +175,7 @@
             <table class="tab" id="user_stats"></table>
             <br>
 
+            <!--Admin page-->
             <h1>¿Eres administrador? Accede a la visión completa desde aquí</h1>
             <a href="admin_stadistics.html" target="_blank">
             <button class="bt">Vista de Administrador</button>
@@ -175,11 +187,12 @@
     </main>
 <!----------------------------------------------------------------------------------------------------------->
 <!----------------------------------------------------------------------------------------------------------->
-
+            <!--Scripts with API functions and global variables-->
             <script src="../Videojuego/js/config/gameConfig.js"></script>
             <script src="../BackEnd/API/api.js"></script>
             <script src="../BackEnd/API/stats_api.js"></script>
 
+            <!--Function to open the game, local storage used for keeping the sesion active-->
             <script>
                 localStorage.setItem("id_jugador", null);
                 localStorage.setItem("usuario", null);

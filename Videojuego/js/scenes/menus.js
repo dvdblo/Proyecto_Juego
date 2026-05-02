@@ -1,3 +1,6 @@
+//This js contains all the scenes related to menus.
+//Use of AI: AI was used to learn how to use the scenes in Phaser, and to learn how to configurate them.
+//We also used video tutorials from YouTube and official documentation.
 
 //MENUS------------------------------------------------------------------------------------------------------------
 class MainMenu extends Phaser.Scene {
@@ -15,6 +18,7 @@ class MainMenu extends Phaser.Scene {
 
     //Creates the objects/variables
     create() {
+        //Reestarts the global variables in preparation for a new run
         gameConfig.actualLevel = 1;
         gameConfig.actualDiff = 1;
         gameConfig.gameLoad = false;
@@ -25,6 +29,7 @@ class MainMenu extends Phaser.Scene {
         gameConfig.totalTime = undefined;
         this.sound.volume = gameConfig.musicVolume;
 
+        //Loads or not music, prevents music for playing more than one time at the same moment
         if (!this.menuMusic || !this.menuMusic.isPlaying) {
             this.menuMusic = this.sound.add('menuMusic', { loop: true });
             this.menuMusic.play();
@@ -39,8 +44,8 @@ class MainMenu extends Phaser.Scene {
 
         //Elements: buttons and texts
         const scale = 1/5 //To resize the button using the canvas size
-        //To adjust the position in Y automatically
-        
+
+            //Fucntion hei is used to adjust the position in Y automatically
         const buttonNew = this.add.image(gameConfig.canvasWidth/2, hei(0,4,2,1.1), 'buttonPlay').setInteractive(); //To allow detection of cursor
         const buttonContinue = this.add.image(gameConfig.canvasWidth/2, hei(1,4,2,1.1), 'buttonPlay').setInteractive();
         const buttonSettings = this.add.image(gameConfig.canvasWidth/2, hei(2,4,2,1.1), 'buttonPlay').setInteractive();
@@ -62,7 +67,7 @@ class MainMenu extends Phaser.Scene {
             align: 'center'
         };
 
-        //Text for the button
+        //Text for the buttons
         const textNew = this.add.text(gameConfig.canvasWidth/2, hei(0,4,2,1.1)-scale*gameConfig.canvasHeight/20, 'Empezar juego', textButton).setOrigin(0.5);
         const textContinue = this.add.text(gameConfig.canvasWidth/2, hei(1,4,2,1.1)-scale*gameConfig.canvasHeight/20, 'Continuar', textButton).setOrigin(0.5);
         const textSettings = this.add.text(gameConfig.canvasWidth/2, hei(2,4,2,1.1)-scale*gameConfig.canvasHeight/20, 'Configuración', textButton).setOrigin(0.5);
@@ -112,12 +117,14 @@ class MainMenu extends Phaser.Scene {
                 return; // stops the function here
             }
 
+            //Puts an end to the last stored game
             if(gameConfig.id_partida) {
                 await finishPartida(gameConfig.id_partida);
             }
-            
+            //Creates a new game
             gameConfig.id_partida = await createPartida(gameConfig.id_jugador);
             
+            //Fade out effect
             this.cameras.main.fadeOut(2000);
             this.tweens.add({
                 targets: this.menuMusic,
@@ -130,6 +137,7 @@ class MainMenu extends Phaser.Scene {
             });
         });
 
+        //To continue a previous not finisehd game
         buttonContinue.on('pointerdown', async() => {
             const data = await continuarPartida(gameConfig.id_jugador);
 
@@ -148,20 +156,23 @@ class MainMenu extends Phaser.Scene {
             volume: 0,
             duration: 1000,
             onComplete: () => {
-                this.scene.start('Introduction'); // or GameScene
+                this.scene.start('Introduction');
                 this.menuMusic.stop();
             }
             });
         });
 
+        //Open settings menu
         buttonSettings.on('pointerdown', () => {
             this.scene.start('Settings');
         });
+
+        //Opens video tutorial for the game
         buttonTutorial.on('pointerdown', () => {
             window.open('https://youtu.be/s21WhEizFu0?si=cKYGhFmVjT7loMDV', '_blank');
         });
 
-        //Text
+        //Title Text
         const styteTitle = {
             fontFamily: 'myTextFont',
             fontSize: '90px',
@@ -175,6 +186,7 @@ class MainMenu extends Phaser.Scene {
     } 
 }
 
+//Settings scene
 class Settings extends Phaser.Scene {
     constructor() {
         super('Settings');
@@ -212,6 +224,7 @@ class Settings extends Phaser.Scene {
 
         this.knob = knob;
 
+        //AI was used in the procces of creation of the interactive knob and the calculation of the sound according to its position
         //Interactive knob
         knob.setInteractive({ draggable: true });
 
@@ -220,7 +233,7 @@ class Settings extends Phaser.Scene {
 
         this.input.on('drag', (pointer, gameObject, dragX) => {
 
-            //To limit the movement of tthe knob
+            //To limit the movement of the knob
             let minX = this.barX - this.barWidth/2;
             let maxX = this.barX + this.barWidth/2;
 
@@ -311,6 +324,7 @@ class Settings extends Phaser.Scene {
     }
 }
 
+//Pause menu in game
 class PauseMenu extends Phaser.Scene {
     constructor() {
         super('PauseMenu');
@@ -500,6 +514,7 @@ class PauseMenu extends Phaser.Scene {
     }
 
     update() {
+        //To keep track if the game is paused or not, and to allow pause or not
         if(!gameConfig.pause) {
             gameConfig.letPause = true;
             gameConfig.gameLoad = true;

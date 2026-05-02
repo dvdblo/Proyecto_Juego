@@ -1,3 +1,7 @@
+/* Here are the different styles used for the elements of the complete page.
+Use of AI: AI was used to solve some compatibility problems between this CSS and Bootstrap styles.
+            Also for some style ideas or functions*/
+
 @font-face {
   font-family: 'myText';
   src: url('../Videojuego/assets/fuentesLetra/WakeboardStudio.ttf') format('truetype');
@@ -260,6 +264,7 @@ h3, p {
     overflow: hidden;
 }
 
+/*Some of this .tab styles were obtained from AI*/
 /* HEADER */
 .tab th {
     padding: 12px 10px;

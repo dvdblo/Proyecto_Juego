@@ -1,9 +1,11 @@
 /*
- * BackEnd: to connect interconnect DB and API
+ * BackEnd: to interconnect DB and API
  *
  * Daniel José Armas Azar A01786896
  * Guillermo Patricio González Martínez A01787393
  * David Blanco Ortiz A01786713
+ * 
+ * Use of AI: AI was used to solve some problems with the connection between backend and API
  */
 
 //Definition of modules
@@ -148,6 +150,7 @@ app.post('/partida/nueva', async (req, res) => {
 });
 
 //Saves game progress to an existing session row
+//Use of AI: AI was used in this endpoint, changing to the put method for the update functions
 app.put('/partida/guardar', async (req, res) => {
     try {
         const { id_partida, puntaje_total, niveles_completados, 
@@ -189,7 +192,8 @@ app.get('/partida/continuar/:id_jugador', async (req, res) => {
     }
 });
 
-//Marks a game session as finished by setting its end timestamp
+//Marks a game session as finished by setting its end timestamp 
+//Inpired form the above app.put, but modiffied (now without using AI)
 app.put('/partida/terminar', async (req, res) => {
     try {
         const { id_partida } = req.body;

@@ -1,3 +1,13 @@
+/*
+ * Sript that contains the global variables for the game, and some global fucntions
+ *
+ * Daniel José Armas Azar A01786896
+ * Guillermo Patricio González Martínez A01787393
+ * David Blanco Ortiz A01786713
+ * 
+ * Use of AI: AI was used to know how to achieve the full screen.
+ */
+
 //Canvas base dimensions
 let cWidth = 1400;
 let cHeight = 600;
@@ -108,7 +118,6 @@ window.addEventListener('keydown', (e) => {
 
 //Resizes the canvas and updates Phasers renderer
 window.setResolution = function (width, height) {
-  // 1. Actualizas config
   gameConfig.canvasWidth = width;
   gameConfig.canvasHeight = height;
 
@@ -118,6 +127,7 @@ window.setResolution = function (width, height) {
 };
 
 //Function to obtain the position in Y automaticaly for elements
+//AI was used to obtain the formula
 function hei(i, n, pInitial, pFinal) {
             const posInitial = gameConfig.canvasHeight/pInitial;
             const posFinal = gameConfig.canvasHeight/pFinal;
