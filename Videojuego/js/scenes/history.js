@@ -1,6 +1,9 @@
-
+//This js contains all the scenes related to history screens.
+//Use of AI: AI was used to learn how to use the scenes in Phaser, and to learn how to configurate them.
+//We also used video tutorials from YouTube and official documentation.
  
 //HISTORY------------------------------------------------------------------------------------------------------------
+//Introduction scene with some context of why are you in that situation
 class Introduction extends Phaser.Scene {
     constructor() {
         super('Introduction');
@@ -14,6 +17,7 @@ class Introduction extends Phaser.Scene {
     }
 
     create() {
+        //Fade in effect
         this.cameras.main.fadeIn(2000);
         if (!this.introMusic || !this.introMusic.isPlaying) {
             this.introMusic = this.sound.add(`introMusic`, { loop: true });
@@ -77,6 +81,7 @@ class Introduction extends Phaser.Scene {
     }
 }
 
+//Good ending scene at the end of the game
 class GoodEnding extends Phaser.Scene {
     constructor() {
         super('GoodEnding');
@@ -154,6 +159,7 @@ class GoodEnding extends Phaser.Scene {
     }
 }
 
+//Bad ending scene for the case when you fall into the void
 class BadEnding1 extends Phaser.Scene {
     constructor() {
         super('BadEnding1');
@@ -235,6 +241,7 @@ class BadEnding1 extends Phaser.Scene {
     }
 }
 
+//Bad ending scene for the case when you lose all your lifes
 class BadEnding2 extends Phaser.Scene {
     constructor() {
         super('BadEnding2');

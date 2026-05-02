@@ -1,3 +1,7 @@
+//This js contains the level scene.
+//Use of AI: AI was used to learn how to use the scenes in Phaser, and to learn how to configurate them.
+//We also used video tutorials from YouTube and official documentation.
+
 //LEVELS------------------------------------------------------------------------------------------------------------
 //Phaser Scene that handles the active gameplay loop
 class Level extends Phaser.Scene {
@@ -109,7 +113,7 @@ class Level extends Phaser.Scene {
         //Clear the canvas each frame before redrawing
         this.ctx.clearRect(0, 0, gameConfig.canvasWidth, gameConfig.canvasHeight);
 
-        //Reset the position oto draw the elements
+        //Reset the position to draw the elements
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
         //Updates the game
@@ -189,7 +193,7 @@ class Level extends Phaser.Scene {
             this.scene.start('GameOver2Screen');
             this.levelMusic.stop();
         }
-        //Player pressed Tab, it meaans pause the Level scene and overlay the PauseMenu scene
+        //Player pressed Tab, it meaa}ns pause the Level scene and overlay the PauseMenu scene
         if(gameConfig.pause && gameConfig.letPause) {
             gameConfig.letPause = false;
             gameConfig.gameLoad = false;

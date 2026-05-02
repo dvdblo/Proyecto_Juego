@@ -1,6 +1,10 @@
+//This js contains all the scenes related to other states, like loading scenes or victory/defeat screens.
+//Use of AI: AI was used to learn how to use the scenes in Phaser, and to learn how to configurate them.
+//We also used video tutorials from YouTube and official documentation.
 
 //STATE SCREENS------------------------------------------------------------------------------------------------------------
-
+//Scenes where the game is intialized, according to the correct new level
+//Loading for difficulty 1
 class LoadingGame1 extends Phaser.Scene {
     constructor() {
         super('LoadingGame1');
@@ -10,7 +14,7 @@ class LoadingGame1 extends Phaser.Scene {
         this.load.image('backgroundLoad1', '../Videojuego/assets/Fondos/backLoad_1.png');
     }
 
-    //Initializes the game
+    //Initializes the game with difficulty 1
     async create() {
         gameConfig.gameLoad = false;
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundLoad1');
@@ -33,6 +37,7 @@ class LoadingGame1 extends Phaser.Scene {
     }
 }
 
+//Loading for difficulty 2
 class LoadingGame2 extends Phaser.Scene {
     constructor() {
         super('LoadingGame2');
@@ -42,7 +47,7 @@ class LoadingGame2 extends Phaser.Scene {
         this.load.image('backgroundLoad2', '../Videojuego/assets/Fondos/backLoad_2.png');
     }
 
-    //Initializes the game
+    //Initializes the game with difficulty 2
     async create() {
         gameConfig.gameLoad = false;
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundLoad2');
@@ -63,6 +68,7 @@ class LoadingGame2 extends Phaser.Scene {
     }
 }
 
+//Loading for difficulty 3
 class LoadingGame3 extends Phaser.Scene {
     constructor() {
         super('LoadingGame3');
@@ -72,7 +78,7 @@ class LoadingGame3 extends Phaser.Scene {
         this.load.image('backgroundLoad3', '../Videojuego/assets/Fondos/backLoad_3.png');
     }
 
-    //Initializes the game
+    //Initializes the game with difficulty 3
     async create() {
         gameConfig.gameLoad = false;
         const back = this.add.image(gameConfig.canvasWidth/2, gameConfig.canvasHeight/2, 'backgroundLoad3');
@@ -93,6 +99,8 @@ class LoadingGame3 extends Phaser.Scene {
     }
 }
 
+//State scenes for winning or losing
+//Win scren for difficulty 1
 class WinLevelScreen1 extends Phaser.Scene {
     constructor() {
         super('WinScreen1');
@@ -154,6 +162,7 @@ class WinLevelScreen1 extends Phaser.Scene {
             await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
             this.winMusic.stop();
+            //To start in the next difficulty
             if (gameConfig.actualLevel > 3) {
                 this.scene.start('LoadingGame2');
             } else {this.scene.start('LoadingGame1');}
@@ -174,6 +183,7 @@ class WinLevelScreen1 extends Phaser.Scene {
     } 
 }
 
+//Win scren for difficulty 2
 class WinLevelScreen2 extends Phaser.Scene {
     constructor() {
         super('WinScreen2');
@@ -235,6 +245,7 @@ class WinLevelScreen2 extends Phaser.Scene {
             await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
             this.winMusic.stop();
+            //To start in the next difficulty
             if (gameConfig.actualLevel > 6) {
                 this.scene.start('LoadingGame3');
             } else {this.scene.start('LoadingGame2');}
@@ -254,6 +265,7 @@ class WinLevelScreen2 extends Phaser.Scene {
     } 
 }
 
+//Win scren for difficulty 3
 class WinLevelScreen3 extends Phaser.Scene {
     constructor() {
         super('WinScreen3');
@@ -315,6 +327,7 @@ class WinLevelScreen3 extends Phaser.Scene {
             await savePartida(gameConfig.id_partida);
             gameConfig.actualLevel++;
             this.winMusic.stop();
+            //To start the win game scene
             if (gameConfig.actualLevel > 9) {
                 await actualizarEstadisticas(true);
                 this.scene.start('GoodEnding');
@@ -335,6 +348,7 @@ class WinLevelScreen3 extends Phaser.Scene {
     } 
 }
 
+//Game over screen when fall into the void
 class GameOver1Screen extends Phaser.Scene {
     constructor() {
         super('GameOver1Screen');
@@ -413,6 +427,7 @@ class GameOver1Screen extends Phaser.Scene {
     } 
 }
 
+//Game over screen when lose all your lifes
 class GameOver2Screen extends Phaser.Scene {
     constructor() {
         super('GameOver2Screen');

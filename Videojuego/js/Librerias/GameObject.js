@@ -4,6 +4,8 @@
  * Daniel José Armas Azar A01786896
  * Guillermo Patricio González Martínez A01787393
  * David Blanco Ortiz A01786713
+ * 
+ * This code was extracted from the repository of the class
  */
 
 "use strict";
@@ -55,28 +57,6 @@ class GameObject {
         this.scale = scale;
     }
 
-    //NOT NECESSARY WHIT THE OVERLAP IMPLEMENTATION
-    // setCollider(x, y, width, height) {
-    //     // The top left corner of the collider is offset by half of its size
-    //     // TODO: Provide the correct values for the collider rectangle
-    //     // Use the scale as well
-    //     this.xOffset = x;
-    //     this.yOffset = x;
-    //     this.colliderWidth = width;
-    //     this.colliderHeight = height;
-    //     this.updateCollider(this.xOffset, this.yOffset, this.colliderWidth, this.colliderHeight);
-    // }
-
-    // updateCollider(xOffset, yOffset, colliderWidth, colliderHeight) {
-    //     // Adjust the Rect of the object with its position
-    //     // TODO: Center the collider around the object position
-    //     // Use the scale as well
-    //     this.collider = new Rect(xOffset,
-    //                              yOffset,
-    //                              colliderWidth,
-    //                              colliderHeight);
-    // }
-
     //To draw the objects
     draw(ctx) {
         //If there is a sprite, use it
@@ -114,7 +94,6 @@ class GameObject {
 
         //To show the limits of the sprite in the canvas (in our case, this limits are the same for the colliders)
         if (showBBox) this.drawBoundingBox(ctx);
-        // if (showColl) this.drawCollider(ctx);
     }
 
     //To show the limits of the sprite in the canvas
@@ -143,16 +122,6 @@ class GameObject {
         ctx.fillStyle = "red";
         ctx.fillRect(this.position.x - 2, this.position.y - 2, 4, 4);
     }
-
-    // drawCollider(ctx) {
-    //     ctx.strokeStyle = "white";
-    //     ctx.beginPath();
-    //     ctx.rect(this.collider.x,
-    //              this.collider.y,
-    //              this.collider.width,
-    //              this.collider.height);
-    //     ctx.stroke();
-    // }
 
     // Empty template for all GameObjects to be able to update
     update() {

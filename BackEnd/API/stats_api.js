@@ -4,11 +4,12 @@
  * Daniel José Armas Azar A01786896
  * Guillermo Patricio González Martínez A01787393
  * David Blanco Ortiz A01786713
+ * 
+ * Use of AI: AI was used to solve some problems with the connection between backend and the API
+ *              Also, it was used for the style of the graphics (not for its creation), for the creation we used official documentation.
  */
 
-//Function to read and translate generation zones from DB to game
-//They are async functions so they can work properly with the connections (also async)
-
+//Function to get the ranking of the 10 top players based on their maximum score
 async function get_top_players() {
     const top_players = await fetch(`http://localhost:3000/stats/top`);
     const data = await top_players.json();
@@ -33,6 +34,7 @@ async function get_top_players() {
     }
 }
 
+//Function to obtain the stats for an specific user, only if there is an active session, or if you are accessing from admin panel
 async function get_user_stats(username) {
 
     if (username) {
@@ -68,6 +70,7 @@ async function get_user_stats(username) {
     }
 }
 
+//General style for the graphics (obtained with AI)
 Chart.defaults.color = '#e0e0e0';
 Chart.defaults.font.family = 'Orbitron, sans-serif'; // estilo gamer
 Chart.defaults.plugins.legend.labels.usePointStyle = true;
@@ -85,7 +88,9 @@ const glowPlugin = {
     }
 };
 
+//Function to validate the admin credentials, and to displays the statistics for the admin
 async function validate_admin(username, contraseña) {
+    //Validates admin
     const val = await fetch('http://localhost:3000/stats/user/validation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -95,9 +100,11 @@ async function validate_admin(username, contraseña) {
     if (comp.success && username === "admin") {
         alert("Sesión de administrador iniciada con éxito");
         
+        //Gets the general game stats
         const general = await fetch(`http://localhost:3000/stats/admin/general`);
         const data = await general.json();
 
+        //Table with general stats
         $("#admin_stats").empty();
 
         $("#admin_stats").append(`
@@ -125,9 +132,11 @@ async function validate_admin(username, contraseña) {
             `);
         });
 
+        //Gets the data needed for the graphics
         const graphics_stats = await fetch(`http://localhost:3000/stats/admin/graphics`);
         const data_graph = await graphics_stats.json();
 
+        //HTML structure for the graphics
         $("#admin_graphics").append(`
             <h1 class="backText">Gráficas Globales</h1>
             <br>
@@ -182,9 +191,11 @@ async function validate_admin(username, contraseña) {
             <br>
         `);
 
+        //Variebles to separate specifc data
         let labs = [];
         let vals = [];
 
+        //GRAPHIC 1
         data_graph[0].run_day.forEach(stat => {
             labs.push(stat.month + stat.day);
             vals.push(stat.runs);
@@ -235,6 +246,7 @@ async function validate_admin(username, contraseña) {
         });
 
 
+        //GRAPHIC 2
         ctx = document.getElementById('graph_victory_fail').getContext('2d');
         const graph_victory_fail = new Chart(ctx, {
             type: 'bar',
@@ -262,6 +274,7 @@ async function validate_admin(username, contraseña) {
         });
 
 
+        //GRAPHIC 3
         const s_e = data_graph[1].start_end[0];   
 
         ctx = document.getElementById('graph_started_ended').getContext('2d');
@@ -289,6 +302,7 @@ async function validate_admin(username, contraseña) {
             plugins: [glowPlugin]
         });
 
+        //SOME OTHER STATS
         $("#admin_stats").append(`
             <br>
             <div class="displays">
@@ -317,6 +331,7 @@ async function validate_admin(username, contraseña) {
             </div>
         `);
 
+        //GRAPHIC 4
         labs = [];
         vals = [];
         let vals2 = [];
@@ -378,7 +393,7 @@ async function validate_admin(username, contraseña) {
         alert("Credenciales de administrador incorrectas");
     }
 }
-
+//Function to update users stats when wins, loses or completes a level
 async function actualizarEstadisticas(victoria) {
     await fetch('http://localhost:3000/stats/actualizar', {
         method: 'PUT',
@@ -396,6 +411,7 @@ async function actualizarEstadisticas(victoria) {
     });
 }
 
+//Function to create a new run in the NivelPartida table of DB, maintains a register of the run´s levels
 async function crearNivelPartida() {
     try {
         const response = await fetch('http://localhost:3000/partida/nivelpartida', {
@@ -411,6 +427,7 @@ async function crearNivelPartida() {
     }
 }
 
+//Funtion to update the level data of a run
 async function actualizarNivelPartida(completado) {
     await fetch('http://localhost:3000/stats/actualizar/nivelpartida', {
         method: 'PUT',
@@ -428,6 +445,7 @@ async function actualizarNivelPartida(completado) {
     });
 }
 
+//Function to insert and maintain a register of the dealt cards in a run/level
 async function crearCartaPartida(cartas) {
     try {
         const response = await fetch('http://localhost:3000/cartapartida/repartida', {
@@ -444,6 +462,7 @@ async function crearCartaPartida(cartas) {
     }
 }
 
+//Updates the register of a dealt card when used. It is called after the level ends
 async function usarCartaPartida(cartas_id) {
     try {
         const response = await fetch('http://localhost:3000/cartapartida/usada', {

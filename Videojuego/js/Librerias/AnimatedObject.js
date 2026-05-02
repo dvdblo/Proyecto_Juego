@@ -4,6 +4,8 @@
  * Daniel José Armas Azar A01786896
  * Guillermo Patricio González Martínez A01787393
  * David Blanco Ortiz A01786713
+ * 
+ * This code was extracted from the repository of the class
  */
 
 "use strict";

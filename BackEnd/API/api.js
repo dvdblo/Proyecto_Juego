@@ -1,9 +1,11 @@
 /*
- * API: functions to interconnect front with back and DB
+ * API: functions to interconnect game front with back and DB.
  *
  * Daniel José Armas Azar A01786896
  * Guillermo Patricio González Martínez A01787393
  * David Blanco Ortiz A01786713
+ * 
+ * Use of AI: AI was used to solve some problems with the connection between backend and API
  */
 
 //Function to read and translate generation zones from DB to game
@@ -22,6 +24,7 @@ async function initGenerationZones(level, unit) {
     return generation_zones;
 }
 
+//To dealt power-up cards. Reads the power-ups from DB and randomly selects some of them
 async function initPowerUps() {
     const res = await fetch(`http://localhost:3000/cartas-powerup/${gameConfig.id_jugador}`);
     const data = await res.json();
@@ -37,6 +40,7 @@ async function initPowerUps() {
     return powerUpInventory;
 }
 
+//To dealt platform cards randomly
 async function initPlatformCards() {
     const res = await fetch(`http://localhost:3000/cartas-plataforma/${gameConfig.id_jugador}`);
     const data = await res.json();
@@ -72,7 +76,7 @@ async function initPlatforms(auto, zones, unit) {  //auto = is auto_generated?
             }
             else {
                 rand = randomRange(platforms.length, 0);
-                plat = platforms[rand];  //Selects a random platforms
+                plat = platforms[rand];  //Selects a random platform
             }
 
             for(let j = 0; j < plat.composicion.formas.length; j++) {
@@ -82,8 +86,10 @@ async function initPlatforms(auto, zones, unit) {  //auto = is auto_generated?
     return actualPlatforms;
 }
 
+//To randimly select the level enemies from the DB
 async function initEnemies(level){
     let enemyLevel = 1;
+    //Assign the level required for the enemies according to the actual level of the game
     if(level >=4 && level <=6){
         enemyLevel = 2;
     }
@@ -95,12 +101,14 @@ async function initEnemies(level){
     return data;
 }
 
+//Reads the data needed to insert a boss in the game
 async function initBoss(level){
     const res = await fetch(`http://localhost:3000/jefe/${level}`);
     const data = await res.json();
     return data;
 }
 
+//Function so a new user can sign up
 async function register(username, contraseña, edad) {
     const response = await fetch('http://localhost:3000/register', {
         method: 'POST',
@@ -115,6 +123,7 @@ async function register(username, contraseña, edad) {
     }
 }
 
+//Function so a suer can acces to its account
 async function login(username, contraseña) {
     const response = await fetch('http://localhost:3000/login', {
         method: 'POST',
@@ -123,6 +132,7 @@ async function login(username, contraseña) {
     });
     const data = await response.json();
     if (data.success) {
+        //AI was used to change the login from global variables to localStorage
         localStorage.setItem("id_jugador", JSON.stringify(data.id_jugador));
         localStorage.setItem("usuario", JSON.stringify(data.username));
         // gameConfig.id_jugador = data.id_jugador;
@@ -132,6 +142,7 @@ async function login(username, contraseña) {
     }
 }
 
+//Function to create a new run in the DB
 async function createPartida(id_jugador) {
     const res = await fetch('http://localhost:3000/partida/nueva', {
         method: 'POST',
@@ -142,6 +153,7 @@ async function createPartida(id_jugador) {
     return data.id_partida; // Store this in gameConfig
 }
 
+//Function to save the progress of the run, it is called when a level is finished, therefore, it does not save progress within the level.
 async function savePartida(id_partida) {
     await fetch('http://localhost:3000/partida/guardar', {
         method: 'PUT',
@@ -157,12 +169,14 @@ async function savePartida(id_partida) {
     });
 }
 
+//Function to restore the run progress when a player had left and want to continue
 async function continuarPartida(id_jugador) {
     const res = await fetch(`http://localhost:3000/partida/continuar/${id_jugador}`);
     const data = await res.json();
     return data; // { found: true, partida: {...} } or { found: false }
 }
 
+//Function to put an end to an active run. It is called when a user wins or loses
 async function finishPartida(id_partida) {
     await fetch('http://localhost:3000/partida/terminar', {
         method: 'PUT',
@@ -171,6 +185,7 @@ async function finishPartida(id_partida) {
     });
 }
 
+//Function to upgrade a card in the user account.
 async function upgradeCard(id_jugador, id_carta) {
     await fetch('http://localhost:3000/carta/mejorar', {
         method: 'PUT',
