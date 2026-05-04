@@ -1070,7 +1070,7 @@ class Game {
             }
         });
 
-        //Select which platform or power-up to use with the number keys, 1-4 for platforms and 5-7 for power-ups
+        //Select which platform or power-up to use with the number keys, 0-6 for platforms and 7-9 for power-ups
         window.addEventListener('keydown', (event) => {
             const num = parseInt(event.key);
             if (isNaN(num)) return; // Ignore non-number keys immediately
@@ -1116,7 +1116,9 @@ class Game {
             }
         });
 
-        window.addEventListener('keydown', async (event) => {
+        window.addEventListener('keydown', async (event) => { 
+            /*If you click "i" whilst a PowerUp is selected and another card hasn't been upgraded this level
+             then the selected PowerUp is upgraded but is also removed from the array so that it can't be used this level*/
             if (event.key == "i" && this.powerUpInventory.length > 0 && this.upgradeCards.length < 1) {
                 if (this.selectedPowerUpIndex >= this.powerUpInventory.length) {
                     this.selectedPowerUpIndex = 0;
