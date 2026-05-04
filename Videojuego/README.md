@@ -58,7 +58,7 @@ FLUSH PRIVILEGES;
 4. Instalar dependencias del backend
 Desde la raíz del repositorio, navega a `BackEnd` e instala los paquetes de Node.js:
 (
-cd Videojuego/js/BackEnd
+cd BackEnd
 npm install
 )
 ATENCIÓN: Esto instalará Express, mysql2, cors y el resto de dependencias. Deberías ver una carpeta `node_modules` creada dentro de `BackEnd`.
