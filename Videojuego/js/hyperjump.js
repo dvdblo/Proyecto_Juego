@@ -823,6 +823,7 @@ class Game {
         ctx.font = "18px Arial";
         ctx.textAlign = "left";
 
+        // Lives
         for(let i = 0; i < gameConfig.lives; i++){
             ctx.drawImage(
                this.lifeSprite,
@@ -833,7 +834,7 @@ class Game {
             );
         }
         
-        
+        //PowerUps
         for(let i = 0; i < this.powerUpInventory.length; i++) {
             ctx.drawImage(
                 this.powerUpInventory[i].sprite,
@@ -844,6 +845,7 @@ class Game {
             );
         }
 
+        //Platform Cards
         for(let i = 0; i < this.platformInventory.length; i++) {
             ctx.drawImage(
                 this.platformInventory[i].sprite,
@@ -872,59 +874,60 @@ class Game {
         for(let enemy of this.enemies) {
             enemy.update(deltaTime, this);
             let overlap = boxOverlap(this.player, enemy, deltaTime, 1);
-            if(overlap == "top") {
+            if(overlap == "top") { //If the player jumps on top of the enemy he deals damage to them and doesn't suffer
                 this.player.position.y = enemy.position.y - enemy.halfSize.y - this.player.halfSize.y;
                 this.player.fallSpeed = 0;
-                this.player.onGround = true;
+                this.player.onGround = true; // Reset the jump
                 
                 if(enemy.damageCooldown <= 0){
-                    let damageResult = enemy.receiveDamage(1, this);
+                    let damageResult = enemy.receiveDamage(1, this); //Apply the damage to the enemy in question
                     enemy.damageCooldown = 500;
-                    if (damageResult == "divided"){
-                        gameConfig.score += enemy.points;
-                        gameConfig.enemiesKilled += 1;
-                        this.enemies.splice(this.enemies.indexOf(enemy), 1);
+                    if (damageResult == "divided"){ // In case the enemy is a big slime divide it into 2 smaller ones
+                        gameConfig.score += enemy.points; //Add points to the score due to eliminating an enemy
+                        gameConfig.enemiesKilled += 1; // Add to the total of enemies eliminated
+                        this.enemies.splice(this.enemies.indexOf(enemy), 1); //Delete the enemy from the array
                     }
                     else if(damageResult == "dead"){
                         if(enemy.isFinalBoss){
-                            this.finalBossDefeated = true;
+                            this.finalBossDefeated = true; //Set the flag to true, this is needed to pass the game
                         }
                         if(enemy.type == "alerta"){
-                            if(gameConfig.sounds && gameConfig.sounds.bark){
+                            if(gameConfig.sounds && gameConfig.sounds.bark){ //In case of eliminating the dog make it stop barking
                                 gameConfig.sounds.bark.stop();
                             }
                         }
-                        gameConfig.score += enemy.points;
-                        gameConfig.enemiesKilled += 1;
-                        this.enemies.splice(this.enemies.indexOf(enemy), 1);
+                        gameConfig.score += enemy.points; //Add points to the score due to eliminating an enemy
+                        gameConfig.enemiesKilled += 1;// Add to the total of enemies eliminated
+                        this.enemies.splice(this.enemies.indexOf(enemy), 1); //Delete the enemy from the array
                         if(gameConfig.sounds){
-                            gameConfig.sounds.enemyDead.play();
+                            gameConfig.sounds.enemyDead.play(); //Play a sound indicating the enemy died
                         }
                     }
                 }
             }
-            else if(overlap != false && enemy.type == "jefe"){
-                gameConfig.lives = 0;
-                gameConfig.levelOver2 = true;
+            else if(overlap != false && enemy.type == "jefe"){ //The bosses instakill so we detect if the colition is with them
+                gameConfig.lives = 0; //Instantly deplete all lives
+                gameConfig.levelOver2 = true; //End the game
             }
-            else if (overlap != false && this.player.damageCooldown <= 0){
+
+            else if (overlap != false && this.player.damageCooldown <= 0){ //If the enemy clashes with the player
                 if(gameConfig.sounds){
-                    gameConfig.sounds.hit.play();
+                    gameConfig.sounds.hit.play(); //Damage Sound
                 }
                 if(enemy.type != "torreta"){
                     gameConfig.lives -= 1;
-                    this.player.damageCooldown = 1000;
+                    this.player.damageCooldown = 1000; //Take a life away and grant a second of invincibility
                 } 
                 if(gameConfig.lives <=0){
                     //this.gameOver();
-                    gameConfig.levelOver2 = true;
+                    gameConfig.levelOver2 = true; //If you have 0 lives left end the game
                 }
             }
         }
         for(let bullet of this.bullets){
             bullet.update(deltaTime);
             let overlap = boxOverlap(this.player, bullet, deltaTime, 1);
-            if(overlap != false && this.player.damageCooldown <= 0){
+            if(overlap != false && this.player.damageCooldown <= 0){ // If you touch a bullet you lose a life
                 if(gameConfig.sounds){
                     gameConfig.sounds.hit.play();
                 }
@@ -932,7 +935,7 @@ class Game {
                 this.player.damageCooldown = 1000;
                 bullet.destroy(this);
                 if(gameConfig.lives<=0){
-                    gameConfig.levelOver2=true;
+                    gameConfig.levelOver2=true; //If you have no lives left end the game
                 }
             }
         }
@@ -951,11 +954,14 @@ class Game {
             if (platform.tipo == "turbina" && platform.baseY !== undefined) {
                 platform.timer += (deltaTime * platform.composicion.velocidad) /500;
                 const newY = platform.baseY + Math.sin(platform.timer) * (platform.composicion.amplitud * gameConfig.unit);
+                //The turbina platform moves up and down using a sin function and the timer to remain within a certain area
+                //AI helped implement this platform, specifically the idea of using the sin function to move the platform
                 let dephase = (platform.size.y/gameConfig.unit < 12) ? 4 : 1.3;  //To move the collision with the platform. Allows the player to be in a pleasant visual spot
                 platform.deltaY = newY - platform.position.y;
                 if (this.player.onGround && boxOverlap(this.player, platform, deltaTime, dephase) == "top") {
-                    this.player.position.y += platform.deltaY;
+                    this.player.position.y += platform.deltaY; //If the player is on the platform he moves alongside it
                 }
+                //The player needs to move before the platform in order to not phase out of it
                 platform.position.y = newY;
 
             }
@@ -974,15 +980,17 @@ class Game {
                     // Special platform effects on landing
                     if (platform.tipo == "one-time") {
                         this.actualPlatforms.splice(this.actualPlatforms.indexOf(platform), 1);
+                        //This platform is a one time use, once you touch it it vanishes
                     }
                     else if (platform.tipo == "hielo") {   
-                        this.player.onIce = true;      
+                        this.player.onIce = true;   
+                        // This makes it so that instead of coming to a full stop you slide as if it were ice   
                     }
                     else if (platform.tipo == "bloquea_proyectiles") {
-                        this.player.damageCooldown = 2000; //The player will be invulnerable for the duration of the power-up, simulating a shield
+                        this.player.damageCooldown = 2000; //The player will be invulnerable, simulating a shield
                     }
                     else if (platform.tipo == "teletransportador" && !platform.teleportCooldown) {
-                        for(let destination of this.actualPlatforms) {
+                        for(let destination of this.actualPlatforms) { // Move the player to the next platform
                             if(destination.position.x > this.player.position.x) {
                                 this.player.position.x = destination.position.x;
                                 this.player.position.y = 0;
@@ -995,9 +1003,10 @@ class Game {
                         // platform.teleportCooldown = 2000;
                     }
 
-                    if(platform.isFinalPlatform == true){
+                    if(platform.isFinalPlatform == true){ //If you step on the final platform the level ends
                         if(this.canFinishLevel()){
-                            this.applyScreenCompleteBonus();
+                            this.applyScreenCompleteBonus(); //Check whether the final boss has been killed or not
+                            //This is needed for the last level
                             gameConfig.levelComplete = true;
                         }
                         else{
